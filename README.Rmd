@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# R package: `dfr.dist`
+## R package `dfr.dist`: dynamic failure rate (DFR) distributions
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -25,12 +25,12 @@ An R package for working with models in survival analysis in which the distribut
 parameterized by a very flexible failure rate function (any function that satisfies properties like
 being non-negative, integrating to infinity over the domain, and having a support of `(0, Inf)`.
 
-## Installation
+### Installation
 
-You can install the development version of `algebraic.dist` from [GitHub](https://github.com/) with:
+You can install the development version of `dfr.dist` from [GitHub](https://github.com/queelius/dfr_dist) with:
 
 ```{r,eval=F}
 # install.packages("devtools")
-devtools::install_github("queelius/dfr.dist")
+devtools::install_github("queelius/dfr_dist")
 ```
    

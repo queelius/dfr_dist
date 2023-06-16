@@ -38,6 +38,7 @@ is_dfr_dist <- function(x) {
 #' accepts a `log` argument that determines whether to compute the log of
 #' the hazard function. Finally, it passes any additional arguments to the
 #' `rate` function of the `dfr_dist` object `x`.
+#' @importFrom algebraic.dist hazard params
 #' @export
 hazard.dfr_dist <- function(x) {
     function(t, par = NULL, ...) {
@@ -54,8 +55,10 @@ hazard.dfr_dist <- function(x) {
 #' It accepts `p`, the probability at which to compute the quantile, 
 #' `par`, the parameters of the distribution, and `...`, any additional
 #' arguments to pass into the constructed cdf.
+#' @importFrom stats uniroot
+#' @importFrom algebraic.dist params cdf inv_cdf
 #' @export
-quantile.dfr_dist <- function(x, ...) {
+inv_cdf.dfr_dist <- function(x, ...) {
 
     F <- cdf(x, ...)
     function(p, par = NULL, ...) {
@@ -71,6 +74,8 @@ quantile.dfr_dist <- function(x, ...) {
     }
 }
 
+#' Method for obtaining the parameters of a `dfr_dist` object.
+#' 
 #' checks to see if any of the parameters are `NA` or `NULL`
 #' and if so, replaces them with the default values
 #' in `x` (`x$par`)
@@ -79,7 +84,11 @@ quantile.dfr_dist <- function(x, ...) {
 #' of a `dfr_dist` object. If we don't know some parameters, we can
 #' pass `NA` or `NULL` for them, and this function will replace them
 #' with the default values in `x$par`.
-#'
+#' 
+#' @param x The object to obtain the parameters of.
+#' @param par The parameters to replace `NA` or `NULL` with.
+#' @return The parameters of the distribution.
+#' @importFrom algebraic.dist params
 #' @export
 params.dfr_dist <- function(x, par = NULL) {
     if (is.null(par)) {
@@ -115,6 +124,8 @@ params.dfr_dist <- function(x, par = NULL) {
 #' sampling, `par` are the parameters of the distribution, and `eps` is
 #' the  update for numerical integration. Finally, we pass additional
 #' arguments `...` into the hazard function.
+#' @importFrom algebraic.dist params surv sampler
+#' @importFrom stats runif
 #' @export
 sampler.dfr_dist <- function(x, ...) {
     S <- surv(x, ...)
@@ -141,6 +152,8 @@ sampler.dfr_dist <- function(x, ...) {
 #' whether to compute the lower limit (F(t)) or upper limit
 #' (S(t) = 1-F(t)). Finally, it passes any additional arguments `...`
 #' to the `rate` function of the `dfr_dist` object `x`.
+#' 
+#' @importFrom algebraic.dist params cdf
 #' @export
 cdf.dfr_dist <- function(x, ...) {
     H <- cum_haz(x, ...)
@@ -167,6 +180,7 @@ cdf.dfr_dist <- function(x, ...) {
 #' distribution, and `log` determines whether to compute the log of
 #' the pdf. Finally, it passes any additional arguments `...` to
 #' the `rate` function of the `dfr_dist` object `x`.
+#' @importFrom algebraic.dist params pdf
 #' @export
 pdf.dfr_dist <- function(x, ...) {
     H <- cum_haz(x, ...)
@@ -186,6 +200,7 @@ pdf.dfr_dist <- function(x, ...) {
 #' @param x The object to obtain the support of.
 #' @param ... Additional arguments to pass.
 #' @return A support object for `x`, an interval (0,Inf).
+#' @importFrom algebraic.dist interval sup
 #' @export
 sup.dfr_dist <- function(x) {
     interval$new(0, Inf, FALSE, FALSE)
@@ -239,6 +254,7 @@ cum_haz.dfr_dist <- function(x, ...) {
 #' determines whether to compute the log of the survival, and
 #' it passes any additional arguments into the `rate` function of
 #' the `dfr_dist` object `x`.
+#' @importFrom algebraic.dist params surv
 #' @export
 surv.dfr_dist <- function(x, ...) {
     H <- cum_haz(x, ...)
@@ -261,19 +277,4 @@ print.dfr_dist <- function(x, ...) {
   cat("It has a survival function given by:\n")
   cat("    S(t|rate) = exp(-H(t,...))\n")
   cat("where H(t,...) is the cumulative hazard function.\n")
-}
-
-
-
-
-
-#' Log-likelihood contribution of a `dfr_dist` object.
-#' @param x The `dfr_dist` object to compute the log-likelihood contribution
-#' for a vector of exact failure times `t`.
-#' @importFrom likelihood.model loglik
-loglik.dfr_dist <- function(x, ...) {
-    function(t, par = NULL, ...) {
-        par <- params(x, par)
-        log(x$rate(t, par, ...))
-    }
 }
