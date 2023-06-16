@@ -1,0 +1,36 @@
+---
+output:
+  github_document:
+    toc: true
+#always_allow_html: true
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# R package: `dfr.dist`
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+An R package for working with models in survival analysis in which the distribution is
+parameterized by a very flexible failure rate function (any function that satisfies properties like
+being non-negative, integrating to infinity over the domain, and having a support of `(0, Inf)`.
+
+## Installation
+
+You can install the development version of `algebraic.dist` from [GitHub](https://github.com/) with:
+
+```{r,eval=F}
+# install.packages("devtools")
+devtools::install_github("queelius/dfr.dist")
+```
+   
