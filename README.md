@@ -19,8 +19,7 @@ Inf)`.
 
 ### Installation
 
-You can install the development version of `dfr.dist` from
-[GitHub](https://github.com/queelius/dfr_dist) with:
+You can install the development version of `dfr.dist` from the GitHub repo with:
 
 ``` r
 # install.packages("devtools")
