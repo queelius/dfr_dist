@@ -4,7 +4,7 @@
 \alias{params.dfr_dist}
 \title{Method for obtaining the parameters of a \code{dfr_dist} object.}
 \usage{
-\method{params}{dfr_dist}(x, par = NULL)
+\method{params}{dfr_dist}(x, par = NA)
 }
 \arguments{
 \item{x}{The object to obtain the parameters of.}
@@ -15,7 +15,7 @@
 The parameters of the distribution.
 }
 \description{
-checks to see if any of the parameters are \code{NA} or \code{NULL}
+Checks to see if any of the parameters are \code{NA} or \code{NULL}
 and if so, replaces them with the default values
 in \code{x} (\code{x$par})
 }

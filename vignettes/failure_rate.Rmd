@@ -276,7 +276,7 @@ relevant material in this section with:
 
 ```{r setup}
 if (!require(dfr.dist)) {
-  devtools::install_github("queelius/dfr.dist")
+  devtools::install_github("queelius/dfr_dist")
 }
 library(dfr.dist)
 library(algebraic.dist)
@@ -284,9 +284,24 @@ library(algebraic.dist)
 
 
 ```{r}
+expdist <- dfr_dist(rate = function(t, par, ...) par, par = 1)
+is_dfr_dist(expdist)
+params(expdist, 100)
+params(expdist)
+h <- hazard(expdist)
+h
+```
+
+
+```{r eval=F}
 n <- 1000
-(mu.hat <- expectation(dfr.dist,
-  function(x) x, n = n)$value)
+
+sup(expdist)
+
+mu.hat <- algebraic.dist::expectation(
+  x = expdist,
+  g = function(x) x, n = n)
+
 (var.hat <- expectation(dfr.dist,
   function(x) (x - mu.hat)^2, n = n)$value)
 

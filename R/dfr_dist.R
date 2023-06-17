@@ -13,7 +13,7 @@
 dfr_dist <- function(rate, par = NULL, eps = 0.01) {
     structure(
         list(rate = rate,
-             par = NULL,
+             par = par,
              eps = eps),
     class = c("dfr_dist", "univariate_dist", "dist"))
 }
@@ -76,7 +76,7 @@ inv_cdf.dfr_dist <- function(x, ...) {
 
 #' Method for obtaining the parameters of a `dfr_dist` object.
 #' 
-#' checks to see if any of the parameters are `NA` or `NULL`
+#' Checks to see if any of the parameters are `NA` or `NULL`
 #' and if so, replaces them with the default values
 #' in `x` (`x$par`)
 #'
@@ -90,21 +90,21 @@ inv_cdf.dfr_dist <- function(x, ...) {
 #' @return The parameters of the distribution.
 #' @importFrom algebraic.dist params
 #' @export
-params.dfr_dist <- function(x, par = NULL) {
-    if (is.null(par)) {
-        stopifnot(!is.null(x$par))
+params.dfr_dist <- function(x, par = NA) {
+    if (is.null(par) || all(is.na(par))) {
+        if (is.null(x$par) || all(is.na(x$par))) {
+            stop("Parameters are unknown.")
+        }
         return(x$par)
     }
 
     # do component-wise replacement of `par` with `x$par`
-    # whenever `par` is `NA` or `NULL`
-    for (i in 1:length(x$par)) {
-        if (is.null(par[[i]]) || is.na(par[[i]])) {
-            par[[i]] <- x$par[[i]]
-        }
-    }
+    # whenever `par` is `NA`
+    par[is.na(par)] <- x$par[is.na(par)]
     par
 }
+
+
 
 #' Sampling function for `dfr_dist` objects.
 #' 
