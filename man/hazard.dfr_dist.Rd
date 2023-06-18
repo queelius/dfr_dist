@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{The object to obtain the hazard function of.}
+
+\item{...}{Additional arguments to pass into the \code{rate} function.}
 }
 \value{
 A function that computes the hazard function of the distribution.

@@ -31,6 +31,7 @@ is_dfr_dist <- function(x) {
 #' Method for obtaining the hazard function of a `dfr_dist` object.
 #'
 #' @param x The object to obtain the hazard function of.
+#' @param ... Additional arguments to pass into the `rate` function.
 #' @return A function that computes the hazard function of the distribution.
 #' It accepts `t`, the time at which to compute the hazard function, and
 #' `par`, the parameters of the distribution. If `par` is `NULL`, then
