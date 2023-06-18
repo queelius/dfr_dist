@@ -33,5 +33,30 @@ You can install the development version of `dfr.dist` from GitHub repo with:
 # install.packages("devtools")
 devtools::install_github("queelius/dfr_dist")
 ```
-   
+
+### Usage
+
+The R packge `dfr_dist` provides an API for specifying and estimating dynamic failure
+rate distributions. They can depend on the data in any way, as the failure rate is
+any function of time and any set of predictors, as long as the failure rate satsifies
+two key properties:
+
+1. It's non-negative. It is not meaningful to have a negative failure rate; the
+failure rate can decrease some times, and even go to $0$, though.
+
+2. At the limit as $t$ goes to infinity, the cumulative hazard $H$ also goes to
+infinity:
+  $$
+    \lim_{t \to \infty} H(t, x_1, \ldots, x_p) = \infty,
+  $$
+  where $H(t, x_1, \ldots, x_p) = \int_{0}^t h(u, x_1, \ldots, x_p) du$.
+  If this constraint isn't satisfied, then the survival function is not well-defined,
+  since it is defined as $S(t) = \exp\bigl\{-H(t)\bigr\}$.
+
+The `dfr_dist` object satisfies all of the requirements of an algebraic distribution
+(see `algebraic.dist`) and a likelihoood model (see `likelihood.model`).
+
+The package is designed to be used with the `algebraic.mle` package, which provides a
+framework for performing maximum likelihood estimation (MLE).
+
 A vignette showing how to use it is [here](https://queelius.github.io/dfr_dist/articles/failure_rate.html).
