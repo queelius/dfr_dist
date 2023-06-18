@@ -64,7 +64,10 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><ul><li>
-<a href="#r-package-dfrdist-dynamic-failure-rate-dfr-distributions">R package <code>dfr.dist</code>: dynamic failure rate (DFR) distributions</a><ul><li><a href="#installation">Installation</a></li></ul>
+<a href="#r-package-dfrdist-dynamic-failure-rate-dfr-distributions">R package <code>dfr.dist</code>: dynamic failure rate (DFR) distributions</a><ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#usage">Usage</a></li>
+</ul>
 </li></ul>
 <!-- README.md is generated from README.Rmd. Please edit that file --><div class="section level2">
 <h2 id="r-package-dfrdist-dynamic-failure-rate-dfr-distributions">R package <code>dfr.dist</code>: dynamic failure rate (DFR) distributions<a class="anchor" aria-label="anchor" href="#r-package-dfrdist-dynamic-failure-rate-dfr-distributions"></a>
@@ -77,6 +80,21 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"queelius/dfr_dist"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h3>
+<p>The R packge <code>dfr_dist</code> provides an API for specifying and estimating dynamic failure rate distributions. They can depend on the data in any way, as the failure rate is any function of time and any set of predictors, as long as the failure rate satsifies two key properties:</p>
+<ol style="list-style-type: decimal">
+<li><p>It’s non-negative. It is not meaningful to have a negative failure rate; the failure rate can decrease some times, and even go to <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;0%20%220%22" alt="0">, though.</p></li>
+<li><p>At the limit as <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;t%20%22t%22" alt="t"> goes to infinity, the cumulative hazard <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;H%20%22H%22" alt="H"> also goes to infinity:<br>
+[
+ \lim_{t \to \infty} H(t, x_1, \ldots, x_p) = \infty,
+](<a href="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%0A%20%5Clim_%7Bt%20%5Cto%20%5Cinfty%7D%20H%28t%2C%20x_1%2C%20%5Cldots%2C%20x_p%29%20%3D%20%5Cinfty%2C%0A%20%20" class="external-link uri">https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%0A%20%5Clim_%7Bt%20%5Cto%20%5Cinfty%7D%20H%28t%2C%20x_1%2C%20%5Cldots%2C%20x_p%29%20%3D%20%5Cinfty%2C%0A%20%20</a> " \lim_{t \to \infty} H(t, x_1, \ldots, x_p) = \infty, ")<br>
+where <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;H%28t%2C%20x_1%2C%20%5Cldots%2C%20x_p%29%20%3D%20%5Cint_%7B0%7D%5Et%20h%28u%2C%20x_1%2C%20%5Cldots%2C%20x_p%29%20du%20%22H(t,%20x_1,%20%5Cldots,%20x_p)%20=%20%5Cint_%7B0%7D%5Et%20h(u,%20x_1,%20%5Cldots,%20x_p)%20du%22" alt="H(t, x_1, \ldots, x_p) = \int_{0}^t h(u, x_1, \ldots, x_p) du">. If this constraint isn’t satisfied, then the survival function is not well-defined, since it is defined as <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;S%28t%29%20%3D%20%5Cexp%5Cbigl%5C%7B-H%28t%29%5Cbigr%5C%7D%20%22S(t)%20=%20%5Cexp%5Cbigl%5C%7B-H(t)%5Cbigr%5C%7D%22" alt="S(t) = \exp\bigl\{-H(t)\bigr\}">.</p></li>
+</ol>
+<p>The <code>dfr_dist</code> object satisfies all of the requirements of an algebraic distribution (see <code>algebraic.dist</code>) and a likelihoood model (see <code>likelihood.model</code>).</p>
+<p>The package is designed to be used with the <code>algebraic.mle</code> package, which provides a framework for performing maximum likelihood estimation (MLE).</p>
 <p>A vignette showing how to use it is <a href="https://queelius.github.io/dfr_dist/articles/failure_rate.html">here</a>.</p>
 </div>
 </div>
