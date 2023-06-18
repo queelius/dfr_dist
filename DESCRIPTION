@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Alexander", "Towell", , "lex@metafunctor.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6443-9897"))
-Description: Set of functions/methods for operating on, sampling from, estimating, etc. distributions paramaterized by failure rates
+Description: Set of functions/methods for operating on, sampling from, estimating, etc. distributions paramaterized by dynamic failure rates that may be correlated with any set of predictors or covariates.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -18,11 +18,12 @@ Imports:
     matlib,
     numDeriv,
     stats,
-    mvtnorm
+    mvtnorm,
+    algebraic.dist
 Depends: 
     R (>= 2.10)
 LazyData: true
 VignetteBuilder: knitr
-URL: https://github.com/queelius/dfr.dist,
-    https://queelius.github.io/dfr.dist/
-BugReports: https://github.com/queelius/dfr.dist/issues
+URL: https://github.com/queelius/dfr_dist,
+    https://queelius.github.io/dfr_dist/
+BugReports: https://github.com/queelius/dfr_dist/issues

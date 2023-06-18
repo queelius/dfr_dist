@@ -4,7 +4,7 @@
 \alias{sup.dfr_dist}
 \title{Method for retrieving the support of an object \code{x}.}
 \usage{
-\method{sup}{dfr_dist}(x)
+\method{sup}{dfr_dist}(x, ...)
 }
 \arguments{
 \item{x}{The object to obtain the support of.}

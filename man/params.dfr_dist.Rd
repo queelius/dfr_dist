@@ -4,10 +4,12 @@
 \alias{params.dfr_dist}
 \title{Method for obtaining the parameters of a \code{dfr_dist} object.}
 \usage{
-\method{params}{dfr_dist}(x, par = NA)
+\method{params}{dfr_dist}(x, ..., par = NA)
 }
 \arguments{
 \item{x}{The object to obtain the parameters of.}
+
+\item{...}{Additional arguments to pass into the \code{params} function.}
 
 \item{par}{The parameters to replace \code{NA} or \code{NULL} with.}
 }

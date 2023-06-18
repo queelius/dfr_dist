@@ -4,7 +4,7 @@
 \alias{hazard.dfr_dist}
 \title{Method for obtaining the hazard function of a \code{dfr_dist} object.}
 \usage{
-\method{hazard}{dfr_dist}(x)
+\method{hazard}{dfr_dist}(x, ...)
 }
 \arguments{
 \item{x}{The object to obtain the hazard function of.}

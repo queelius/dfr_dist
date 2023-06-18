@@ -19,10 +19,13 @@ Inf)`.
 
 ### Installation
 
-You can install the development version of `dfr.dist` from
-[GitHub](https://github.com/queelius/dfr_dist) with:
+You can install the development version of `dfr.dist` from GitHub repo
+with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("queelius/dfr_dist")
 ```
+
+A vignette showing how to use it is
+[here](https://queelius.github.io/dfr_dist/articles/failure_rate.html).

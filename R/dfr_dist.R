@@ -40,7 +40,7 @@ is_dfr_dist <- function(x) {
 #' `rate` function of the `dfr_dist` object `x`.
 #' @importFrom algebraic.dist hazard params
 #' @export
-hazard.dfr_dist <- function(x) {
+hazard.dfr_dist <- function(x, ...) {
     function(t, par = NULL, ...) {
         par <- params(x, par)
         x$rate(t, par, ...)
@@ -86,22 +86,13 @@ inv_cdf.dfr_dist <- function(x, ...) {
 #' with the default values in `x$par`.
 #' 
 #' @param x The object to obtain the parameters of.
+#' @param ... Additional arguments to pass into the `params` function.
 #' @param par The parameters to replace `NA` or `NULL` with.
 #' @return The parameters of the distribution.
 #' @importFrom algebraic.dist params
 #' @export
-params.dfr_dist <- function(x, par = NA) {
-    if (is.null(par) || all(is.na(par))) {
-        if (is.null(x$par) || all(is.na(x$par))) {
-            stop("Parameters are unknown.")
-        }
-        return(x$par)
-    }
-
-    # do component-wise replacement of `par` with `x$par`
-    # whenever `par` is `NA`
-    par[is.na(par)] <- x$par[is.na(par)]
-    par
+params.dfr_dist <- function(x, ..., par = NA) {
+    get_params(x$par, par)
 }
 
 
@@ -202,7 +193,7 @@ pdf.dfr_dist <- function(x, ...) {
 #' @return A support object for `x`, an interval (0,Inf).
 #' @importFrom algebraic.dist interval sup
 #' @export
-sup.dfr_dist <- function(x) {
+sup.dfr_dist <- function(x, ...) {
     interval$new(0, Inf, FALSE, FALSE)
 }
 
@@ -235,7 +226,7 @@ cum_haz.dfr_dist <- function(x, ...) {
         if (res$message != "OK") {
             warning(res$message)
         }
-        if (res$abs.error > abs_tol) {
+        if (res$abs.error > integrate$abs_tol) {
             warning("Absolute error in cumulative hazard is greater than 1e-3")
         }
         res$value
