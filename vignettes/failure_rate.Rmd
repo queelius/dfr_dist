@@ -211,63 +211,9 @@ which has a nice form if $H$ has an analytical form, which is the case
 for many of the well-known distributions, but otherwise we can use the
 definition of $H$ to compute it numerically.
 
-### Score of the likelihood function
-
-The score of the $i$-th obserevation for an exact failure time is just the
-gradient of the $i$-th log-likelihood contribution,
-$$
-\begin{align}
-  s_i = \nabla_{\theta} f(t_i|x_i).
-\end{align}
-
-Let's rewrite this to get it into a nicer form.
-First, let's substitute in the definition of the log-likelihood contribution,
-$$
-  s_i = \nabla_{\theta} \log h(t_i, x_i) - \nabla_{\theta} H(t_i, x_i).
-$$
-Recall that the cumulative hazard function is defined assuming
-$$
-  H(t, x) = \int_0^t h(u, x) \, du,
-$$
-and so by the Second Law of the Fundamental Theorem of Calculus, we have
-$$
-\begin{align}
-  s_i &= \nabla_{\theta} \log h(t_i, x_i) - \nabla_{\theta} h(t_i, x_i)\\
-      &= \frac{\nabla_{\theta} h(t_i, x_i)}{h(t_i,x_i)} -
-        \nabla_{\theta} h(t_i, x_i),
-\end{align}
-$$
-where $h$ is the hazard function. This is actually quite good, because
-for most hazard functions, the hazard function and its gradient can be computed
-analytically, which may simplify the numerical solution of, say, the MLE
-problem.
-
-The hessian of the log-likelihood function, or the Jacobian of the score,
-with respect to $\theta$ is given by
-$$
-\begin{align}
-  \nabla_{\theta} s_i &= \nabla_{\theta} \frac{\nabla_{\theta} h(t_i, x_i)}{h(t_i,x_i)} -
-        \nabla_{\theta} \nabla_{\theta} h(t_i, x_i)\\
-      &= \frac{\nabla_{\theta}^2 h(t_i, x_i)}{h(t_i,x_i)} -
-        \frac{\nabla_{\theta} h(t_i, x_i) \nabla_{\theta} h(t_i, x_i)}{h(t_i,x_i)^2} -
-        \nabla_{\theta} \nabla_{\theta} h(t_i, x_i).
-\end{align}
-$$
-
-This is an important result for the MLE, since it allows us to evaluate the
-variance-covariance of the sampling distribution of the MLE, in addition
-to other imporatnt quantities the MLEs sensitivity to sampling error. However,
-normally, we just numerically compute the Hessian and there are many important
-algorithms that do this for us, particularly for efficiently approximating
-it for solving efficiently solving for a linear approximation of the the root of
-the score function.
 
 ## Simulation
-We construct a data frame showing mean and variance for each
-way three ways of it, using `mean` and `vcov`, using `expectation` (defined
-for all `dist` objects using Monte Carlo integration), and using the
-analytical formulae for the mean and variance of the exponential
-and the definitions of each, and using the sample mean and sample variance.
+We construct a data frame showing mean and variance computed in different ways.
 
 ### Installation
 
@@ -298,11 +244,12 @@ n <- 1000
 
 sup(expdist)
 
-mu.hat <- algebraic.dist::expectation(
-  x = expdist,
-  g = function(x) x, n = n)
+mu.hat <- expectation(
+  expdist,
+  function(x) x, n = n)$value
 
-(var.hat <- expectation(dfr.dist,
+(var.hat <- expectation(
+  dfr.dist,
   function(x) (x - mu.hat)^2, n = n)$value)
 
 df <- data.frame(
