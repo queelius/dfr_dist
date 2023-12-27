@@ -22,8 +22,9 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 An R package for working with models in survival analysis in which the distribution is
-parameterized by a very flexible failure rate function (any function that satisfies properties like
-being non-negative, integrating to infinity over the domain, and having a support of `(0, Inf)`.
+parameterized by a very flexible failure rate function, which is any function that
+satisfies properties like being non-negative, integrating to infinity over the domain,
+and having a support of `(0, Inf)`.
 
 ### Installation
 
