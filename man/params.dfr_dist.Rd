@@ -4,26 +4,16 @@
 \alias{params.dfr_dist}
 \title{Method for obtaining the parameters of a \code{dfr_dist} object.}
 \usage{
-\method{params}{dfr_dist}(x, ..., par = NA)
+\method{params}{dfr_dist}(x, ...)
 }
 \arguments{
 \item{x}{The object to obtain the parameters of.}
 
-\item{...}{Additional arguments to pass into the \code{params} function.}
-
-\item{par}{The parameters to replace \code{NA} or \code{NULL} with.}
+\item{...}{Additional arguments (unused).}
 }
 \value{
 The parameters of the distribution.
 }
 \description{
-Checks to see if any of the parameters are \code{NA} or \code{NULL}
-and if so, replaces them with the default values
-in \code{x} (\code{x$par})
-}
-\details{
-We may think of this function as a "constructor" for the parameters
-of a \code{dfr_dist} object. If we don't know some parameters, we can
-pass \code{NA} or \code{NULL} for them, and this function will replace them
-with the default values in \code{x$par}.
+Method for obtaining the parameters of a \code{dfr_dist} object.
 }

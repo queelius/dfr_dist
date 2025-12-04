@@ -1,28 +1,33 @@
 Package: dfr.dist
-Title: Dynamic failure rate (DFR) distributions
-Version: 0.0.0.9000
-Authors@R: 
+Title: Dynamic Failure Rate Distributions for Survival Analysis
+Version: 0.1.0
+Authors@R:
     person("Alexander", "Towell", , "lex@metafunctor.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6443-9897"))
-Description: Set of functions/methods for operating on, sampling from, estimating, etc. distributions paramaterized by dynamic failure rates that may be correlated with any set of predictors or covariates.
+Description: Flexible framework for specifying survival distributions through
+    their hazard (failure rate) functions. Define arbitrary time-varying
+    hazard functions to model complex failure patterns including bathtub
+    curves, proportional hazards with covariates, and other non-standard
+    hazard behaviors. Provides automatic computation of survival, CDF, PDF,
+    quantiles, and sampling. Implements the likelihood model interface for
+    maximum likelihood estimation with right-censored survival data.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
-Suggests: 
+RoxygenNote: 7.3.3
+Suggests:
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    algebraic.mle
 Config/testthat/edition: 3
-Imports: 
-    matlib,
-    numDeriv,
+Imports:
     stats,
-    mvtnorm,
-    algebraic.dist
-Depends: 
-    R (>= 2.10)
-LazyData: true
+    algebraic.dist,
+    likelihood.model,
+    generics
+Depends:
+    R (>= 3.5.0)
 VignetteBuilder: knitr
 URL: https://github.com/queelius/dfr_dist,
     https://queelius.github.io/dfr_dist/

@@ -2,7 +2,6 @@
 output:
   github_document:
     toc: true
-#always_allow_html: true
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -16,48 +15,132 @@ knitr::opts_chunk$set(
 )
 ```
 
-## R package `dfr.dist`: dynamic failure rate (DFR) distributions
+# dfr.dist
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/queelius/dfr_dist/workflows/R-CMD-check/badge.svg)](https://github.com/queelius/dfr_dist/actions)
 <!-- badges: end -->
 
-An R package for working with models in survival analysis in which the distribution is
-parameterized by a very flexible failure rate function, which is any function that
-satisfies properties like being non-negative, integrating to infinity over the domain,
-and having a support of `(0, Inf)`.
+**Dynamic Failure Rate Distributions for Survival Analysis**
 
-### Installation
+The `dfr.dist` package provides a flexible framework for specifying survival
+distributions through their **hazard (failure rate) functions**. Instead of
+choosing from a fixed catalog of distributions, you directly specify the hazard
+function, giving complete control over time-varying failure patterns.
 
-You can install the development version of `dfr.dist` from GitHub repo with:
+## Features
 
-```{r,eval=F}
+- **Flexible hazard specification**: Define any hazard function h(t, par, ...)
+- **Complete distribution interface**: Automatic computation of survival, CDF, PDF, quantiles
+- **Likelihood model support**: Log-likelihood, score, Hessian for MLE
+- **Censoring support**: Handle exact and right-censored survival data
+- **Integration with ecosystem**: Works with `algebraic.dist`, `likelihood.model`, `algebraic.mle`
+
+## Installation
+
+Install from GitHub:
+
+```r
 # install.packages("devtools")
 devtools::install_github("queelius/dfr_dist")
 ```
 
-### Usage
+## Quick Start
 
-The R packge `dfr_dist` provides an API for specifying and estimating dynamic failure
-rate distributions. They can depend on the data in any way, as the failure rate is
-any function of time and any set of predictors, as long as the failure rate satsifies
-two key properties:
+```{r setup, message=FALSE, warning=FALSE}
+library(dfr.dist)
+library(algebraic.dist)
+```
 
-1. It's non-negative. It is not meaningful to have a negative failure rate; the
-failure rate can decrease some times, and even go to $0$, though.
+### Define a distribution via its hazard function
 
-2. At the limit as $t$ goes to infinity, the cumulative hazard $H$ also goes to
-infinity:
-  $$
-    \lim_{t \to \infty} H(t, x_1, \ldots, x_p) = \infty,
-  $$
-  where $H(t, x_1, \ldots, x_p) = \int_{0}^t h(u, x_1, \ldots, x_p) du$.
-  If this constraint isn't satisfied, then the survival function is not well-defined,
-  since it is defined as $S(t) = \exp\bigl\{-H(t)\bigr\}$.
+```{r}
+# Exponential distribution: constant hazard h(t) = lambda
+exp_dist <- dfr_dist(
+  rate = function(t, par, ...) rep(par[1], length(t)),
+  par = c(lambda = 0.5)
+)
 
-The `dfr_dist` object satisfies all of the requirements of an algebraic distribution
-(see `algebraic.dist`) and a likelihoood model (see `likelihood.model`).
+# All distribution functions are automatically available
+S <- surv(exp_dist)
+S(2)  # Survival probability at t=2
+```
 
-The package is designed to be used with the `algebraic.mle` package, which provides a
-framework for performing maximum likelihood estimation (MLE).
+### Maximum Likelihood Estimation
 
-A vignette showing how to use it is [here](https://queelius.github.io/dfr_dist/articles/failure_rate.html).
+```{r}
+# Simulate failure times
+set.seed(42)
+times <- rexp(50, rate = 1)
+df <- data.frame(t = times, delta = 1)
+
+# Create distribution without fixed parameters
+dist <- dfr_dist(
+  rate = function(t, par, ...) rep(par[1], length(t))
+)
+
+# Fit via MLE
+solver <- fit(dist)
+result <- solver(df, par = c(0.5), method = "BFGS")
+params(result)
+```
+
+### Custom hazard functions
+
+Model complex failure patterns like bathtub curves (infant mortality + useful life + wear-out):
+
+```{r bathtub, fig.height=4}
+# h(t) = a*exp(-b*t) + c + d*t^k
+bathtub <- dfr_dist(
+  rate = function(t, par, ...) {
+    par[1] * exp(-par[2] * t) + par[3] + par[4] * t^par[5]
+  },
+  par = c(a = 1, b = 2, c = 0.02, d = 0.001, k = 2)
+)
+
+h <- hazard(bathtub)
+curve(sapply(x, h), 0, 15, xlab = "Time", ylab = "Hazard rate",
+      main = "Bathtub hazard curve")
+```
+
+## Mathematical Background
+
+For a lifetime $T$, the hazard function is:
+$$h(t) = \frac{f(t)}{S(t)}$$
+
+From the hazard, all other quantities follow:
+
+| Function | Formula | Method |
+|----------|---------|--------|
+| Cumulative hazard | $H(t) = \int_0^t h(u) du$ | `cum_haz()` |
+| Survival | $S(t) = e^{-H(t)}$ | `surv()` |
+| CDF | $F(t) = 1 - S(t)$ | `cdf()` |
+| PDF | $f(t) = h(t) \cdot S(t)$ | `pdf()` |
+
+## Likelihood for Survival Data
+
+For exact observations: $\log L = \log h(t) - H(t)$
+
+For right-censored: $\log L = -H(t)$
+
+```{r}
+# Mixed data with censoring
+df <- data.frame(
+  t = c(1, 2, 3, 4, 5),
+  delta = c(1, 1, 0, 1, 0)  # 1 = exact, 0 = censored
+)
+
+ll <- loglik(dist)
+ll(df, par = c(0.5))
+```
+
+## Documentation
+
+- [Vignette: Dynamic Failure Rate Distributions](https://queelius.github.io/dfr_dist/articles/failure_rate.html)
+- [Function Reference](https://queelius.github.io/dfr_dist/reference/)
+
+## Related Packages
+
+- [`algebraic.dist`](https://github.com/queelius/algebraic.dist): Generic distribution interface
+- [`likelihood.model`](https://github.com/queelius/likelihood.model): Likelihood model framework
+- [`algebraic.mle`](https://github.com/queelius/algebraic.mle): MLE utilities

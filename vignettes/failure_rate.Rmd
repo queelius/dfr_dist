@@ -1,10 +1,10 @@
 ---
-title: "Failure rate distributions"
+title: "Dynamic Failure Rate Distributions"
 output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Failure rate distributions}
+  %\VignetteIndexEntry{Dynamic Failure Rate Distributions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,245 +18,384 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-One of the most important quantities in reliability theory and
-survival analysis is the failure rate, often denoted by $\lambda$.
-For a system with a random lifetime $T$, its failure rate over some
-interval $(t, t + \Delta t)$ is the ratio of the probability of
-failure in that interval $(t, t + \Delta t)$ given that the
-system survived up to the time $t$ divided by the length
-of the interval $\Delta t$.
-That is,
+The `dfr.dist` package provides a flexible framework for working with survival
+distributions defined through their **hazard (failure rate) functions**. Instead
+of choosing from a fixed catalog of distributions, you directly specify the
+hazard function itself, giving complete flexibility to model systems with
+complex, time-varying failure patterns.
+
+### Why hazard-based parameterization?
+
+Traditional approaches use parametric families (Weibull, exponential, log-normal)
+that impose strong assumptions on failure rate behavior. The hazard function
+$h(t)$ provides a more intuitive parameterization for reliability:
+
+- **Constant hazard**: Exponential distribution (memoryless failures)
+- **Increasing hazard**: Wear-out phenomena
+- **Decreasing hazard**: Burn-in or infant mortality
+- **Bathtub curve**: Common in electronics and human mortality
+
+### Mathematical background
+
+For a lifetime random variable $T$, the instantaneous failure rate (hazard) is:
 $$
-  \lambda = \frac{\Pr(T \leq t + \Delta t | T > t)}{\Delta t}.
+h(t) = \lim_{\Delta t \to 0} \frac{\Pr\{T \leq t + \Delta t | T > t\}}{\Delta t} = \frac{f(t)}{S(t)}
 $$
 
-For instance, if we have a system with a failure rate of $\lambda$
-over the interval $(t, t + \Delta t)$, then the probability of failure
-over this interval, given that it has survived up to time $t$, is
-$\lambda \Delta t$.
-Of course, for most systems, the failure rate changes over time. For
-instance, a system may be more likely to fail when it is new, or when
-it is old.
-
-At the limit, as $\Delta t \to 0$, we have what is known as the
-instaneous failure rate, or the hazard function,
-
+The cumulative hazard integrates the instantaneous rate:
 $$
-h(t) = \lim_{\Delta t \to 0}
-  \frac{\Pr\{T \leq t + \Delta t | T > t\}}{\Delta t}.
+H(t) = \int_0^t h(u) \, du
 $$
 
-We can rewrite the above expression as
-$$
-\begin{align}
-h(t)
-  &= \lim_{\Delta t \to 0}
-    \frac{\Pr\{t < T \leq t + \Delta t\}}{ \Pr\{T > t\} \Delta t}\\
-  &= \lim_{\Delta t \to 0} \left(\frac{F(t + \Delta t) - F(t)}{\Delta t}\right)
-      \frac{1}{ 1 - F(t) }\\
-  &= \frac{f(t)}{S(t)},
-\end{align}
-$$
-where $f$ is the pdf, $F$ is the cdf, and $S$ is the survival function of $T$.
+From this, all other quantities follow:
 
-The concept of the failure rate or hazard function is the basis of
-many important lifetime models in survival analysis and reliability theory.
-In what follows, we consider the dynamic failure rate (DFR) family of
-distributions, which can be a function of both time and any other
-predictors or covariates, i.e., $h(t, x)$ may change with respect to both
-$t$ and the covariate vector $x$.
+- **Survival function**: $S(t) = \exp(-H(t))$
+- **CDF**: $F(t) = 1 - S(t)$
+- **PDF**: $f(t) = h(t) \cdot S(t)$
 
-## Dynamic failure rate (DFR) distribution
-
-Now, we consider the case where the failure rate is not constant. In fact,
-we generalize it to be a function of both time and any other predictors, say
-$t$ and $x$ where $x$ is a vector of covariates $(x_1,\ldots,x_p)$. We denote this function
-hazard function by $h(t, x)$.
-
-First, we define the cumulative hazard function. It is defined as
-$$
-H(t, x) = \int_0^t h(u, x) \, du,
-$$
-which is the expected number of failures up to time $t$. This is useful
-in its own right, but it is also useful in defining the survival function.
-The survival function, $\Pr\{T > t\}$, is given by
-$$
-S(t|x) = \exp\left(-\int_0^t h(s, x) \, ds\right).
-$$
-
-There is a well-known relationship between the survival function, the
-harzard function, and the pdf,
-$$
-  h(t, x) =   \frac{f(t|x)}{S(t|x)}.
-$$
-We may rewrite the above expression to define the pdf in terms of the
-hazard and survival functions,
-$$
-f(t|x) = h(t, x) S(t|x).
-$$
-
-#### Common failure rate distributions
-
-In what follows, we show how two well-known distributions, the exponential
-and the Weibull, are defined in this framework.
-
-1. Exponential distribution:
-   $$
-     h(t, x) = h(t) = \lambda.
-   $$
-
-2. Weibull distribution:
-   $$
-     h(t, x) = h(t) =
-     \left(\frac{k}{\lambda}\right)\left(\frac{t}{\lambda}\right)^{k-1}.
-   $$
-
-Of course, we can parameterize any family of distributions in terms of
-the hazard function. Sometimes, the parameterization yields an analytical
-form for the cumulative hazard function, which is useful in computing
-the other related distribution functions, like the survival and pdf.
-
-Even simple hazard functions, when combined with other predictors, can
-yield complex distribution functions, but first let's consider a simpler
-case where the hazard function is only a function of some other predictor
-$x$,
-$$
-h(t, x) = h(x) = \exp(\beta_0 + \beta_1 x),
-$$
-which is just a family of hazard function for an exponential distribution with
-rate $\lambda = \exp(\beta_0 + \beta_1 x)$. This is pretty straightforward
-to estimate, and in fact may be rewritten as:
-$$
-h(x) = h_0 \exp(\beta_1 x),
-$$
-where $h_0$ is the same for each observation, and $\beta_1$ is the coefficient
-for the predictor $x$. We can generalize $h_0$ to be a function of $t$, in which
-case we have the proportional hazards model, which is straightforward to
-estimate,
-$$
-h(t,x) = h_0(t) \exp(\beta_1 x).
-$$
-
-Things become more complicated if we have a hazard function  in which $t$
-and $x$ interact, e.g., 
-$$
-h(t, x) = \exp(\beta0 + \beta_1 t + \beta_1 x + \beta_{1 2} x t).
-$$
-In this case, we no longer have a proportional hazards model, and the estimation of
-the parameters is more complicated.
-
-### Likelihood function and maximum likelihood estimation
-
-The likelihoon function is a sufficient statistic for the parameters of
-the distribution. The likelihood function for an observation of an exact
-failure time is given by
-$$
-\ell_i(\theta|t_i,x_i) = f(t_i|x_i,\theta),
-$$
-where $\theta$ is the vector of parameters of the distribution, $t_i$ 
-is the exact failure time, and $x_i$ is the vector of predictors 
-for the $i$th observation in the sample. We denote $l_i$ as a shorthand
-for $\ell_i(\theta|t_i,x_i)$, and we call this a likelihood contribution.
-
-If we have a sample in which $n$ are exact failure times, the total
-likelihood function over these observations is given by
-$$
-\ell(\theta|t,X) = \prod_{i=1}^n \ell_i(\theta|t_i,X_{i:}),
-$$
-where $t$ is the vector of failure times, $X$ is an $n \times p$ matrix
-of predictors, and $X_{i:}$ is the $i$-th row of $X$, a $1 \times p$
-vector of predictors for the $i$th row of $X$ corresponding to the $i$th
-observation in the exact failure time sample.
-
-It is more convenient to work with the log-likelihood function normally,
-so we define the log-likelihood contribution as
-$$
-L_i = \log \ell_i.
-$$
-A particularly nice feature of the log-likelihood function is that it
-is additive, so the total log-likelihood function is given by
-$$
-L(\theta|t,X) = \sum_{i=1}^n L_i,
-$$
-and thus by the CLT, the log-likelihood function is asymptotically
-normally distributed. This comes in handy for the MLE, which is
-asymptotically normally distributed with a mean equal to the true
-parameter value $\theta$ and a variance equal to the inverse of the Fisher
-information matrix, assuming the following regularity conditions hold:
-
-(1) The support of the distribution does not depend on the parameter
-    $\theta$.
-(2) The parameter space is open.
-(3) The gradient of the log-likelihood function with respect to
-    $\theta$ exists and is continuous.
-(4) The expectation of the gradient of the log-likelihood function
-    with respect to $\theta$ is zero.
-
-For our DFR (dynamic failure rate) model, the $i$-th log-likelihood contribution
-for the exact failure time is given by
-\begin{align}
-\ell_i &= h(t_i, x_i) S(t_i|x_i)\\
-       &= h(t_i, x_i) \exp\left(-H(t_i, x_i)\right)
-\end{align}
-where $h$ is the hazard function, $S$ is the survival function, and $H$
-is the cumulative hazard function.
-The log-likelihood function is given by
-$$
-\begin{align}
-\ell_i &= \log \ell_i\\
-       &= \log h(t_i, x_i) - H(t_i, x_i),
-\end{align}
-$$
-which has a nice form if $H$ has an analytical form, which is the case
-for many of the well-known distributions, but otherwise we can use the
-definition of $H$ to compute it numerically.
-
-
-## Simulation
-We construct a data frame showing mean and variance computed in different ways.
-
-### Installation
-
-We load the R package `dfr.dist` which contains all of the
-relevant material in this section with:
+## Getting Started
 
 ```{r setup}
-if (!require(dfr.dist)) {
-  devtools::install_github("queelius/dfr_dist")
-}
 library(dfr.dist)
 library(algebraic.dist)
 ```
 
+### Creating a DFR distribution
+
+Use `dfr_dist()` to create a distribution from a hazard function:
 
 ```{r}
-expdist <- dfr_dist(rate = function(t, par, ...) par, par = 1)
-is_dfr_dist(expdist)
-params(expdist, 100)
-params(expdist)
-h <- hazard(expdist)
-h
-```
-
-
-```{r eval=F}
-n <- 1000
-
-sup(expdist)
-
-mu.hat <- expectation(
-  expdist,
-  function(x) x, n = n)$value
-
-(var.hat <- expectation(
-  dfr.dist,
-  function(x) (x - mu.hat)^2, n = n)$value)
-
-df <- data.frame(
-  analytical = c(mean(dfr.dist),
-                 vcov(dfr.dist)),
-  sample = c(mean(data), var(data))
+# Exponential distribution: constant hazard h(t) = lambda
+exp_dist <- dfr_dist(
+  rate = function(t, par, ...) rep(par[1], length(t)),
+  par = c(lambda = 0.5)
 )
-row.names(df) <- c("mean", "variance")
-print(df)
+
+print(exp_dist)
+is_dfr_dist(exp_dist)
 ```
+
+The `rate` function must accept:
+
+- `t`: time (scalar or vector)
+- `par`: parameter vector
+- `...`: additional arguments
+
+### Weibull distribution
+
+The Weibull distribution has hazard $h(t) = \frac{k}{\sigma}\left(\frac{t}{\sigma}\right)^{k-1}$:
+
+```{r}
+weibull_dist <- dfr_dist(
+  rate = function(t, par, ...) {
+    k <- par[1]      # shape
+    sigma <- par[2]  # scale
+    (k / sigma) * (t / sigma)^(k - 1)
+  },
+  par = c(shape = 2, scale = 3)
+)
+```
+
+## Distribution Methods
+
+All standard distribution functions are available:
+
+### Hazard and cumulative hazard
+
+```{r}
+h <- hazard(exp_dist)
+H <- cum_haz(exp_dist)
+
+# Evaluate at specific times
+h(1)      # Hazard at t=1
+h(c(1, 2, 3))  # Vectorized
+
+H(2)      # Cumulative hazard at t=2
+```
+
+### Survival and CDF
+
+```{r}
+S <- surv(exp_dist)
+F <- cdf(exp_dist)
+
+# Verify S(t) + F(t) = 1
+t <- 2
+c(survival = S(t), cdf = F(t), sum = S(t) + F(t))
+```
+
+### PDF
+
+```{r}
+# Use algebraic.dist::pdf to avoid masking by grDevices::pdf
+pdf_fn <- algebraic.dist::pdf(exp_dist)
+
+# For exponential: f(t) = lambda * exp(-lambda * t)
+t <- 1
+lambda <- 0.5
+c(computed = pdf_fn(t), analytical = lambda * exp(-lambda * t))
+```
+
+### Quantile function (inverse CDF)
+
+```{r}
+Q <- inv_cdf(exp_dist)
+
+# Median of exponential is log(2)/lambda
+median_computed <- Q(0.5)
+median_analytical <- log(2) / 0.5
+c(computed = median_computed, analytical = median_analytical)
+```
+### Sampling
+
+```{r}
+samp <- sampler(exp_dist)
+
+set.seed(42)
+samples <- samp(1000)
+
+# Compare sample mean to theoretical mean (1/lambda = 2)
+c(sample_mean = mean(samples), theoretical = 1/0.5)
+```
+
+### Overriding parameters
+
+All methods accept a `par` argument to override default parameters:
+```{r}
+h <- hazard(exp_dist)
+
+# Use default lambda = 0.5
+h(1)
+
+# Override with lambda = 2
+h(1, par = c(2))
+```
+
+## Likelihood Model Interface
+
+The `dfr_dist` class implements the `likelihood_model` interface, enabling
+maximum likelihood estimation with survival data.
+
+### Log-likelihood for survival data
+
+For exact observations (failures at known times):
+$$
+\log L_i = \log h(t_i) - H(t_i)
+$$
+
+For right-censored observations (survived past time $t$):
+$$
+\log L_i = -H(t_i)
+$$
+
+### Creating test data
+
+```{r}
+# Simulate exact failure times from exponential(lambda=1)
+set.seed(123)
+true_lambda <- 1
+n <- 50
+times <- rexp(n, rate = true_lambda)
+
+# Create data frame with standard survival format
+# delta = 1 means exact observation, delta = 0 means censored
+df_exact <- data.frame(t = times, delta = rep(1, n))
+head(df_exact)
+```
+
+### Computing log-likelihood
+
+```{r}
+dist <- dfr_dist(
+  rate = function(t, par, ...) rep(par[1], length(t)),
+  par = NULL  # No default - must be supplied
+)
+
+ll <- loglik(dist)
+
+# Evaluate at different parameter values
+ll(df_exact, par = c(0.5))  # lambda = 0.5
+ll(df_exact, par = c(1.0))  # lambda = 1.0 (true value)
+ll(df_exact, par = c(2.0))  # lambda = 2.0
+```
+
+The log-likelihood should be highest near the true parameter value.
+
+### Score function (gradient)
+
+The score function is the gradient of the log-likelihood with respect to
+parameters. It's computed numerically by default:
+
+```{r}
+s <- score(dist)
+s(df_exact, par = c(1.0))  # Should be close to 0 at MLE
+```
+
+### Hessian of log-likelihood
+
+```{r}
+H_ll <- hess_loglik(dist)
+hess <- H_ll(df_exact, par = c(1.0))
+hess  # Should be negative (concave at maximum)
+```
+
+## Maximum Likelihood Estimation
+
+The `fit()` function provides MLE estimation:
+
+```{r}
+solver <- fit(dist)
+
+# Find MLE starting from initial guess
+result <- solver(df_exact, par = c(0.5), method = "BFGS")
+
+# Extract fitted parameters
+params(result)
+
+# Compare to analytical MLE: lambda_hat = n / sum(t)
+analytical_mle <- n / sum(times)
+c(fitted = params(result), analytical = analytical_mle, true = true_lambda)
+```
+
+### Working with censored data
+
+Real survival data often includes censoring. Here's an example with mixed data:
+
+```{r}
+# Some observations are censored (patient still alive at study end)
+df_mixed <- data.frame(
+  t = c(1, 2, 3, 4, 5, 6, 7, 8),
+  delta = c(1, 1, 1, 0, 0, 1, 1, 0)  # 0 = censored
+)
+
+ll <- loglik(dist)
+
+# Fit with censored data
+solver <- fit(dist)
+result <- solver(df_mixed, par = c(0.5), method = "BFGS")
+params(result)
+```
+
+## Example: Weibull MLE
+
+```{r}
+# Create Weibull DFR
+weibull <- dfr_dist(
+  rate = function(t, par, ...) {
+    k <- par[1]
+    sigma <- par[2]
+    (k / sigma) * (t / sigma)^(k - 1)
+  }
+)
+
+# Simulate Weibull data (shape=2, scale=3)
+set.seed(456)
+true_shape <- 2
+true_scale <- 3
+n <- 100
+
+# Use inverse CDF sampling
+u <- runif(n)
+weibull_times <- true_scale * (-log(u))^(1/true_shape)
+
+df_weibull <- data.frame(t = weibull_times, delta = rep(1, n))
+
+# Fit
+solver <- fit(weibull)
+result <- solver(df_weibull, par = c(1.5, 2.5), method = "BFGS")
+
+c(fitted_shape = params(result)[1], true_shape = true_shape)
+c(fitted_scale = params(result)[2], true_scale = true_scale)
+```
+
+## Custom Hazard Functions
+
+The real power of `dfr.dist` is modeling complex, non-standard hazard patterns.
+
+### Bathtub hazard
+
+A classic bathtub curve has three phases:
+1. **Infant mortality**: High initial failure rate that decreases
+2. **Useful life**: Low, relatively constant failure rate
+3. **Wear-out**: Increasing failure rate as components age
+
+```{r, fig.alt="Bathtub hazard curve showing three phases: high infant mortality at t=0 that decreases, then a constant useful life period, followed by increasing wear-out hazard."}
+# h(t) = a * exp(-b*t) + c + d * t^k
+# Three components: infant mortality + baseline + wear-out
+bathtub <- dfr_dist(
+  rate = function(t, par, ...) {
+    a <- par[1]  # infant mortality magnitude
+    b <- par[2]  # infant mortality decay rate
+    c <- par[3]  # baseline hazard (useful life)
+    d <- par[4]  # wear-out coefficient
+    k <- par[5]  # wear-out exponent
+    a * exp(-b * t) + c + d * t^k
+  },
+  par = c(a = 1, b = 2, c = 0.02, d = 0.001, k = 2)
+)
+
+# Plot the hazard function
+t_seq <- seq(0.01, 15, length.out = 200)
+h <- hazard(bathtub)
+plot(t_seq, sapply(t_seq, h), type = "l",
+     xlab = "Time", ylab = "Hazard rate",
+     main = "Bathtub hazard curve")
+```
+
+### Time-covariate interaction
+
+Hazards can depend on covariates that modify the time effect:
+
+```{r}
+# Proportional hazards with covariate x
+# h(t, x) = h0(t) * exp(beta * x)
+# where h0(t) = Weibull baseline
+
+ph_model <- dfr_dist(
+  rate = function(t, par, x = 0, ...) {
+    k <- par[1]
+    sigma <- par[2]
+    beta <- par[3]
+    baseline <- (k / sigma) * (t / sigma)^(k - 1)
+    baseline * exp(beta * x)
+  },
+  par = c(shape = 2, scale = 3, beta = 0.5)
+)
+
+h <- hazard(ph_model)
+
+# Hazard for different covariate values
+h(2, x = 0)  # Baseline
+h(2, x = 1)  # Higher risk group
+```
+
+## Integration with algebraic.dist
+
+The `dfr_dist` class inherits from `algebraic.dist` classes, providing access
+to additional functionality:
+
+```{r}
+# Support is (0, Inf) for all DFR distributions
+support <- sup(exp_dist)
+print(support)
+
+# Parameters
+params(exp_dist)
+```
+
+## Summary
+
+The `dfr.dist` package provides:
+
+1. **Flexible specification**: Define distributions through hazard functions
+2. **Complete distribution interface**: hazard, survival, CDF, PDF, quantiles, sampling
+3. **Likelihood model support**: Log-likelihood, score, Hessian for MLE
+4. **Censoring support**: Handle exact and right-censored survival data
+5. **Numerical integration**: Automatic computation of cumulative hazard
+
+This makes it ideal for:
+
+- Custom reliability models
+- Survival analysis with non-standard hazard patterns
+- Maximum likelihood estimation of hazard function parameters
+- Simulation studies with flexible failure distributions

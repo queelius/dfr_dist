@@ -1,21 +1,29 @@
-#' Concstructor for `dfr_dist` objects
-#' 
+#' Constructor for `dfr_dist` objects
+#'
 #' We assume that the hazard rate is a function of time and any other
-#' predictors. We also assume that intergate(rate(t), 0, Inf) = infinity
+#' predictors. We also assume that integrate(rate(t), 0, Inf) = infinity
 #' and that the support is (0, Inf).
-#' 
+#'
 #' @param rate A function that computes the hazard rate at time `t`.
 #' @param par The parameters of the distribution. Defaults to `NULL`,
 #'            which means that the parameters are unknown.
 #' @param eps The epsilon update for numerical integration. Defaults to 0.01.
-#' @return A `dfr_dist` object.
+#' @param ob_col The column name for observation times in data frames.
+#'               Defaults to "t".
+#' @param delta_col The column name for event indicators in data frames.
+#'                  Uses standard survival analysis convention: 1 = event
+#'                  observed (exact), 0 = right-censored. Defaults to "delta".
+#' @return A `dfr_dist` object that inherits from `likelihood_model`.
 #' @export
-dfr_dist <- function(rate, par = NULL, eps = 0.01) {
+dfr_dist <- function(rate, par = NULL, eps = 0.01,
+                     ob_col = "t", delta_col = "delta") {
     structure(
         list(rate = rate,
              par = par,
-             eps = eps),
-    class = c("dfr_dist", "univariate_dist", "dist"))
+             eps = eps,
+             ob_col = ob_col,
+             delta_col = delta_col),
+    class = c("dfr_dist", "likelihood_model", "univariate_dist", "dist"))
 }
 
 #' Function for determining whether an object is a `dfr_dist` object.
@@ -43,7 +51,7 @@ is_dfr_dist <- function(x) {
 #' @export
 hazard.dfr_dist <- function(x, ...) {
     function(t, par = NULL, ...) {
-        par <- params(x, par)
+        par <- get_params(par, x$par)
         x$rate(t, par, ...)
     }
 }
@@ -63,7 +71,7 @@ inv_cdf.dfr_dist <- function(x, ...) {
 
     F <- cdf(x, ...)
     function(p, par = NULL, ...) {
-        par <- params(x, par)
+        par <- get_params(par, x$par)
         # F(t) = p, so we want to find t such that F(t) = p.
         uniroot_args <- list(
             f = function(t) {
@@ -76,24 +84,14 @@ inv_cdf.dfr_dist <- function(x, ...) {
 }
 
 #' Method for obtaining the parameters of a `dfr_dist` object.
-#' 
-#' Checks to see if any of the parameters are `NA` or `NULL`
-#' and if so, replaces them with the default values
-#' in `x` (`x$par`)
 #'
-#' We may think of this function as a "constructor" for the parameters
-#' of a `dfr_dist` object. If we don't know some parameters, we can
-#' pass `NA` or `NULL` for them, and this function will replace them
-#' with the default values in `x$par`.
-#' 
 #' @param x The object to obtain the parameters of.
-#' @param ... Additional arguments to pass into the `params` function.
-#' @param par The parameters to replace `NA` or `NULL` with.
+#' @param ... Additional arguments (unused).
 #' @return The parameters of the distribution.
 #' @importFrom algebraic.dist params
 #' @export
-params.dfr_dist <- function(x, ..., par = NA) {
-    get_params(x$par, par)
+params.dfr_dist <- function(x, ...) {
+    x$par
 }
 
 
@@ -120,15 +118,12 @@ params.dfr_dist <- function(x, ..., par = NA) {
 #' @importFrom stats runif
 #' @export
 sampler.dfr_dist <- function(x, ...) {
-    S <- surv(x, ...)
-    function(n, t = 0, par = NULL, eps = x$eps, ...) {
-        par <- params(x, par)
-        replicate(n, {
-            while (runif(1) > S(t, par)) {
-                t <- t + eps
-            }
-            t
-        })
+    # Use inverse CDF sampling for reliability
+    Q <- inv_cdf(x, ...)
+    function(n, par = NULL, ...) {
+        par <- get_params(par, x$par)
+        u <- runif(n)
+        sapply(u, function(p) Q(p, par, ...))
     }
 }
 
@@ -149,8 +144,8 @@ sampler.dfr_dist <- function(x, ...) {
 #' @export
 cdf.dfr_dist <- function(x, ...) {
     H <- cum_haz(x, ...)
-    function (t, par = NULL, log.p, lower.limit = TRUE, ...) {
-        par <- params(x, par)
+    function (t, par = NULL, log.p = FALSE, lower.limit = TRUE, ...) {
+        par <- get_params(par, x$par)
         haz <- H(t, par, ...)
         if (lower.limit) {
             p <- 1 - exp(-haz)
@@ -172,17 +167,22 @@ cdf.dfr_dist <- function(x, ...) {
 #' distribution, and `log` determines whether to compute the log of
 #' the pdf. Finally, it passes any additional arguments `...` to
 #' the `rate` function of the `dfr_dist` object `x`.
-#' @importFrom algebraic.dist params pdf
+#' @importFrom algebraic.dist pdf params
 #' @export
 pdf.dfr_dist <- function(x, ...) {
     H <- cum_haz(x, ...)
-    function(t, par = NULL, log = FALSE, ...) {
-        par <- params(x, par)
+    # Inner function works on scalar t for integration compatibility
+    inner <- function(t, par, log, ...) {
         if (log) {
             log(x$rate(t, par, ...)) - H(t, par, ...)
         } else {
             x$rate(t, par, ...) * exp(-H(t, par, ...))
         }
+    }
+    function(t, par = NULL, log = FALSE, ...) {
+        par <- get_params(par, x$par)
+        # Vectorize over t for integration compatibility
+        sapply(t, function(ti) inner(ti, par, log, ...))
     }
 }
 
@@ -213,22 +213,23 @@ sup.dfr_dist <- function(x, ...) {
 cum_haz.dfr_dist <- function(x, ...) {
 
     integrator_defaults <- list(
-        lower = 0, subdivisions = 1000L, abs_tol = 1e-3)
+        lower = 0, subdivisions = 1000L, abs.tol = 1e-3)
     integrator <- modifyList(integrator_defaults, list(...))
 
     function(t, par = NULL, ...) {
-        par <- params(x, par)
+        par <- get_params(par, x$par)
         # we call `integrate` with the options in `int_options` and
-        # we integrate `rate` over `t` with respect to the parameters
+        # we integrate `rate` from 0 to `t` with respect to the parameters
         # `par` and any additional arguments `...`
         res <- do.call(integrate,
             modifyList(integrator, list(
-                f = function(t) x$rate(t, par, ...))))
+                upper = t,
+                f = function(u) x$rate(u, par, ...))))
         if (res$message != "OK") {
             warning(res$message)
         }
-        if (res$abs.error > integrate$abs_tol) {
-            warning("Absolute error in cumulative hazard is greater than 1e-3")
+        if (res$abs.error > integrator$abs.tol) {
+            warning("Absolute error in cumulative hazard is greater than tolerance")
         }
         res$value
     }
@@ -250,9 +251,9 @@ cum_haz.dfr_dist <- function(x, ...) {
 #' @export
 surv.dfr_dist <- function(x, ...) {
     H <- cum_haz(x, ...)
-    function (t = 0, par = NULL, log.p, ...) {
-        par <- params(x, par)
-        haz <- -H(t, par, ...)
+    function (t = 0, par = NULL, log.p = FALSE, ...) {
+        par <- get_params(par, x$par)
+        haz <- H(t, par, ...)
         ifelse(log.p, -haz, exp(-haz))
     }
 }
@@ -269,4 +270,67 @@ print.dfr_dist <- function(x, ...) {
   cat("It has a survival function given by:\n")
   cat("    S(t|rate) = exp(-H(t,...))\n")
   cat("where H(t,...) is the cumulative hazard function.\n")
+}
+
+#' Log-likelihood method for `dfr_dist` objects
+#'
+#' Returns a function that computes the log-likelihood of the data given
+#' the distribution parameters. The log-likelihood for survival data is:
+#'
+#' For exact observations (uncensored): log(f(t)) = log(h(t)) - H(t)
+#' For right-censored observations: log(S(t)) = -H(t)
+#'
+#' where h(t) is the hazard function, H(t) is the cumulative hazard,
+#' f(t) = h(t)*S(t) is the pdf, and S(t) = exp(-H(t)) is the survival function.
+#'
+#' @param model The `dfr_dist` object
+#' @param ... Additional arguments to pass to the hazard and cumulative hazard
+#' @return A function that computes the log-likelihood. It accepts:
+#'         - `df`: A data frame with observation times and censoring indicators
+#'         - `par`: The parameters of the distribution
+#'         - `...`: Additional arguments passed to internal functions
+#' @importFrom likelihood.model loglik
+#' @export
+loglik.dfr_dist <- function(model, ...) {
+    H <- cum_haz(model, ...)
+
+    function(df, par = NULL, ...) {
+        par <- get_params(par, model$par)
+
+        ob_col <- model$ob_col
+        delta_col <- model$delta_col
+
+        # Extract observation times
+        t <- df[[ob_col]]
+
+        # Extract event indicators (1 = exact observation, 0 = right-censored)
+        # If column doesn't exist, assume all exact observations
+        if (delta_col %in% names(df)) {
+            delta <- df[[delta_col]]
+        } else {
+            delta <- rep(1, length(t))
+        }
+
+        # Compute log-likelihood contributions
+        ll <- 0
+
+        # For exact observations (delta = 1): log(h(t)) - H(t)
+        exact_idx <- which(delta == 1)
+        if (length(exact_idx) > 0) {
+            t_exact <- t[exact_idx]
+            h_exact <- sapply(t_exact, function(ti) model$rate(ti, par, ...))
+            H_exact <- sapply(t_exact, function(ti) H(ti, par, ...))
+            ll <- ll + sum(log(h_exact) - H_exact)
+        }
+
+        # For censored observations (delta = 0): -H(t)
+        censor_idx <- which(delta == 0)
+        if (length(censor_idx) > 0) {
+            t_censor <- t[censor_idx]
+            H_censor <- sapply(t_censor, function(ti) H(ti, par, ...))
+            ll <- ll - sum(H_censor)
+        }
+
+        ll
+    }
 }
