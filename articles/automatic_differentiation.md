@@ -268,14 +268,14 @@ time_full <- as.numeric(Sys.time() - t0) / n_iter * 1000
 cat("Average time per Hessian computation:\n")
 #> Average time per Hessian computation:
 cat(sprintf("  Numerical:      %7.2f ms\n", time_num))
-#>   Numerical:       108.90 ms
+#>   Numerical:       108.58 ms
 cat(sprintf("  Hybrid (recommended): %7.2f ms\n", time_hybrid))
-#>   Hybrid (recommended):    1.53 ms
+#>   Hybrid (recommended):    1.55 ms
 cat(sprintf("  Full AD:        %7.2f ms\n", time_full))
-#>   Full AD:         107.48 ms
+#>   Full AD:         107.65 ms
 cat(sprintf("\nSpeedup (Numerical / Hybrid): %.1fx\n", time_num / time_hybrid))
 #> 
-#> Speedup (Numerical / Hybrid): 71.0x
+#> Speedup (Numerical / Hybrid): 70.2x
 ```
 
 ## Scaling with Sample Size
@@ -308,10 +308,10 @@ for (sample_n in c(50, 100, 500, 1000)) {
     cat(sprintf("%8d %9.1f ms %9.1f ms %7.0fx\n",
                 sample_n, t_hybrid, t_num, t_num/t_hybrid))
 }
-#>       50       1.3 ms      54.7 ms      42x
-#>      100       1.7 ms     109.6 ms      65x
-#>      500       1.4 ms     543.7 ms     388x
-#>     1000       1.8 ms    1123.0 ms     623x
+#>       50       1.3 ms      54.6 ms      42x
+#>      100       1.7 ms     107.9 ms      64x
+#>      500       1.4 ms     536.4 ms     384x
+#>     1000       1.8 ms    1107.3 ms     621x
 ```
 
 The hybrid approach stays nearly constant (~2ms) while numerical scales

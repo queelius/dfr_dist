@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   automatic_differentiation: automatic_differentiation.html
   failure_rate: failure_rate.html
-last_built: 2025-12-06T15:34Z
+last_built: 2025-12-06T22:07Z
 urls:
   reference: https://queelius.github.io/dfr_dist/reference
   article: https://queelius.github.io/dfr_dist/articles
