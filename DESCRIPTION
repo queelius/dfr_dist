@@ -1,6 +1,6 @@
 Package: dfr.dist
 Title: Dynamic Failure Rate Distributions for Survival Analysis
-Version: 0.1.0
+Version: 0.2.0
 Authors@R:
     person("Alexander", "Towell", , "lex@metafunctor.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6443-9897"))
@@ -19,10 +19,12 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    algebraic.mle
+    algebraic.mle,
+    femtograd
 Config/testthat/edition: 3
 Imports:
     stats,
+    numDeriv,
     algebraic.dist,
     likelihood.model,
     generics

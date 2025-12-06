@@ -26,11 +26,16 @@ Always run `devtools::document()` after modifying roxygen2 comments. NAMESPACE i
 
 The central abstraction in `R/dfr_dist.R`:
 ```r
-dfr_dist(rate, par = NULL, eps = 0.01)
+dfr_dist(rate, par = NULL, eps = 0.01,
+         ob_col = "t", delta_col = "delta",
+         cum_haz_rate = NULL, score_fn = NULL)
 ```
 - `rate`: Function computing hazard rate h(t, par, ...)
 - `par`: Distribution parameters (can be NULL if unknown)
 - `eps`: Epsilon for numerical integration/sampling
+- `ob_col`, `delta_col`: Column names for survival data
+- `cum_haz_rate`: Optional analytical H(t, par) for AD gradient computation
+- `score_fn`: Optional analytical score for AD Hessian via Jacobian
 
 Inherits from `"univariate_dist"` and `"dist"` classes, implementing the `algebraic.dist` interface.
 
@@ -83,9 +88,41 @@ The `dfr_dist` class implements `likelihood_model` from the likelihood.model pac
 | Method | Returns | Usage |
 |--------|---------|-------|
 | `loglik()` | Log-likelihood function | `ll <- loglik(dist); ll(df, par)` |
-| `score()` | Score function (gradient) | Numerical gradient of loglik |
-| `hess_loglik()` | Hessian of log-likelihood | Numerical Hessian |
+| `score()` | Score function (gradient) | See fallback chain below |
+| `hess_loglik()` | Hessian of log-likelihood | See fallback chain below |
 | `fit()` | MLE solver | `solver <- fit(dist); solver(df, par)` |
+
+### Automatic Differentiation Integration
+
+The package optionally integrates with `femtograd` for exact gradient/Hessian computation:
+
+**Score function fallback chain:**
+1. Analytical `score_fn` if provided → exact
+2. AD gradient via `femtograd` if `cum_haz_rate` provided → exact
+3. Numerical gradient via `numDeriv::grad()` → approximate
+
+**Hessian fallback chain (hybrid approach):**
+1. AD Jacobian of analytical `score_fn` via `femtograd` → exact
+2. Numerical Hessian via `numDeriv::hessian()` → approximate
+
+The hybrid approach (analytical gradient + AD Jacobian) is often more practical than full AD because:
+- Gradients are easier to derive analytically than Hessians
+- Forward-mode AD Jacobian of a p-dimensional gradient costs O(p) passes
+- Works even when full AD through log-likelihood is impractical
+
+**Example with analytical score:**
+```r
+exp_dist <- dfr_dist(
+    rate = function(t, par, ...) rep(par[1], length(t)),
+    cum_haz_rate = function(t, par, ...) par[1] * t,
+    score_fn = function(df, par, ...) {
+        c(sum(df$delta) / par[1] - sum(df$t))
+    }
+)
+# Hessian computed via AD Jacobian of score_fn
+H <- hess_loglik(exp_dist)
+hess <- H(df, par = c(1))  # Uses femtograd if available
+```
 
 ### Survival Data Conventions
 
@@ -153,10 +190,12 @@ Two packages handle **series systems** (systems that fail when any component fai
 
 ## File Structure
 
-- `R/dfr_dist.R`: Main S3 class and all methods (~340 lines)
+- `R/dfr_dist.R`: Main S3 class and all methods (~440 lines)
+- `R/ad_utils.R`: AD helpers for femtograd integration
 - `R/generic_functions.R`: Generic `cum_haz()` declaration
 - `R/utils.R`: Helper `get_params()` for parameter resolution
 - `R/reexports.R`: Re-exports from likelihood.model (loglik, score, etc.)
+- `tests/testthat/test-ad_integration.R`: Tests for AD integration
 - `tests/testthat/test-likelihood_model.R`: Comprehensive tests for likelihood interface
 - `vignettes/failure_rate.Rmd`: Main tutorial
 
@@ -166,3 +205,4 @@ Two packages handle **series systems** (systems that fail when any component fai
 2. **Integration warnings**: Cumulative hazard uses numerical integration - check for convergence
 3. **Sampling efficiency**: Rejection sampler can be slow for complex rate functions
 4. **Closure pattern**: Remember methods return functions, not values directly
+5. **AD compatibility**: When writing `score_fn` for AD Hessian, use `[[` indexing for parameters (e.g., `par[[1]]` not `par[1]`) to work with femtograd dual numbers

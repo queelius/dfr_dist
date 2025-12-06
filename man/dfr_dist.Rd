@@ -4,7 +4,15 @@
 \alias{dfr_dist}
 \title{Constructor for \code{dfr_dist} objects}
 \usage{
-dfr_dist(rate, par = NULL, eps = 0.01, ob_col = "t", delta_col = "delta")
+dfr_dist(
+  rate,
+  par = NULL,
+  eps = 0.01,
+  ob_col = "t",
+  delta_col = "delta",
+  cum_haz_rate = NULL,
+  score_fn = NULL
+)
 }
 \arguments{
 \item{rate}{A function that computes the hazard rate at time \code{t}.}
@@ -20,6 +28,14 @@ Defaults to "t".}
 \item{delta_col}{The column name for event indicators in data frames.
 Uses standard survival analysis convention: 1 = event
 observed (exact), 0 = right-censored. Defaults to "delta".}
+
+\item{cum_haz_rate}{Optional analytical cumulative hazard function H(t, par).
+If provided, enables exact AD-based gradient computation.
+Should return the integral of rate from 0 to t.}
+
+\item{score_fn}{Optional analytical score function score(df, par).
+If provided, enables exact AD-based Hessian computation
+via Jacobian of the score. Should return gradient vector.}
 }
 \value{
 A \code{dfr_dist} object that inherits from \code{likelihood_model}.

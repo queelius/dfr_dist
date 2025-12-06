@@ -13,16 +13,25 @@
 #' @param delta_col The column name for event indicators in data frames.
 #'                  Uses standard survival analysis convention: 1 = event
 #'                  observed (exact), 0 = right-censored. Defaults to "delta".
+#' @param cum_haz_rate Optional analytical cumulative hazard function H(t, par).
+#'                     If provided, enables exact AD-based gradient computation.
+#'                     Should return the integral of rate from 0 to t.
+#' @param score_fn Optional analytical score function score(df, par).
+#'                 If provided, enables exact AD-based Hessian computation
+#'                 via Jacobian of the score. Should return gradient vector.
 #' @return A `dfr_dist` object that inherits from `likelihood_model`.
 #' @export
 dfr_dist <- function(rate, par = NULL, eps = 0.01,
-                     ob_col = "t", delta_col = "delta") {
+                     ob_col = "t", delta_col = "delta",
+                     cum_haz_rate = NULL, score_fn = NULL) {
     structure(
         list(rate = rate,
              par = par,
              eps = eps,
              ob_col = ob_col,
-             delta_col = delta_col),
+             delta_col = delta_col,
+             cum_haz_rate = cum_haz_rate,
+             score_fn = score_fn),
     class = c("dfr_dist", "likelihood_model", "univariate_dist", "dist"))
 }
 
@@ -329,6 +338,101 @@ loglik.dfr_dist <- function(model, ...) {
             t_censor <- t[censor_idx]
             H_censor <- sapply(t_censor, function(ti) H(ti, par, ...))
             ll <- ll - sum(H_censor)
+        }
+
+        ll
+    }
+}
+
+#' Score function (gradient of log-likelihood) for dfr_dist
+#'
+#' Returns a function that computes the score (gradient of log-likelihood)
+#' with respect to parameters. Uses analytical score if provided, otherwise
+#' falls back to numerical differentiation.
+#'
+#' @param model A dfr_dist object
+#' @param ... Additional arguments passed to loglik
+#' @return A function that computes the score vector
+#' @importFrom likelihood.model score
+#' @export
+score.dfr_dist <- function(model, ...) {
+    ll_fn <- loglik(model, ...)
+
+    function(df, par = NULL, ...) {
+        par <- get_params(par, model$par)
+
+        # Option 1: Use analytical score if provided
+        if (!is.null(model$score_fn)) {
+            return(model$score_fn(df, par, ...))
+        }
+
+        # Option 2: Use AD gradient if femtograd available and cum_haz_rate provided
+        if (!is.null(model$cum_haz_rate) && has_femtograd()) {
+            # Create AD-compatible log-likelihood
+            ad_ll <- make_ad_loglik_analytical(model, df)
+            return(ad_gradient(ad_ll, par))
+        }
+
+        # Option 3: Fall back to numerical gradient
+        numDeriv::grad(function(p) ll_fn(df, par = p, ...), par)
+    }
+}
+
+#' Hessian of log-likelihood for dfr_dist
+#'
+#' Returns a function that computes the Hessian matrix of the log-likelihood.
+#' If analytical score is provided, uses AD Jacobian for exact computation.
+#' Otherwise falls back to numerical differentiation.
+#'
+#' @param model A dfr_dist object
+#' @param ... Additional arguments passed to score
+#' @return A function that computes the Hessian matrix
+#' @importFrom likelihood.model hess_loglik
+#' @export
+hess_loglik.dfr_dist <- function(model, ...) {
+    score_fn <- score(model, ...)
+    ll_fn <- loglik(model, ...)
+
+    function(df, par = NULL, ...) {
+        par <- get_params(par, model$par)
+
+        # Option 1: AD Jacobian of analytical score (the hybrid approach)
+        if (!is.null(model$score_fn) && has_femtograd()) {
+            # Wrap score_fn for AD
+            ad_score <- function(p) model$score_fn(df, p, ...)
+            return(ad_hessian(ad_score, par))
+        }
+
+        # Option 2: Numerical Hessian
+        numDeriv::hessian(function(p) ll_fn(df, par = p, ...), par)
+    }
+}
+
+#' Create AD-compatible log-likelihood using analytical cumulative hazard
+#'
+#' @param model A dfr_dist object with cum_haz_rate defined
+#' @param df Data frame with observations
+#' @return A function f(par) compatible with femtograd
+#' @keywords internal
+make_ad_loglik_analytical <- function(model, df) {
+    ob_col <- model$ob_col
+    delta_col <- model$delta_col
+    t_obs <- df[[ob_col]]
+    delta <- if (delta_col %in% names(df)) df[[delta_col]] else rep(1, length(t_obs))
+
+    function(par) {
+        ll <- 0
+
+        for (i in seq_along(t_obs)) {
+            ti <- t_obs[i]
+            h_i <- model$rate(ti, par)
+            H_i <- model$cum_haz_rate(ti, par)
+
+            if (delta[i] == 1) {
+                ll <- ll + log(h_i) - H_i
+            } else {
+                ll <- ll - H_i
+            }
         }
 
         ll
