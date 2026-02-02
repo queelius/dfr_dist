@@ -2,7 +2,7 @@ Package: dfr.dist
 Title: Dynamic Failure Rate Distributions for Survival Analysis
 Version: 0.5.0
 Authors@R:
-    person("Alexander", "Towell", , "lex@metafunctor.com", role = c("aut", "cre"),
+    person("Alexander", "Towell", , "queelius@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6443-9897"))
 Description: Flexible framework for specifying survival distributions through
     their hazard (failure rate) functions. Define arbitrary time-varying

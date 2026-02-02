@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
 title: "dfr.dist: Dynamic Failure Rate Distributions for Survival Analysis"
-version: 0.2.0
+version: 0.5.0
 date-released: 2025-01-01
 url: "https://github.com/queelius/dfr.dist"
 repository-code: "https://github.com/queelius/dfr.dist"
@@ -10,7 +10,7 @@ license: GPL-3.0-or-later
 authors:
   - family-names: Towell
     given-names: Alexander
-    email: lex@metafunctor.com
+    email: queelius@gmail.com
     orcid: "https://orcid.org/0000-0001-6443-9897"
 keywords:
   - survival-analysis
