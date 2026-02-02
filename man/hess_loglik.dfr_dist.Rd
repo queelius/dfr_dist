@@ -9,13 +9,13 @@
 \arguments{
 \item{model}{A dfr_dist object}
 
-\item{...}{Additional arguments passed to score}
+\item{...}{Additional arguments passed to loglik}
 }
 \value{
 A function that computes the Hessian matrix
 }
 \description{
 Returns a function that computes the Hessian matrix of the log-likelihood.
-If analytical score is provided, uses AD Jacobian for exact computation.
-Otherwise falls back to numerical differentiation.
+Uses user-provided Hessian function if available, otherwise falls back to
+numerical differentiation via numDeriv::hessian.
 }

@@ -57,22 +57,43 @@ From this, all other quantities follow:
 
 ```{r setup}
 library(dfr.dist)
-library(algebraic.dist)
 ```
 
-### Creating a DFR distribution
+### Using Built-in Distributions
 
-Use `dfr_dist()` to create a distribution from a hazard function:
+The package provides convenient constructors for classic survival distributions:
 
 ```{r}
-# Exponential distribution: constant hazard h(t) = lambda
-exp_dist <- dfr_dist(
-  rate = function(t, par, ...) rep(par[1], length(t)),
-  par = c(lambda = 0.5)
-)
+# Exponential: constant hazard h(t) = lambda
+exp_dist <- dfr_exponential(lambda = 0.5)
+
+# Weibull: power-law hazard h(t) = (k/sigma)(t/sigma)^(k-1)
+weib_dist <- dfr_weibull(shape = 2, scale = 3)
+
+# Gompertz: exponentially increasing hazard h(t) = a*exp(b*t)
+gomp_dist <- dfr_gompertz(a = 0.01, b = 0.1)
+
+# Log-logistic: non-monotonic hazard (increases then decreases)
+ll_dist <- dfr_loglogistic(alpha = 10, beta = 2)
 
 print(exp_dist)
 is_dfr_dist(exp_dist)
+```
+
+### Creating Custom Distributions
+
+For non-standard hazard patterns, use `dfr_dist()` directly:
+
+```{r}
+# Custom: linear increasing hazard h(t) = a + b*t
+linear_dist <- dfr_dist(
+  rate = function(t, par, ...) {
+    a <- par[1]
+    b <- par[2]
+    a + b * t
+  },
+  par = c(a = 0.1, b = 0.01)
+)
 ```
 
 The `rate` function must accept:
@@ -81,20 +102,7 @@ The `rate` function must accept:
 - `par`: parameter vector
 - `...`: additional arguments
 
-### Weibull distribution
-
-The Weibull distribution has hazard $h(t) = \frac{k}{\sigma}\left(\frac{t}{\sigma}\right)^{k-1}$:
-
-```{r}
-weibull_dist <- dfr_dist(
-  rate = function(t, par, ...) {
-    k <- par[1]      # shape
-    sigma <- par[2]  # scale
-    (k / sigma) * (t / sigma)^(k - 1)
-  },
-  par = c(shape = 2, scale = 3)
-)
-```
+See `vignette("custom_distributions")` for detailed guidance on creating optimized custom distributions.
 
 ## Distribution Methods
 
@@ -124,11 +132,11 @@ t <- 2
 c(survival = S(t), cdf = F(t), sum = S(t) + F(t))
 ```
 
-### PDF
+### PDF (Density)
 
 ```{r}
-# Use algebraic.dist::pdf to avoid masking by grDevices::pdf
-pdf_fn <- algebraic.dist::pdf(exp_dist)
+# Use stats::density which dfr.dist implements as density.dfr_dist
+pdf_fn <- density(exp_dist)
 
 # For exponential: f(t) = lambda * exp(-lambda * t)
 t <- 1
@@ -249,12 +257,12 @@ solver <- fit(dist)
 # Find MLE starting from initial guess
 result <- solver(df_exact, par = c(0.5), method = "BFGS")
 
-# Extract fitted parameters
-params(result)
+# Extract fitted parameters (fisher_mle uses coef())
+coef(result)
 
 # Compare to analytical MLE: lambda_hat = n / sum(t)
 analytical_mle <- n / sum(times)
-c(fitted = params(result), analytical = analytical_mle, true = true_lambda)
+c(fitted = coef(result), analytical = analytical_mle, true = true_lambda)
 ```
 
 ### Working with censored data
@@ -273,7 +281,7 @@ ll <- loglik(dist)
 # Fit with censored data
 solver <- fit(dist)
 result <- solver(df_mixed, par = c(0.5), method = "BFGS")
-params(result)
+coef(result)
 ```
 
 ## Example: Weibull MLE
@@ -304,8 +312,8 @@ df_weibull <- data.frame(t = weibull_times, delta = rep(1, n))
 solver <- fit(weibull)
 result <- solver(df_weibull, par = c(1.5, 2.5), method = "BFGS")
 
-c(fitted_shape = params(result)[1], true_shape = true_shape)
-c(fitted_scale = params(result)[2], true_scale = true_scale)
+c(fitted_shape = coef(result)[1], true_shape = true_shape)
+c(fitted_scale = coef(result)[2], true_scale = true_scale)
 ```
 
 ## Custom Hazard Functions
@@ -383,6 +391,54 @@ print(support)
 params(exp_dist)
 ```
 
+## Model Diagnostics
+
+After fitting a model, it's essential to verify goodness-of-fit. The package provides
+diagnostic tools based on residual analysis.
+
+### Cox-Snell Residuals
+
+Cox-Snell residuals are defined as r_i = H(t_i), the cumulative hazard at each
+observation time. If the model is correctly specified, these residuals follow
+an Exp(1) distribution.
+
+```{r, fig.alt="Cox-Snell residuals Q-Q plot showing model fit assessment."}
+# Fit a model and check residuals
+set.seed(99)
+test_times <- rexp(80, rate = 0.3)
+test_df <- data.frame(t = test_times, delta = 1)
+
+# Fit exponential
+exp_fitted <- dfr_exponential()
+solver <- fit(exp_fitted)
+fit_result <- solver(test_df, par = c(0.5))
+lambda_hat <- coef(fit_result)
+
+# Create fitted distribution with estimated parameters
+exp_final <- dfr_exponential(lambda = lambda_hat)
+
+# Q-Q plot of Cox-Snell residuals
+qqplot_residuals(exp_final, test_df)
+```
+
+Points falling along the diagonal indicate good fit. Systematic departures
+suggest model misspecification.
+
+### Martingale Residuals
+
+Martingale residuals (M_i = delta_i - H(t_i)) are useful for identifying
+individual observations that are poorly fit:
+
+```{r}
+mart_resid <- residuals(exp_final, test_df, type = "martingale")
+summary(mart_resid)
+
+# Large positive values: failed earlier than expected
+# Large negative values: survived longer than expected
+```
+
+For more detailed diagnostic workflows, see `vignette("reliability_engineering")`.
+
 ## Summary
 
 The `dfr.dist` package provides:
@@ -392,6 +448,7 @@ The `dfr.dist` package provides:
 3. **Likelihood model support**: Log-likelihood, score, Hessian for MLE
 4. **Censoring support**: Handle exact and right-censored survival data
 5. **Numerical integration**: Automatic computation of cumulative hazard
+6. **Model diagnostics**: Residuals and Q-Q plots for fit assessment
 
 This makes it ideal for:
 
@@ -399,3 +456,10 @@ This makes it ideal for:
 - Survival analysis with non-standard hazard patterns
 - Maximum likelihood estimation of hazard function parameters
 - Simulation studies with flexible failure distributions
+
+## Next Steps
+
+- **`vignette("custom_distributions")`** - How to create your own distributions with analytical formulas
+- **`vignette("reliability_engineering")`** - Real-world reliability analysis applications
+- **`vignette("automatic_differentiation")`** - Advanced: exact derivatives via AD for faster MLE
+- **`vignette("getting_started")`** - Quick 5-minute introduction

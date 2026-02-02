@@ -14,16 +14,21 @@
 #'                  Uses standard survival analysis convention: 1 = event
 #'                  observed (exact), 0 = right-censored. Defaults to "delta".
 #' @param cum_haz_rate Optional analytical cumulative hazard function H(t, par).
-#'                     If provided, enables exact AD-based gradient computation.
+#'                     If provided, used for faster exact cumulative hazard
+#'                     computation instead of numerical integration.
 #'                     Should return the integral of rate from 0 to t.
-#' @param score_fn Optional analytical score function score(df, par).
-#'                 If provided, enables exact AD-based Hessian computation
-#'                 via Jacobian of the score. Should return gradient vector.
+#' @param score_fn Optional score function (gradient of log-likelihood).
+#'                 Signature: score_fn(df, par, ...) returning a numeric vector.
+#'                 If NULL, falls back to numerical gradient via numDeriv::grad.
+#' @param hess_fn Optional Hessian function (second derivatives of log-likelihood).
+#'                Signature: hess_fn(df, par, ...) returning a matrix.
+#'                If NULL, falls back to numerical Hessian via numDeriv::hessian.
 #' @return A `dfr_dist` object that inherits from `likelihood_model`.
 #' @export
 dfr_dist <- function(rate, par = NULL, eps = 0.01,
                      ob_col = "t", delta_col = "delta",
-                     cum_haz_rate = NULL, score_fn = NULL) {
+                     cum_haz_rate = NULL, score_fn = NULL,
+                     hess_fn = NULL) {
     structure(
         list(rate = rate,
              par = par,
@@ -31,7 +36,8 @@ dfr_dist <- function(rate, par = NULL, eps = 0.01,
              ob_col = ob_col,
              delta_col = delta_col,
              cum_haz_rate = cum_haz_rate,
-             score_fn = score_fn),
+             score_fn = score_fn,
+             hess_fn = hess_fn),
     class = c("dfr_dist", "likelihood_model", "univariate_dist", "dist"))
 }
 
@@ -78,13 +84,12 @@ hazard.dfr_dist <- function(x, ...) {
 #' @export
 inv_cdf.dfr_dist <- function(x, ...) {
 
-    F <- cdf(x, ...)
+    cdf_fn <- cdf(x, ...)
     function(p, par = NULL, ...) {
         par <- get_params(par, x$par)
-        # F(t) = p, so we want to find t such that F(t) = p.
         uniroot_args <- list(
             f = function(t) {
-                F(t, par, ...) - p
+                cdf_fn(t, par, ...) - p
             },
             interval = c(0, 1e3),
             extendInt = "upX")
@@ -102,8 +107,6 @@ inv_cdf.dfr_dist <- function(x, ...) {
 params.dfr_dist <- function(x, ...) {
     x$par
 }
-
-
 
 #' Sampling function for `dfr_dist` objects.
 #' 
@@ -153,34 +156,31 @@ sampler.dfr_dist <- function(x, ...) {
 #' @export
 cdf.dfr_dist <- function(x, ...) {
     H <- cum_haz(x, ...)
-    function (t, par = NULL, log.p = FALSE, lower.limit = TRUE, ...) {
+    function(t, par = NULL, log.p = FALSE, lower.limit = TRUE, ...) {
         par <- get_params(par, x$par)
         haz <- H(t, par, ...)
         if (lower.limit) {
             p <- 1 - exp(-haz)
-            return(ifelse(log.p, log(p), p))
-        }
-        else {            
-            return(ifelse(log.p, -haz, exp(-haz)))
+            ifelse(log.p, log(p), p)
+        } else {
+            ifelse(log.p, -haz, exp(-haz))
         }
     }
 }
 
-#' Method for obtaining the pdf of a `dfr_dist` object.
-#' 
-#' @param x The object to obtain the pdf of.
+#' Method for obtaining the density (pdf) of a `dfr_dist` object.
+#'
+#' @param x The object to obtain the density of.
 #' @param ... Additional arguments to pass.
-#' @return A function that computes the pdf of the distribution.
-#' It accepts `y`, the value at which to compute the pdf, `t`, the time
-#' at which to compute the pdf, `par` is the parameters of the
-#' distribution, and `log` determines whether to compute the log of
-#' the pdf. Finally, it passes any additional arguments `...` to
-#' the `rate` function of the `dfr_dist` object `x`.
-#' @importFrom algebraic.dist pdf params
+#' @return A function that computes the density of the distribution.
+#' It accepts `t`, the time at which to compute the density, `par` is
+#' the parameters of the distribution, and `log` determines whether to
+#' compute the log of the density. Finally, it passes any additional
+#' arguments `...` to the `rate` function of the `dfr_dist` object `x`.
+#' @importFrom stats density
 #' @export
-pdf.dfr_dist <- function(x, ...) {
+density.dfr_dist <- function(x, ...) {
     H <- cum_haz(x, ...)
-    # Inner function works on scalar t for integration compatibility
     inner <- function(t, par, log, ...) {
         if (log) {
             log(x$rate(t, par, ...)) - H(t, par, ...)
@@ -190,7 +190,6 @@ pdf.dfr_dist <- function(x, ...) {
     }
     function(t, par = NULL, log = FALSE, ...) {
         par <- get_params(par, x$par)
-        # Vectorize over t for integration compatibility
         sapply(t, function(ti) inner(ti, par, log, ...))
     }
 }
@@ -207,19 +206,29 @@ sup.dfr_dist <- function(x, ...) {
     interval$new(0, Inf, FALSE, FALSE)
 }
 
-#' Method for obtaining the hazard function of a `dfr_dist` object.
-#' @param x The object to obtain the hazard function of.
-#' @param ... Additional arguments to pass into the `integrate` function.
-#' @return A function that computes the hazard function of the distribution.
-#' It accepts `t`, the time at which to compute the hazard function, and
+#' Method for obtaining the cumulative hazard function of a `dfr_dist` object.
+#' @param x The object to obtain the cumulative hazard function of.
+#' @param ... Additional arguments to pass into the `integrate` function
+#'   (only used when no analytical cum_haz_rate is provided).
+#' @return A function that computes the cumulative hazard H(t) of the distribution.
+#' It accepts `t`, the time at which to compute the cumulative hazard, and
 #' `par`, the parameters of the distribution. If `par` is `NULL`, then the
 #' parameters of the `dfr_dist` object `x` are used. Finally, it passes any
-#' additional arguments `...` to the `rate` function of the `dfr_dist`
-#' object `x`.
+#' additional arguments `...` to the rate function.
+#' @details
+#' If the `dfr_dist` object has an analytical `cum_haz_rate` function, that is
+#' used directly for fast, exact computation. Otherwise, numerical integration
+#' of the hazard function is performed.
 #' @importFrom stats integrate
 #' @importFrom utils modifyList
 #' @export
 cum_haz.dfr_dist <- function(x, ...) {
+    if (!is.null(x$cum_haz_rate)) {
+        return(function(t, par = NULL, ...) {
+            par <- get_params(par, x$par)
+            x$cum_haz_rate(t, par, ...)
+        })
+    }
 
     integrator_defaults <- list(
         lower = 0, subdivisions = 1000L, abs.tol = 1e-3)
@@ -227,9 +236,6 @@ cum_haz.dfr_dist <- function(x, ...) {
 
     function(t, par = NULL, ...) {
         par <- get_params(par, x$par)
-        # we call `integrate` with the options in `int_options` and
-        # we integrate `rate` from 0 to `t` with respect to the parameters
-        # `par` and any additional arguments `...`
         res <- do.call(integrate,
             modifyList(integrator, list(
                 upper = t,
@@ -243,7 +249,6 @@ cum_haz.dfr_dist <- function(x, ...) {
         res$value
     }
 }
-
 
 #' Method for obtaining the survival function of a `dfr_dist` object.
 #' @param x The object to obtain the survival function of.
@@ -260,25 +265,24 @@ cum_haz.dfr_dist <- function(x, ...) {
 #' @export
 surv.dfr_dist <- function(x, ...) {
     H <- cum_haz(x, ...)
-    function (t = 0, par = NULL, log.p = FALSE, ...) {
+    function(t = 0, par = NULL, log.p = FALSE, ...) {
         par <- get_params(par, x$par)
         haz <- H(t, par, ...)
         ifelse(log.p, -haz, exp(-haz))
     }
 }
 
-
 #' Print method for `dfr_dist` objects.
 #' @param x The `dfr_dist` object to print.
 #' @param ... Additional arguments (not used)
 #' @export
 print.dfr_dist <- function(x, ...) {
-  cat("Dynamic failure rate (DFR) distribution with failure rate:\n")
-  print(x$rate)
-
-  cat("It has a survival function given by:\n")
-  cat("    S(t|rate) = exp(-H(t,...))\n")
-  cat("where H(t,...) is the cumulative hazard function.\n")
+    cat("Dynamic failure rate (DFR) distribution with failure rate:\n")
+    print(x$rate)
+    cat("It has a survival function given by:\n")
+    cat("    S(t|rate) = exp(-H(t,...))\n")
+    cat("where H(t,...) is the cumulative hazard function.\n")
+    invisible(x)
 }
 
 #' Log-likelihood method for `dfr_dist` objects
@@ -288,6 +292,7 @@ print.dfr_dist <- function(x, ...) {
 #'
 #' For exact observations (uncensored): log(f(t)) = log(h(t)) - H(t)
 #' For right-censored observations: log(S(t)) = -H(t)
+#' For left-censored observations: log(F(t)) = log(1 - exp(-H(t)))
 #'
 #' where h(t) is the hazard function, H(t) is the cumulative hazard,
 #' f(t) = h(t)*S(t) is the pdf, and S(t) = exp(-H(t)) is the survival function.
@@ -296,6 +301,7 @@ print.dfr_dist <- function(x, ...) {
 #' @param ... Additional arguments to pass to the hazard and cumulative hazard
 #' @return A function that computes the log-likelihood. It accepts:
 #'         - `df`: A data frame with observation times and censoring indicators
+#'           (delta: 1 = exact, 0 = right-censored, -1 = left-censored)
 #'         - `par`: The parameters of the distribution
 #'         - `...`: Additional arguments passed to internal functions
 #' @importFrom likelihood.model loglik
@@ -306,38 +312,41 @@ loglik.dfr_dist <- function(model, ...) {
     function(df, par = NULL, ...) {
         par <- get_params(par, model$par)
 
-        ob_col <- model$ob_col
-        delta_col <- model$delta_col
+        t <- df[[model$ob_col]]
 
-        # Extract observation times
-        t <- df[[ob_col]]
-
-        # Extract event indicators (1 = exact observation, 0 = right-censored)
-        # If column doesn't exist, assume all exact observations
-        if (delta_col %in% names(df)) {
-            delta <- df[[delta_col]]
+        if (model$delta_col %in% names(df)) {
+            delta <- df[[model$delta_col]]
         } else {
             delta <- rep(1, length(t))
         }
 
-        # Compute log-likelihood contributions
         ll <- 0
 
-        # For exact observations (delta = 1): log(h(t)) - H(t)
+        # Exact observations (delta = 1): log(h(t)) - H(t)
         exact_idx <- which(delta == 1)
         if (length(exact_idx) > 0) {
             t_exact <- t[exact_idx]
             h_exact <- sapply(t_exact, function(ti) model$rate(ti, par, ...))
             H_exact <- sapply(t_exact, function(ti) H(ti, par, ...))
-            ll <- ll + sum(log(h_exact) - H_exact)
+            contrib <- sum(log(h_exact) - H_exact)
+            if (is.nan(contrib)) return(-Inf)
+            ll <- ll + contrib
         }
 
-        # For censored observations (delta = 0): -H(t)
-        censor_idx <- which(delta == 0)
-        if (length(censor_idx) > 0) {
-            t_censor <- t[censor_idx]
-            H_censor <- sapply(t_censor, function(ti) H(ti, par, ...))
-            ll <- ll - sum(H_censor)
+        # Right-censored observations (delta = 0): -H(t)
+        right_idx <- which(delta == 0)
+        if (length(right_idx) > 0) {
+            t_right <- t[right_idx]
+            H_right <- sapply(t_right, function(ti) H(ti, par, ...))
+            ll <- ll - sum(H_right)
+        }
+
+        # Left-censored observations (delta = -1): log(1 - exp(-H(t)))
+        left_idx <- which(delta == -1)
+        if (length(left_idx) > 0) {
+            t_left <- t[left_idx]
+            H_left <- sapply(t_left, function(ti) H(ti, par, ...))
+            ll <- ll + sum(log1p(-exp(-H_left)))
         }
 
         ll
@@ -347,8 +356,8 @@ loglik.dfr_dist <- function(model, ...) {
 #' Score function (gradient of log-likelihood) for dfr_dist
 #'
 #' Returns a function that computes the score (gradient of log-likelihood)
-#' with respect to parameters. Uses analytical score if provided, otherwise
-#' falls back to numerical differentiation.
+#' with respect to parameters. Uses user-provided score function if available,
+#' otherwise falls back to numerical differentiation via numDeriv::grad.
 #'
 #' @param model A dfr_dist object
 #' @param ... Additional arguments passed to loglik
@@ -360,20 +369,9 @@ score.dfr_dist <- function(model, ...) {
 
     function(df, par = NULL, ...) {
         par <- get_params(par, model$par)
-
-        # Option 1: Use analytical score if provided
         if (!is.null(model$score_fn)) {
             return(model$score_fn(df, par, ...))
         }
-
-        # Option 2: Use AD gradient if femtograd available and cum_haz_rate provided
-        if (!is.null(model$cum_haz_rate) && has_femtograd()) {
-            # Create AD-compatible log-likelihood
-            ad_ll <- make_ad_loglik_analytical(model, df)
-            return(ad_gradient(ad_ll, par))
-        }
-
-        # Option 3: Fall back to numerical gradient
         numDeriv::grad(function(p) ll_fn(df, par = p, ...), par)
     }
 }
@@ -381,60 +379,130 @@ score.dfr_dist <- function(model, ...) {
 #' Hessian of log-likelihood for dfr_dist
 #'
 #' Returns a function that computes the Hessian matrix of the log-likelihood.
-#' If analytical score is provided, uses AD Jacobian for exact computation.
-#' Otherwise falls back to numerical differentiation.
+#' Uses user-provided Hessian function if available, otherwise falls back to
+#' numerical differentiation via numDeriv::hessian.
 #'
 #' @param model A dfr_dist object
-#' @param ... Additional arguments passed to score
+#' @param ... Additional arguments passed to loglik
 #' @return A function that computes the Hessian matrix
 #' @importFrom likelihood.model hess_loglik
 #' @export
 hess_loglik.dfr_dist <- function(model, ...) {
-    score_fn <- score(model, ...)
     ll_fn <- loglik(model, ...)
 
     function(df, par = NULL, ...) {
         par <- get_params(par, model$par)
-
-        # Option 1: AD Jacobian of analytical score (the hybrid approach)
-        if (!is.null(model$score_fn) && has_femtograd()) {
-            # Wrap score_fn for AD
-            ad_score <- function(p) model$score_fn(df, p, ...)
-            return(ad_hessian(ad_score, par))
+        if (!is.null(model$hess_fn)) {
+            return(model$hess_fn(df, par, ...))
         }
-
-        # Option 2: Numerical Hessian
         numDeriv::hessian(function(p) ll_fn(df, par = p, ...), par)
     }
 }
 
-#' Create AD-compatible log-likelihood using analytical cumulative hazard
+#' Retrieve the assumptions a DFR distribution makes about the data
 #'
-#' @param model A dfr_dist object with cum_haz_rate defined
-#' @param df Data frame with observations
-#' @return A function f(par) compatible with femtograd
-#' @keywords internal
-make_ad_loglik_analytical <- function(model, df) {
-    ob_col <- model$ob_col
-    delta_col <- model$delta_col
-    t_obs <- df[[ob_col]]
-    delta <- if (delta_col %in% names(df)) df[[delta_col]] else rep(1, length(t_obs))
+#' Returns a list of assumptions that the dynamic failure rate distribution
+#' model makes about the underlying data and process.
+#'
+#' @param model A `dfr_dist` object
+#' @param ... Additional arguments (ignored)
+#' @return A character vector of model assumptions
+#' @importFrom likelihood.model assumptions
+#' @export
+assumptions.dfr_dist <- function(model, ...) {
+    c(
+        "Non-negative hazard: h(t) >= 0 for all t > 0",
+        "Cumulative hazard diverges: lim(t->Inf) H(t) = Inf",
+        "Support is positive reals: t in (0, Inf)",
+        "Observations are independent",
+        "Censoring indicator convention: 1=exact, 0=right-censored, -1=left-censored",
+        "Non-informative censoring: censoring mechanism independent of failure time"
+    )
+}
 
-    function(par) {
-        ll <- 0
+#' MLE solver for dfr_dist objects
+#'
+#' Returns a solver function that fits a dfr_dist model to survival data
+#' using maximum likelihood estimation. The solver uses gradient-based
+#' optimization (BFGS by default) with analytical or numerical gradients.
+#'
+#' @param object A `dfr_dist` object
+#' @param ... Additional arguments passed to the log-likelihood, score, and
+#'            Hessian constructors (e.g., integration parameters for cum_haz)
+#' @return A solver function that accepts:
+#'   - `df`: Data frame with observation times and censoring indicators
+#'   - `par`: Initial parameter values (uses object's params if NULL)
+#'   - `method`: Optimization method (default "BFGS")
+#'   - `control`: Control parameters for optim()
+#'   - `...`: Additional arguments passed to likelihood functions
+#'
+#' @details
+#' The solver returns a `fisher_mle` object (from likelihood.model) containing:
+#' - Parameter estimates
+#' - Log-likelihood value at MLE
+#' - Variance-covariance matrix (from Hessian)
+#' - Convergence status
+#'
+#' Use methods like `coef()`, `vcov()`, `confint()`, `summary()` on the result.
+#'
+#' @examples
+#' \donttest{
+#' # Exponential distribution
+#' exp_dist <- dfr_dist(
+#'   rate = function(t, par, ...) rep(par[1], length(t)),
+#'   par = c(lambda = 1)
+#' )
+#'
+#' # Simulate data
+#' set.seed(42)
+#' df <- data.frame(t = rexp(100, rate = 2), delta = 1)
+#'
+#' # Fit model
+#' solver <- fit(exp_dist)
+#' result <- solver(df, par = c(1))
+#' summary(result)
+#' confint(result)
+#' }
+#'
+#' @importFrom generics fit
+#' @importFrom stats optim
+#' @importFrom utils modifyList
+#' @export
+fit.dfr_dist <- function(object, ...) {
+    ll <- loglik(object, ...)
+    s <- score(object, ...)
+    H <- hess_loglik(object, ...)
 
-        for (i in seq_along(t_obs)) {
-            ti <- t_obs[i]
-            h_i <- model$rate(ti, par)
-            H_i <- model$cum_haz_rate(ti, par)
-
-            if (delta[i] == 1) {
-                ll <- ll + log(h_i) - H_i
-            } else {
-                ll <- ll - H_i
+    function(df, par = NULL,
+             method = c("BFGS", "Nelder-Mead", "L-BFGS-B", "CG", "SANN"),
+             control = list(), ...) {
+        if (is.null(par)) {
+            par <- params(object)
+            if (is.null(par)) {
+                stop("Initial parameters required: specify 'par' argument ",
+                     "or set parameters in dfr_dist()")
             }
         }
 
-        ll
+        control <- modifyList(list(fnscale = -1), control)
+        method <- match.arg(method)
+
+        sol <- optim(
+            par = par,
+            fn = function(p) ll(df, p, ...),
+            gr = if (method == "SANN") NULL else function(p) s(df, p, ...),
+            method = method,
+            control = control
+        )
+
+        likelihood.model::fisher_mle(
+            par = sol$par,
+            loglik_val = sol$value,
+            hessian = H(df, sol$par, ...),
+            score_val = s(df, sol$par, ...),
+            nobs = nrow(df),
+            converged = (sol$convergence == 0),
+            optim_result = sol
+        )
     }
 }

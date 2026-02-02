@@ -9,3 +9,5 @@
 ^README\.Rmd$
 ^NA$
 ^\.github$
+^\.claude$
+^CITATION\.cff$

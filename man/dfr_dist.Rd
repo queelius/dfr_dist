@@ -11,7 +11,8 @@ dfr_dist(
   ob_col = "t",
   delta_col = "delta",
   cum_haz_rate = NULL,
-  score_fn = NULL
+  score_fn = NULL,
+  hess_fn = NULL
 )
 }
 \arguments{
@@ -30,12 +31,17 @@ Uses standard survival analysis convention: 1 = event
 observed (exact), 0 = right-censored. Defaults to "delta".}
 
 \item{cum_haz_rate}{Optional analytical cumulative hazard function H(t, par).
-If provided, enables exact AD-based gradient computation.
+If provided, used for faster exact cumulative hazard
+computation instead of numerical integration.
 Should return the integral of rate from 0 to t.}
 
-\item{score_fn}{Optional analytical score function score(df, par).
-If provided, enables exact AD-based Hessian computation
-via Jacobian of the score. Should return gradient vector.}
+\item{score_fn}{Optional score function (gradient of log-likelihood).
+Signature: score_fn(df, par, ...) returning a numeric vector.
+If NULL, falls back to numerical gradient via numDeriv::grad.}
+
+\item{hess_fn}{Optional Hessian function (second derivatives of log-likelihood).
+Signature: hess_fn(df, par, ...) returning a matrix.
+If NULL, falls back to numerical Hessian via numDeriv::hessian.}
 }
 \value{
 A \code{dfr_dist} object that inherits from \code{likelihood_model}.

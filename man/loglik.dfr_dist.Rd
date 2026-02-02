@@ -14,6 +14,7 @@
 \value{
 A function that computes the log-likelihood. It accepts:
 - \code{df}: A data frame with observation times and censoring indicators
+(delta: 1 = exact, 0 = right-censored, -1 = left-censored)
 - \code{par}: The parameters of the distribution
 - \code{...}: Additional arguments passed to internal functions
 }
@@ -24,6 +25,7 @@ the distribution parameters. The log-likelihood for survival data is:
 \details{
 For exact observations (uncensored): log(f(t)) = log(h(t)) - H(t)
 For right-censored observations: log(S(t)) = -H(t)
+For left-censored observations: log(F(t)) = log(1 - exp(-H(t)))
 
 where h(t) is the hazard function, H(t) is the cumulative hazard,
 f(t) = h(t)*S(t) is the pdf, and S(t) = exp(-H(t)) is the survival function.

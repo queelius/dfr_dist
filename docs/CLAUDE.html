@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">dfr.dist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,12 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="articles/automatic_differentiation.html">Automatic Differentiation for Maximum Likelihood Estimation</a></li>
+    <li><a class="dropdown-item" href="articles/comparing_ad_approaches.html">Comparing AD Approaches for Survival MLE</a></li>
+    <li><a class="dropdown-item" href="articles/custom_distributions.html">Creating Custom Distributions</a></li>
+    <li><a class="dropdown-item" href="articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
+    <li><a class="dropdown-item" href="articles/getting_started.html">Getting Started with dfr.dist</a></li>
+    <li><a class="dropdown-item" href="articles/reliability_engineering.html">Reliability Engineering Applications</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -50,10 +55,18 @@
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/build.html" class="external-link">build</a></span><span class="op">(</span><span class="op">)</span>         <span class="co"># Build package tarball</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/check.html" class="external-link">check</a></span><span class="op">(</span><span class="op">)</span>         <span class="co"># Run R CMD check</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="op">)</span>       <span class="co"># Install locally</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">test</a></span><span class="op">(</span><span class="op">)</span>          <span class="co"># Run tests</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">test</a></span><span class="op">(</span><span class="op">)</span>          <span class="co"># Run all tests</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">test</a></span><span class="op">(</span>filter <span class="op">=</span> <span class="st">"ad_integration"</span><span class="op">)</span>  <span class="co"># Run specific test file</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/build_vignettes.html" class="external-link">build_vignettes</a></span><span class="op">(</span><span class="op">)</span>    <span class="co"># Build vignettes</span></span>
-<span><span class="fu">pkgdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">build_site</a></span><span class="op">(</span><span class="op">)</span>          <span class="co"># Build package website</span></span></code></pre></div>
+<span><span class="fu">pkgdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">build_site</a></span><span class="op">(</span><span class="op">)</span>          <span class="co"># Build package website</span></span>
+<span><span class="fu">pkgdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/deploy_to_branch.html" class="external-link">deploy_to_branch</a></span><span class="op">(</span><span class="op">)</span>    <span class="co"># Deploy docs to GitHub Pages (gh-pages branch)</span></span>
+<span><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/package_coverage.html" class="external-link">package_coverage</a></span><span class="op">(</span><span class="op">)</span>       <span class="co"># Check test coverage</span></span></code></pre></div>
 <p>Always run <code><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">devtools::document()</a></code> after modifying roxygen2 comments. NAMESPACE is auto-generated - never edit manually.</p>
+</div>
+<div class="section level2">
+<h2 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a></h2>
+<p><strong>Required (Imports):</strong> - <code>stats</code>, <code>numDeriv</code> - numerical methods - <code>algebraic.dist</code> - distribution interface generics - <code>likelihood.model</code> - likelihood model interface - <code>generics</code> - generic function infrastructure</p>
+<p><strong>Optional (Suggests):</strong> - <code>femtograd</code> - enables AD-based exact gradients/Hessians (install from GitHub: <code>queelius/femtograd</code>) - <code>dualr</code> - forward-mode AD with convenience API (install from GitHub: <code>queelius/dualr</code>) - <code>testthat</code>, <code>knitr</code>, <code>rmarkdown</code> - testing and documentation</p>
 </div>
 <div class="section level2">
 <h2 id="core-architecture">Core Architecture<a class="anchor" aria-label="anchor" href="#core-architecture"></a></h2>
@@ -61,13 +74,21 @@
 <h3 id="the-dfr_dist-object">The <code>dfr_dist</code> Object<a class="anchor" aria-label="anchor" href="#the-dfr_dist-object"></a></h3>
 <p>The central abstraction in <code>R/dfr_dist.R</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span><span class="va">rate</span>, par <span class="op">=</span> <span class="cn">NULL</span>, eps <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span><span class="va">rate</span>, par <span class="op">=</span> <span class="cn">NULL</span>, eps <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>         ob_col <span class="op">=</span> <span class="st">"t"</span>, delta_col <span class="op">=</span> <span class="st">"delta"</span>,</span>
+<span>         cum_haz_rate <span class="op">=</span> <span class="cn">NULL</span>, score_fn <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <ul><li>
 <code>rate</code>: Function computing hazard rate h(t, par, …)</li>
 <li>
 <code>par</code>: Distribution parameters (can be NULL if unknown)</li>
 <li>
 <code>eps</code>: Epsilon for numerical integration/sampling</li>
+<li>
+<code>ob_col</code>, <code>delta_col</code>: Column names for survival data</li>
+<li>
+<code>cum_haz_rate</code>: Optional analytical H(t, par) for AD gradient computation</li>
+<li>
+<code>score_fn</code>: Optional analytical score for AD Hessian via Jacobian</li>
 </ul><p>Inherits from <code>"univariate_dist"</code> and <code>"dist"</code> classes, implementing the <code>algebraic.dist</code> interface.</p>
 </div>
 <div class="section level3">
@@ -86,7 +107,7 @@
 <span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span>rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="va">par</span>, par <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get hazard function (returns closure)</span></span>
-<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu">hazard</span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Use the closure</span></span>
 <span><span class="fu">h</span><span class="op">(</span>t <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>              <span class="co"># Uses default par = 1</span></span>
@@ -98,29 +119,29 @@
 <table class="table"><thead><tr class="header"><th>Method</th>
 <th>Returns</th>
 <th>Formula</th>
-</tr></thead><tbody><tr class="odd"><td><code>hazard()</code></td>
+</tr></thead><tbody><tr class="odd"><td><code><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard()</a></code></td>
 <td>h(t, par, …)</td>
 <td>Direct rate function</td>
 </tr><tr class="even"><td><code><a href="reference/cum_haz.html">cum_haz()</a></code></td>
 <td>H(t, par, …)</td>
 <td>∫₀ᵗ h(u) du (numerical)</td>
-</tr><tr class="odd"><td><code>surv()</code></td>
+</tr><tr class="odd"><td><code><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv()</a></code></td>
 <td>S(t, par, …)</td>
 <td>exp(-H(t))</td>
-</tr><tr class="even"><td><code>cdf()</code></td>
+</tr><tr class="even"><td><code><a href="https://queelius.github.io/algebraic.dist/reference/cdf.html" class="external-link">cdf()</a></code></td>
 <td>F(t, par, …)</td>
 <td>1 - S(t)</td>
-</tr><tr class="odd"><td><code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code></td>
+</tr><tr class="odd"><td><code><a href="https://rdrr.io/r/stats/density.html" class="external-link">density()</a></code></td>
 <td>f(t, par, …)</td>
 <td>h(t) × S(t)</td>
-</tr><tr class="even"><td><code>inv_cdf()</code></td>
+</tr><tr class="even"><td><code><a href="https://queelius.github.io/algebraic.dist/reference/inv_cdf.html" class="external-link">inv_cdf()</a></code></td>
 <td>t given F(t)</td>
 <td>Uses <code><a href="https://rdrr.io/r/stats/uniroot.html" class="external-link">uniroot()</a></code>
 </td>
-</tr><tr class="odd"><td><code>sampler()</code></td>
+</tr><tr class="odd"><td><code><a href="https://queelius.github.io/algebraic.dist/reference/sampler.html" class="external-link">sampler()</a></code></td>
 <td>Generates samples</td>
 <td>Inverse CDF sampling</td>
-</tr><tr class="even"><td><code>params()</code></td>
+</tr><tr class="even"><td><code><a href="https://queelius.github.io/algebraic.dist/reference/params.html" class="external-link">params()</a></code></td>
 <td>Resolved parameters</td>
 <td>Handles NA/NULL defaults</td>
 </tr></tbody></table></div>
@@ -135,23 +156,47 @@
 <td><code>ll &lt;- loglik(dist); ll(df, par)</code></td>
 </tr><tr class="even"><td><code><a href="https://queelius.github.io/likelihood.model/reference/score.html" class="external-link">score()</a></code></td>
 <td>Score function (gradient)</td>
-<td>Numerical gradient of loglik</td>
+<td>See fallback chain below</td>
 </tr><tr class="odd"><td><code><a href="https://queelius.github.io/likelihood.model/reference/hess_loglik.html" class="external-link">hess_loglik()</a></code></td>
 <td>Hessian of log-likelihood</td>
-<td>Numerical Hessian</td>
+<td>See fallback chain below</td>
 </tr><tr class="even"><td><code><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit()</a></code></td>
 <td>MLE solver</td>
-<td><code>solver &lt;- fit(dist); solver(df, par)</code></td>
+<td>
+<code>solver &lt;- fit(dist); result &lt;- solver(df, par)</code> → <code>fisher_mle</code>
+</td>
+</tr><tr class="odd"><td><code><a href="https://queelius.github.io/likelihood.model/reference/assumptions.html" class="external-link">assumptions()</a></code></td>
+<td>Model assumptions</td>
+<td>Returns character vector of assumptions</td>
 </tr></tbody></table></div>
 <div class="section level3">
+<h3 id="automatic-differentiation-integration">Automatic Differentiation Integration<a class="anchor" aria-label="anchor" href="#automatic-differentiation-integration"></a></h3>
+<p>The package optionally integrates with <code>femtograd</code> for exact gradient/Hessian computation:</p>
+<p><strong>Score function fallback chain:</strong> 1. Analytical <code>score_fn</code> if provided → exact 2. AD gradient via <code>femtograd</code> if <code>cum_haz_rate</code> provided → exact 3. Numerical gradient via <code><a href="https://rdrr.io/pkg/numDeriv/man/grad.html" class="external-link">numDeriv::grad()</a></code> → approximate</p>
+<p><strong>Hessian fallback chain (hybrid approach):</strong> 1. AD Jacobian of analytical <code>score_fn</code> via <code>femtograd</code> → exact 2. Numerical Hessian via <code><a href="https://rdrr.io/pkg/numDeriv/man/hessian.html" class="external-link">numDeriv::hessian()</a></code> → approximate</p>
+<p>The hybrid approach (analytical gradient + AD Jacobian) is often more practical than full AD because: - Gradients are easier to derive analytically than Hessians - Forward-mode AD Jacobian of a p-dimensional gradient costs O(p) passes - Works even when full AD through log-likelihood is impractical</p>
+<p><strong>Example with analytical score:</strong></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">exp_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
+<span>    rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    cum_haz_rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">*</span> <span class="va">t</span>,</span>
+<span>    score_fn <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">delta</span><span class="op">)</span> <span class="op">/</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">t</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Hessian computed via AD Jacobian of score_fn</span></span>
+<span><span class="va">H</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/hess_loglik.html" class="external-link">hess_loglik</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
+<span><span class="va">hess</span> <span class="op">&lt;-</span> <span class="fu">H</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>  <span class="co"># Uses femtograd if available</span></span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="survival-data-conventions">Survival Data Conventions<a class="anchor" aria-label="anchor" href="#survival-data-conventions"></a></h3>
-<p>Data frames passed to likelihood methods use: - <code>t</code> column (or <code>ob_col</code>): Observation times - <code>delta</code> column (or <code>delta_col</code>): Event indicators - <code>1</code> = exact observation (failure) - <code>0</code> = right-censored (survived past time t)</p>
-<p>Log-likelihood contributions: - Exact: log L_i = log h(t_i) - H(t_i) - Censored: log L_i = -H(t_i)</p>
+<p>Data frames passed to likelihood methods use: - <code>t</code> column (or <code>ob_col</code>): Observation times - <code>delta</code> column (or <code>delta_col</code>): Event indicators - <code>1</code> = exact observation (failure) - <code>0</code> = right-censored (survived past time t) - <code>-1</code> = left-censored (failed before time t)</p>
+<p>Log-likelihood contributions: - Exact (δ=1): log L_i = log h(t_i) - H(t_i) - Right-censored (δ=0): log L_i = -H(t_i) - Left-censored (δ=-1): log L_i = log(1 - exp(-H(t_i)))</p>
 </div>
 <div class="section level3">
 <h3 id="numerical-methods">Numerical Methods<a class="anchor" aria-label="anchor" href="#numerical-methods"></a></h3>
 <p><strong>Cumulative hazard</strong> uses <code><a href="https://rdrr.io/r/stats/integrate.html" class="external-link">stats::integrate()</a></code> with defaults: - subdivisions = 1000L, abs_tol = 1e-3 (overridable)</p>
-<p><strong>Sampling</strong> uses iterative rejection: 1. Start at t = 0, sample from Exp(rate(t, par)) 2. Accept if runif(1) ≤ S(t, par), else increment t by eps</p>
+<p><strong>Sampling</strong> uses inverse CDF method: 1. Generate u ~ Uniform(0, 1) 2. Return inv_cdf(u, par) via <code><a href="https://rdrr.io/r/stats/uniroot.html" class="external-link">uniroot()</a></code></p>
 </div>
 </div>
 <div class="section level2">
@@ -161,18 +206,23 @@
     ↓
 dfr.dist               # This package - DFR distributions
     ↓
-likelihood.model       # Likelihood model interface (dfr_dist satisfies this)
-    ↓
-algebraic.mle          # MLE algebra for hypothesis testing, model selection
-    ↓
-numerical.mle          # Optimization: gradient ascent, Newton-Raphson, etc.</code></pre>
+likelihood.model       # Likelihood model interface + fisher_mle class</code></pre>
 <div class="section level3">
 <h3 id="usage-with-mle">Usage with MLE<a class="anchor" aria-label="anchor" href="#usage-with-mle"></a></h3>
-<p>The <code>dfr_dist</code> object satisfies the <code>likelihood_model</code> interface, enabling:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Fit DFR distribution to data using algebraic.mle</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/algebraic.mle" class="external-link">algebraic.mle</a></span><span class="op">)</span></span>
-<span><span class="va">mle_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.mle/reference/mle.html" class="external-link">mle</a></span><span class="op">(</span><span class="va">dfr_model</span>, <span class="va">data</span>, <span class="va">start_params</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>dfr_dist</code> object implements the <code>likelihood_model</code> interface and has its own <code><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit()</a></code> method:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create distribution</span></span>
+<span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span>rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit to data</span></span>
+<span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"BFGS"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Result is a fisher_mle object with standard methods</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>      <span class="co"># Parameter estimates</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>      <span class="co"># Variance-covariance matrix</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>   <span class="co"># Confidence intervals</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>   <span class="co"># Full summary</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="series-system-packages">Series System Packages<a class="anchor" aria-label="anchor" href="#series-system-packages"></a></h3>
@@ -186,29 +236,90 @@ numerical.mle          # Optimization: gradient ascent, Newton-Raphson, etc.</co
 <ul><li>
 <strong>algebraic.dist</strong>: Provides generics (hazard, cdf, pdf, surv, etc.)</li>
 <li>
-<strong>likelihood.model</strong>: Defines likelihood interface (loglik, score, hess_loglik)</li>
+<strong>likelihood.model</strong>: Defines likelihood interface (loglik, score, hess_loglik) and fisher_mle class</li>
 <li>
-<strong>algebraic.mle</strong>: MLE algebra for inference</li>
-<li>
-<strong>numerical.mle</strong>: Numerical optimization methods</li>
+<strong>numerical.mle</strong>: Numerical optimization methods (optional, for advanced use)</li>
 <li>
 <strong>md.tools</strong>: Masked data utilities (Boolean matrix encoding/decoding)</li>
 </ul></div>
 </div>
 <div class="section level2">
+<h2 id="helper-distribution-constructors">Helper Distribution Constructors<a class="anchor" aria-label="anchor" href="#helper-distribution-constructors"></a></h2>
+<p>The package provides ready-to-use constructors for classic survival distributions:</p>
+<table class="table"><colgroup><col width="31%"><col width="39%"><col width="29%"></colgroup><thead><tr class="header"><th>Constructor</th>
+<th>Hazard Pattern</th>
+<th>Parameters</th>
+</tr></thead><tbody><tr class="odd"><td><code>dfr_exponential(lambda)</code></td>
+<td>Constant</td>
+<td>lambda = failure rate</td>
+</tr><tr class="even"><td><code>dfr_weibull(shape, scale)</code></td>
+<td>Power-law</td>
+<td>shape (k), scale (σ)</td>
+</tr><tr class="odd"><td><code>dfr_gompertz(a, b)</code></td>
+<td>Exponential growth</td>
+<td>a = initial hazard, b = growth rate</td>
+</tr><tr class="even"><td><code>dfr_loglogistic(alpha, beta)</code></td>
+<td>Non-monotonic</td>
+<td>alpha = scale, beta = shape</td>
+</tr></tbody></table><p>Each provides analytical <code>rate</code>, <code>cum_haz_rate</code>, and <code>score_fn</code> for optimal performance:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Quick creation with parameters</span></span>
+<span><span class="va">weib</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfr_weibull.html">dfr_weibull</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, scale <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Template for fitting (parameters supplied later)</span></span>
+<span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="fu"><a href="reference/dfr_weibull.html">dfr_weibull</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="diagnostic-methods">Diagnostic Methods<a class="anchor" aria-label="anchor" href="#diagnostic-methods"></a></h2>
+<table class="table"><thead><tr class="header"><th>Method</th>
+<th>Purpose</th>
+</tr></thead><tbody><tr class="odd"><td><code>residuals(dist, data, type)</code></td>
+<td>Cox-Snell or Martingale residuals</td>
+</tr><tr class="even"><td><code>plot(dist, what)</code></td>
+<td>Visualize survival, hazard, or cumhaz</td>
+</tr><tr class="odd"><td><code>qqplot_residuals(dist, data)</code></td>
+<td>Q-Q plot for model validation</td>
+</tr></tbody></table><p>Cox-Snell residuals should follow Exp(1) if model is correct.</p>
+</div>
+<div class="section level2">
 <h2 id="file-structure">File Structure<a class="anchor" aria-label="anchor" href="#file-structure"></a></h2>
 <ul><li>
-<code>R/dfr_dist.R</code>: Main S3 class and all methods (~340 lines)</li>
+<code>R/dfr_dist.R</code>: Main S3 class and all methods (~580 lines)</li>
+<li>
+<code>R/distributions.R</code>: Helper constructors (dfr_exponential, dfr_weibull, etc.)</li>
+<li>
+<code>R/diagnostics.R</code>: Residuals, plot, and Q-Q plot methods</li>
+<li>
+<code>R/ad_utils.R</code>: AD helpers for femtograd integration</li>
 <li>
 <code>R/generic_functions.R</code>: Generic <code><a href="reference/cum_haz.html">cum_haz()</a></code> declaration</li>
 <li>
 <code>R/utils.R</code>: Helper <code>get_params()</code> for parameter resolution</li>
 <li>
-<code>R/reexports.R</code>: Re-exports from likelihood.model (loglik, score, etc.)</li>
+<code>R/reexports.R</code>: Re-exports from likelihood.model and algebraic.dist</li>
 <li>
-<code>tests/testthat/test-likelihood_model.R</code>: Comprehensive tests for likelihood interface</li>
+<code>tests/testthat/test-dfr_dist.R</code>: Core distribution tests</li>
 <li>
-<code>vignettes/failure_rate.Rmd</code>: Main tutorial</li>
+<code>tests/testthat/test-distributions.R</code>: Tests for helper constructors</li>
+<li>
+<code>tests/testthat/test-diagnostics.R</code>: Tests for diagnostic methods</li>
+<li>
+<code>tests/testthat/test-ad_integration.R</code>: Tests for AD integration</li>
+<li>
+<code>tests/testthat/test-likelihood_model.R</code>: Likelihood interface tests</li>
+<li>
+<code>vignettes/getting_started.Rmd</code>: 5-minute quick start</li>
+<li>
+<code>vignettes/failure_rate.Rmd</code>: Hazard-based modeling deep dive</li>
+<li>
+<code>vignettes/custom_distributions.Rmd</code>: How to create custom distributions</li>
+<li>
+<code>vignettes/reliability_engineering.Rmd</code>: Real-world applications</li>
+<li>
+<code>vignettes/automatic_differentiation.Rmd</code>: AD integration tutorial</li>
+<li>
+<code>vignettes/comparing_ad_approaches.Rmd</code>: Comparison of AD approaches (dual vs femtograd vs numDeriv)</li>
 </ul></div>
 <div class="section level2">
 <h2 id="common-pitfalls">Common Pitfalls<a class="anchor" aria-label="anchor" href="#common-pitfalls"></a></h2>
@@ -220,6 +331,8 @@ numerical.mle          # Optimization: gradient ascent, Newton-Raphson, etc.</co
 <strong>Sampling efficiency</strong>: Rejection sampler can be slow for complex rate functions</li>
 <li>
 <strong>Closure pattern</strong>: Remember methods return functions, not values directly</li>
+<li>
+<strong>AD compatibility</strong>: When writing <code>score_fn</code> for AD Hessian, use <code>[[</code> indexing for parameters (e.g., <code>par[[1]]</code> not <code>par[1]</code>) to work with femtograd’s AD objects (dual numbers in forward-mode, value objects in reverse-mode)</li>
 </ol></div>
 </div>
 

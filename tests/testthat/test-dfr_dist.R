@@ -2,33 +2,9 @@
 #
 # These tests cover the existing distribution methods to ensure they work
 # correctly before and after adding likelihood_model support.
-
-# =============================================================================
-# Test Fixtures
-# =============================================================================
-
-# Helper: Create exponential DFR distribution
-make_exponential_dfr <- function(lambda = NULL) {
-  dfr_dist(
-    rate = function(t, par, ...) {
-      rep(par[1], length(t))
-    },
-    par = lambda
-  )
-}
-
-# Helper: Create Weibull DFR distribution
-make_weibull_dfr <- function(shape = NULL, scale = NULL) {
-  par <- if (!is.null(shape) && !is.null(scale)) c(shape, scale) else NULL
-  dfr_dist(
-    rate = function(t, par, ...) {
-      k <- par[1]
-      sigma <- par[2]
-      (k / sigma) * (t / sigma)^(k - 1)
-    },
-    par = par
-  )
-}
+#
+# Note: Test fixtures (make_exponential_dfr, make_weibull_dfr, etc.) are
+# defined in helper-fixtures.R and automatically loaded by testthat.
 
 # =============================================================================
 # Constructor Tests
@@ -263,20 +239,37 @@ test_that("cdf is monotonically increasing", {
   expect_true(all(diff(values) >= 0))
 })
 
+test_that("cdf with lower.limit = FALSE returns survival function", {
+  lambda <- 0.5
+  dist <- make_exponential_dfr(lambda = lambda)
+  F <- cdf(dist)
+  S <- surv(dist)
+
+  t <- 2
+  # lower.limit = FALSE should return S(t) = 1 - F(t)
+  expect_equal(F(t, lower.limit = FALSE), S(t), tolerance = 1e-6)
+
+  # Test log.p = TRUE with lower.limit = TRUE (log of CDF)
+  expect_equal(F(t, log.p = TRUE, lower.limit = TRUE), log(F(t)), tolerance = 1e-6)
+
+  # Test log.p = TRUE with lower.limit = FALSE (log of survival = -H(t))
+  expect_equal(F(t, log.p = TRUE, lower.limit = FALSE), log(S(t)), tolerance = 1e-6)
+})
+
 # =============================================================================
-# pdf() Method Tests
+# density() Method Tests
 # =============================================================================
 
-test_that("pdf returns a function", {
+test_that("density returns a function", {
   dist <- make_exponential_dfr(lambda = 1)
-  f <- pdf(dist)
+  f <- density(dist)
   expect_type(f, "closure")
 })
 
-test_that("pdf for exponential matches lambda * exp(-lambda*t)", {
+test_that("density for exponential matches lambda * exp(-lambda*t)", {
   lambda <- 0.5
   dist <- make_exponential_dfr(lambda = lambda)
-  f <- pdf(dist)
+  f <- density(dist)
 
   t <- 2
   expected <- lambda * exp(-lambda * t)
@@ -284,9 +277,9 @@ test_that("pdf for exponential matches lambda * exp(-lambda*t)", {
   expect_equal(f(t), expected, tolerance = 1e-4)
 })
 
-test_that("pdf equals hazard * survival", {
+test_that("density equals hazard * survival", {
   dist <- make_exponential_dfr(lambda = 1)
-  f <- pdf(dist)
+  f <- density(dist)
   h <- hazard(dist)
   S <- surv(dist)
 
@@ -297,9 +290,9 @@ test_that("pdf equals hazard * survival", {
   }
 })
 
-test_that("pdf integrates to approximately 1", {
+test_that("density integrates to approximately 1", {
   dist <- make_exponential_dfr(lambda = 1)
-  f <- pdf(dist)
+  f <- density(dist)
 
   # Numerical integration
   integral <- integrate(f, lower = 0, upper = 100)$value
@@ -307,10 +300,10 @@ test_that("pdf integrates to approximately 1", {
   expect_equal(integral, 1, tolerance = 1e-3)
 })
 
-test_that("pdf log argument works", {
+test_that("density log argument works", {
   lambda <- 1
   dist <- make_exponential_dfr(lambda = lambda)
-  f <- pdf(dist)
+  f <- density(dist)
 
   t <- 2
   expect_equal(f(t, log = TRUE), log(f(t)), tolerance = 1e-6)
@@ -468,4 +461,64 @@ test_that("vectorized operations work for hazard", {
 
   expect_length(results, 5)
   expect_true(all(results == 1))
+})
+
+test_that("hazard handles very small times", {
+  dist <- make_exponential_dfr(lambda = 1)
+  h <- hazard(dist)
+  S <- surv(dist)
+  f <- density(dist)
+
+  # Very small times should give finite results
+  small_t <- 1e-10
+  expect_true(is.finite(h(small_t)))
+  expect_true(is.finite(S(small_t)))
+  expect_true(is.finite(f(small_t)))
+})
+
+test_that("surv handles very large times", {
+  dist <- make_exponential_dfr(lambda = 1)
+  S <- surv(dist)
+
+  # Very large times should give S(t) very close to 0
+  expect_lt(S(50), 1e-10)
+  expect_true(S(50) >= 0)  # Non-negative
+})
+
+test_that("cdf handles very large times", {
+  dist <- make_exponential_dfr(lambda = 1)
+  F <- cdf(dist)
+
+  # Very large times should give F(t) very close to 1
+  expect_gt(F(50), 1 - 1e-10)
+  expect_true(F(50) <= 1)  # At most 1
+})
+
+test_that("Weibull handles shape near 1 (boundary case)", {
+  # Shape = 1 is exponential, shape near 1 tests numerical stability
+  dist_near_1 <- make_weibull_dfr(shape = 1.001, scale = 2)
+  dist_at_1 <- make_weibull_dfr(shape = 1.0, scale = 2)
+
+  h_near <- hazard(dist_near_1)
+  h_at <- hazard(dist_at_1)
+
+  # Should be stable and close near shape = 1
+  t <- 1
+  expect_true(is.finite(h_near(t)))
+  expect_equal(h_near(t), h_at(t), tolerance = 0.01)
+})
+
+test_that("methods handle single observation time", {
+  dist <- make_exponential_dfr(lambda = 0.5)
+
+  # Single time point should work
+  h <- hazard(dist)
+  S <- surv(dist)
+  F <- cdf(dist)
+  f <- density(dist)
+
+  expect_equal(h(2), 0.5)
+  expect_true(is.finite(S(2)))
+  expect_true(is.finite(F(2)))
+  expect_true(is.finite(f(2)))
 })

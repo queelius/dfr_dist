@@ -1,3 +1,20 @@
+# dfr.dist 0.5.0
+
+## Changes
+
+* Added helper distribution constructors: `dfr_exponential()`, `dfr_weibull()`,
+  `dfr_gompertz()`, `dfr_loglogistic()` with analytical hazard, cumulative
+  hazard, score, and Hessian functions where available.
+* Added diagnostic methods: `residuals()` (Cox-Snell and Martingale),
+  `plot()` (survival, hazard, cumulative hazard), `qqplot_residuals()`.
+* Added `density()` method (alias for pdf).
+* Added `assumptions()` method for listing model assumptions.
+* Added `kaplan_meier()` internal utility for empirical survival estimation.
+* Added support for left-censored observations (delta = -1).
+* Improved numerical stability in log-likelihood computation.
+* Removed femtograd dependency — users supply their own derivative functions
+  via `score_fn` and `hess_fn`, or the package falls back to numDeriv.
+
 # dfr.dist 0.1.0
 
 Initial release.

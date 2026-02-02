@@ -13,7 +13,7 @@ Initial release.
   [`cum_haz()`](https://queelius.github.io/dfr_dist/reference/cum_haz.md),
   [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html),
   [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html),
-  [`pdf()`](https://queelius.github.io/algebraic.dist/reference/pdf.html),
+  [`pdf()`](https://rdrr.io/r/grDevices/pdf.html),
   [`inv_cdf()`](https://queelius.github.io/algebraic.dist/reference/inv_cdf.html),
   [`sampler()`](https://queelius.github.io/algebraic.dist/reference/sampler.html)
 - Likelihood model interface:

@@ -7,7 +7,15 @@
 \alias{score}
 \alias{hess_loglik}
 \alias{is_likelihood_model}
+\alias{assumptions}
 \alias{fit}
+\alias{hazard}
+\alias{surv}
+\alias{cdf}
+\alias{inv_cdf}
+\alias{sampler}
+\alias{params}
+\alias{sup}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -15,8 +23,10 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
+  \item{algebraic.dist}{\code{\link[algebraic.dist]{cdf}}, \code{\link[algebraic.dist]{hazard}}, \code{\link[algebraic.dist]{inv_cdf}}, \code{\link[algebraic.dist]{params}}, \code{\link[algebraic.dist]{sampler}}, \code{\link[algebraic.dist]{sup}}, \code{\link[algebraic.dist]{surv}}}
+
   \item{generics}{\code{\link[generics]{fit}}}
 
-  \item{likelihood.model}{\code{\link[likelihood.model]{hess_loglik}}, \code{\link[likelihood.model]{is_likelihood_model}}, \code{\link[likelihood.model]{loglik}}, \code{\link[likelihood.model]{score}}}
+  \item{likelihood.model}{\code{\link[likelihood.model]{assumptions}}, \code{\link[likelihood.model]{hess_loglik}}, \code{\link[likelihood.model]{is_likelihood_model}}, \code{\link[likelihood.model]{loglik}}, \code{\link[likelihood.model]{score}}}
 }}
 

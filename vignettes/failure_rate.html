@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Dynamic Failure Rate Distributions</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Dynamic Failure Rate Distributions</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction" id="toc-introduction">Introduction</a>
+<ul>
+<li><a href="#why-hazard-based-parameterization" id="toc-why-hazard-based-parameterization">Why hazard-based
+parameterization?</a></li>
+<li><a href="#mathematical-background" id="toc-mathematical-background">Mathematical background</a></li>
+</ul></li>
+<li><a href="#getting-started" id="toc-getting-started">Getting
+Started</a>
+<ul>
+<li><a href="#creating-a-dfr-distribution" id="toc-creating-a-dfr-distribution">Creating a DFR
+distribution</a></li>
+<li><a href="#weibull-distribution" id="toc-weibull-distribution">Weibull distribution</a></li>
+</ul></li>
+<li><a href="#distribution-methods" id="toc-distribution-methods">Distribution Methods</a>
+<ul>
+<li><a href="#hazard-and-cumulative-hazard" id="toc-hazard-and-cumulative-hazard">Hazard and cumulative
+hazard</a></li>
+<li><a href="#survival-and-cdf" id="toc-survival-and-cdf">Survival and
+CDF</a></li>
+<li><a href="#pdf-density" id="toc-pdf-density">PDF (Density)</a></li>
+<li><a href="#quantile-function-inverse-cdf" id="toc-quantile-function-inverse-cdf">Quantile function (inverse
+CDF)</a></li>
+<li><a href="#sampling" id="toc-sampling">Sampling</a></li>
+<li><a href="#overriding-parameters" id="toc-overriding-parameters">Overriding parameters</a></li>
+</ul></li>
+<li><a href="#likelihood-model-interface" id="toc-likelihood-model-interface">Likelihood Model Interface</a>
+<ul>
+<li><a href="#log-likelihood-for-survival-data" id="toc-log-likelihood-for-survival-data">Log-likelihood for survival
+data</a></li>
+<li><a href="#creating-test-data" id="toc-creating-test-data">Creating
+test data</a></li>
+<li><a href="#computing-log-likelihood" id="toc-computing-log-likelihood">Computing log-likelihood</a></li>
+<li><a href="#score-function-gradient" id="toc-score-function-gradient">Score function (gradient)</a></li>
+<li><a href="#hessian-of-log-likelihood" id="toc-hessian-of-log-likelihood">Hessian of log-likelihood</a></li>
+</ul></li>
+<li><a href="#maximum-likelihood-estimation" id="toc-maximum-likelihood-estimation">Maximum Likelihood Estimation</a>
+<ul>
+<li><a href="#working-with-censored-data" id="toc-working-with-censored-data">Working with censored data</a></li>
+</ul></li>
+<li><a href="#example-weibull-mle" id="toc-example-weibull-mle">Example:
+Weibull MLE</a></li>
+<li><a href="#custom-hazard-functions" id="toc-custom-hazard-functions">Custom Hazard Functions</a>
+<ul>
+<li><a href="#bathtub-hazard" id="toc-bathtub-hazard">Bathtub
+hazard</a></li>
+<li><a href="#time-covariate-interaction" id="toc-time-covariate-interaction">Time-covariate interaction</a></li>
+</ul></li>
+<li><a href="#integration-with-algebraic.dist" id="toc-integration-with-algebraic.dist">Integration with
+algebraic.dist</a></li>
+<li><a href="#summary" id="toc-summary">Summary</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The <code>dfr.dist</code> package provides a flexible framework for
+working with survival distributions defined through their <strong>hazard
+(failure rate) functions</strong>. Instead of choosing from a fixed
+catalog of distributions, you directly specify the hazard function
+itself, giving complete flexibility to model systems with complex,
+time-varying failure patterns.</p>
+<div id="why-hazard-based-parameterization" class="section level3">
+<h3>Why hazard-based parameterization?</h3>
+<p>Traditional approaches use parametric families (Weibull, exponential,
+log-normal) that impose strong assumptions on failure rate behavior. The
+hazard function <span class="math inline">\(h(t)\)</span> provides a
+more intuitive parameterization for reliability:</p>
+<ul>
+<li><strong>Constant hazard</strong>: Exponential distribution
+(memoryless failures)</li>
+<li><strong>Increasing hazard</strong>: Wear-out phenomena</li>
+<li><strong>Decreasing hazard</strong>: Burn-in or infant mortality</li>
+<li><strong>Bathtub curve</strong>: Common in electronics and human
+mortality</li>
+</ul>
+</div>
+<div id="mathematical-background" class="section level3">
+<h3>Mathematical background</h3>
+<p>For a lifetime random variable <span class="math inline">\(T\)</span>, the instantaneous failure rate
+(hazard) is: <span class="math display">\[
+h(t) = \lim_{\Delta t \to 0} \frac{\Pr\{T \leq t + \Delta t | T &gt;
+t\}}{\Delta t} = \frac{f(t)}{S(t)}
+\]</span></p>
+<p>The cumulative hazard integrates the instantaneous rate: <span class="math display">\[
+H(t) = \int_0^t h(u) \, du
+\]</span></p>
+<p>From this, all other quantities follow:</p>
+<ul>
+<li><strong>Survival function</strong>: <span class="math inline">\(S(t)
+= \exp(-H(t))\)</span></li>
+<li><strong>CDF</strong>: <span class="math inline">\(F(t) = 1 -
+S(t)\)</span></li>
+<li><strong>PDF</strong>: <span class="math inline">\(f(t) = h(t) \cdot
+S(t)\)</span></li>
+</ul>
+</div>
+</div>
+<div id="getting-started" class="section level2">
+<h2>Getting Started</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(dfr.dist)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(algebraic.dist)</span></code></pre></div>
+<div id="creating-a-dfr-distribution" class="section level3">
+<h3>Creating a DFR distribution</h3>
+<p>Use <code>dfr_dist()</code> to create a distribution from a hazard
+function:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Exponential distribution: constant hazard h(t) = lambda</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>exp_dist <span class="ot">&lt;-</span> <span class="fu">dfr_dist</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">rate =</span> <span class="cf">function</span>(t, par, ...) <span class="fu">rep</span>(par[<span class="dv">1</span>], <span class="fu">length</span>(t)),</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">par =</span> <span class="fu">c</span>(<span class="at">lambda =</span> <span class="fl">0.5</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="fu">print</span>(exp_dist)</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; Dynamic failure rate (DFR) distribution with failure rate:</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; &lt;srcref: file &quot;&quot; chars 3:10 to 3:53&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; It has a survival function given by:</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt;     S(t|rate) = exp(-H(t,...))</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; where H(t,...) is the cumulative hazard function.</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="fu">is_dfr_dist</span>(exp_dist)</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>The <code>rate</code> function must accept:</p>
+<ul>
+<li><code>t</code>: time (scalar or vector)</li>
+<li><code>par</code>: parameter vector</li>
+<li><code>...</code>: additional arguments</li>
+</ul>
+</div>
+<div id="weibull-distribution" class="section level3">
+<h3>Weibull distribution</h3>
+<p>The Weibull distribution has hazard <span class="math inline">\(h(t)
+= \frac{k}{\sigma}\left(\frac{t}{\sigma}\right)^{k-1}\)</span>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>weibull_dist <span class="ot">&lt;-</span> <span class="fu">dfr_dist</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">rate =</span> <span class="cf">function</span>(t, par, ...) {</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    k <span class="ot">&lt;-</span> par[<span class="dv">1</span>]      <span class="co"># shape</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    sigma <span class="ot">&lt;-</span> par[<span class="dv">2</span>]  <span class="co"># scale</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    (k <span class="sc">/</span> sigma) <span class="sc">*</span> (t <span class="sc">/</span> sigma)<span class="sc">^</span>(k <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  },</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">par =</span> <span class="fu">c</span>(<span class="at">shape =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="dv">3</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="distribution-methods" class="section level2">
+<h2>Distribution Methods</h2>
+<p>All standard distribution functions are available:</p>
+<div id="hazard-and-cumulative-hazard" class="section level3">
+<h3>Hazard and cumulative hazard</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">hazard</span>(exp_dist)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>H <span class="ot">&lt;-</span> <span class="fu">cum_haz</span>(exp_dist)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># Evaluate at specific times</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="fu">h</span>(<span class="dv">1</span>)      <span class="co"># Hazard at t=1</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; lambda </span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt;    0.5</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="fu">h</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))  <span class="co"># Vectorized</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; lambda lambda lambda </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;    0.5    0.5    0.5</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="fu">H</span>(<span class="dv">2</span>)      <span class="co"># Cumulative hazard at t=2</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span></code></pre></div>
+</div>
+<div id="survival-and-cdf" class="section level3">
+<h3>Survival and CDF</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">surv</span>(exp_dist)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>F <span class="ot">&lt;-</span> <span class="fu">cdf</span>(exp_dist)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co"># Verify S(t) + F(t) = 1</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">c</span>(<span class="at">survival =</span> <span class="fu">S</span>(t), <span class="at">cdf =</span> <span class="fu">F</span>(t), <span class="at">sum =</span> <span class="fu">S</span>(t) <span class="sc">+</span> <span class="fu">F</span>(t))</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;  survival       cdf       sum </span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; 0.3678794 0.6321206 1.0000000</span></span></code></pre></div>
+</div>
+<div id="pdf-density" class="section level3">
+<h3>PDF (Density)</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Use stats::density which dfr.dist implements as density.dfr_dist</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>pdf_fn <span class="ot">&lt;-</span> <span class="fu">density</span>(exp_dist)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># For exponential: f(t) = lambda * exp(-lambda * t)</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="fu">c</span>(<span class="at">computed =</span> <span class="fu">pdf_fn</span>(t), <span class="at">analytical =</span> lambda <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>lambda <span class="sc">*</span> t))</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; computed.lambda      analytical </span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt;       0.3032653       0.3032653</span></span></code></pre></div>
+</div>
+<div id="quantile-function-inverse-cdf" class="section level3">
+<h3>Quantile function (inverse CDF)</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>Q <span class="ot">&lt;-</span> <span class="fu">inv_cdf</span>(exp_dist)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co"># Median of exponential is log(2)/lambda</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>median_computed <span class="ot">&lt;-</span> <span class="fu">Q</span>(<span class="fl">0.5</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>median_analytical <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="dv">2</span>) <span class="sc">/</span> <span class="fl">0.5</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="fu">c</span>(<span class="at">computed =</span> median_computed, <span class="at">analytical =</span> median_analytical)</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt;   computed analytical </span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt;   1.386294   1.386294</span></span></code></pre></div>
+</div>
+<div id="sampling" class="section level3">
+<h3>Sampling</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>samp <span class="ot">&lt;-</span> <span class="fu">sampler</span>(exp_dist)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">samp</span>(<span class="dv">1000</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co"># Compare sample mean to theoretical mean (1/lambda = 2)</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="fu">c</span>(<span class="at">sample_mean =</span> <span class="fu">mean</span>(samples), <span class="at">theoretical =</span> <span class="dv">1</span><span class="sc">/</span><span class="fl">0.5</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; sample_mean theoretical </span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt;     1.92733     2.00000</span></span></code></pre></div>
+</div>
+<div id="overriding-parameters" class="section level3">
+<h3>Overriding parameters</h3>
+<p>All methods accept a <code>par</code> argument to override default
+parameters:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">hazard</span>(exp_dist)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co"># Use default lambda = 0.5</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="fu">h</span>(<span class="dv">1</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; lambda </span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;    0.5</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co"># Override with lambda = 2</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="fu">h</span>(<span class="dv">1</span>, <span class="at">par =</span> <span class="fu">c</span>(<span class="dv">2</span>))</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span></code></pre></div>
+</div>
+</div>
+<div id="likelihood-model-interface" class="section level2">
+<h2>Likelihood Model Interface</h2>
+<p>The <code>dfr_dist</code> class implements the
+<code>likelihood_model</code> interface, enabling maximum likelihood
+estimation with survival data.</p>
+<div id="log-likelihood-for-survival-data" class="section level3">
+<h3>Log-likelihood for survival data</h3>
+<p>For exact observations (failures at known times): <span class="math display">\[
+\log L_i = \log h(t_i) - H(t_i)
+\]</span></p>
+<p>For right-censored observations (survived past time <span class="math inline">\(t\)</span>): <span class="math display">\[
+\log L_i = -H(t_i)
+\]</span></p>
+</div>
+<div id="creating-test-data" class="section level3">
+<h3>Creating test data</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Simulate exact failure times from exponential(lambda=1)</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>true_lambda <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">rexp</span>(n, <span class="at">rate =</span> true_lambda)</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co"># Create data frame with standard survival format</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co"># delta = 1 means exact observation, delta = 0 means censored</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>df_exact <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">t =</span> times, <span class="at">delta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n))</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="fu">head</span>(df_exact)</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt;            t delta</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt; 1 0.84345726     1</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; 2 0.57661027     1</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; 3 1.32905487     1</span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; 4 0.03157736     1</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt; 5 0.05621098     1</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; 6 0.31650122     1</span></span></code></pre></div>
+</div>
+<div id="computing-log-likelihood" class="section level3">
+<h3>Computing log-likelihood</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>dist <span class="ot">&lt;-</span> <span class="fu">dfr_dist</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">rate =</span> <span class="cf">function</span>(t, par, ...) <span class="fu">rep</span>(par[<span class="dv">1</span>], <span class="fu">length</span>(t)),</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">par =</span> <span class="cn">NULL</span>  <span class="co"># No default - must be supplied</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>)</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>ll <span class="ot">&lt;-</span> <span class="fu">loglik</span>(dist)</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co"># Evaluate at different parameter values</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="fu">ll</span>(df_exact, <span class="at">par =</span> <span class="fu">c</span>(<span class="fl">0.5</span>))  <span class="co"># lambda = 0.5</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#&gt; [1] -62.91663</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="fu">ll</span>(df_exact, <span class="at">par =</span> <span class="fu">c</span>(<span class="fl">1.0</span>))  <span class="co"># lambda = 1.0 (true value)</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#&gt; [1] -56.51854</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="fu">ll</span>(df_exact, <span class="at">par =</span> <span class="fu">c</span>(<span class="fl">2.0</span>))  <span class="co"># lambda = 2.0</span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt; [1] -78.37973</span></span></code></pre></div>
+<p>The log-likelihood should be highest near the true parameter
+value.</p>
+</div>
+<div id="score-function-gradient" class="section level3">
+<h3>Score function (gradient)</h3>
+<p>The score function is the gradient of the log-likelihood with respect
+to parameters. It’s computed numerically by default:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">score</span>(dist)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">s</span>(df_exact, <span class="at">par =</span> <span class="fu">c</span>(<span class="fl">1.0</span>))  <span class="co"># Should be close to 0 at MLE</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; [1] -6.518543</span></span></code></pre></div>
+</div>
+<div id="hessian-of-log-likelihood" class="section level3">
+<h3>Hessian of log-likelihood</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>H_ll <span class="ot">&lt;-</span> <span class="fu">hess_loglik</span>(dist)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>hess <span class="ot">&lt;-</span> <span class="fu">H_ll</span>(df_exact, <span class="at">par =</span> <span class="fu">c</span>(<span class="fl">1.0</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>hess  <span class="co"># Should be negative (concave at maximum)</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt;      [,1]</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt; [1,]  -50</span></span></code></pre></div>
+</div>
+</div>
+<div id="maximum-likelihood-estimation" class="section level2">
+<h2>Maximum Likelihood Estimation</h2>
+<p>The <code>fit()</code> function provides MLE estimation:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>solver <span class="ot">&lt;-</span> <span class="fu">fit</span>(dist)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co"># Find MLE starting from initial guess</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">solver</span>(df_exact, <span class="at">par =</span> <span class="fu">c</span>(<span class="fl">0.5</span>), <span class="at">method =</span> <span class="st">&quot;BFGS&quot;</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co"># Extract fitted parameters (fisher_mle uses coef())</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="fu">coef</span>(result)</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; [1] 0.8846654</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co"># Compare to analytical MLE: lambda_hat = n / sum(t)</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>analytical_mle <span class="ot">&lt;-</span> n <span class="sc">/</span> <span class="fu">sum</span>(times)</span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="fu">c</span>(<span class="at">fitted =</span> <span class="fu">coef</span>(result), <span class="at">analytical =</span> analytical_mle, <span class="at">true =</span> true_lambda)</span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt;     fitted analytical       true </span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt;  0.8846654  0.8846654  1.0000000</span></span></code></pre></div>
+<div id="working-with-censored-data" class="section level3">
+<h3>Working with censored data</h3>
+<p>Real survival data often includes censoring. Here’s an example with
+mixed data:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Some observations are censored (patient still alive at study end)</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>df_mixed <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>),</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="at">delta =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>)  <span class="co"># 0 = censored</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>)</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>ll <span class="ot">&lt;-</span> <span class="fu">loglik</span>(dist)</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># Fit with censored data</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>solver <span class="ot">&lt;-</span> <span class="fu">fit</span>(dist)</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">solver</span>(df_mixed, <span class="at">par =</span> <span class="fu">c</span>(<span class="fl">0.5</span>), <span class="at">method =</span> <span class="st">&quot;BFGS&quot;</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="fu">coef</span>(result)</span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; [1] 0.1388889</span></span></code></pre></div>
+</div>
+</div>
+<div id="example-weibull-mle" class="section level2">
+<h2>Example: Weibull MLE</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Create Weibull DFR</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>weibull <span class="ot">&lt;-</span> <span class="fu">dfr_dist</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">rate =</span> <span class="cf">function</span>(t, par, ...) {</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>    k <span class="ot">&lt;-</span> par[<span class="dv">1</span>]</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>    sigma <span class="ot">&lt;-</span> par[<span class="dv">2</span>]</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>    (k <span class="sc">/</span> sigma) <span class="sc">*</span> (t <span class="sc">/</span> sigma)<span class="sc">^</span>(k <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>  }</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>)</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co"># Simulate Weibull data (shape=2, scale=3)</span></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>true_shape <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>true_scale <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co"># Use inverse CDF sampling</span></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a>weibull_times <span class="ot">&lt;-</span> true_scale <span class="sc">*</span> (<span class="sc">-</span><span class="fu">log</span>(u))<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>true_shape)</span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a>df_weibull <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">t =</span> weibull_times, <span class="at">delta =</span> <span class="fu">rep</span>(<span class="dv">1</span>, n))</span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="co"># Fit</span></span>
+<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a>solver <span class="ot">&lt;-</span> <span class="fu">fit</span>(weibull)</span>
+<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">solver</span>(df_weibull, <span class="at">par =</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="fl">2.5</span>), <span class="at">method =</span> <span class="st">&quot;BFGS&quot;</span>)</span>
+<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a></span>
+<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a><span class="fu">c</span>(<span class="at">fitted_shape =</span> <span class="fu">coef</span>(result)[<span class="dv">1</span>], <span class="at">true_shape =</span> true_shape)</span>
+<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a><span class="co">#&gt; fitted_shape   true_shape </span></span>
+<span id="cb16-28"><a href="#cb16-28" tabindex="-1"></a><span class="co">#&gt;      1.92518      2.00000</span></span>
+<span id="cb16-29"><a href="#cb16-29" tabindex="-1"></a><span class="fu">c</span>(<span class="at">fitted_scale =</span> <span class="fu">coef</span>(result)[<span class="dv">2</span>], <span class="at">true_scale =</span> true_scale)</span>
+<span id="cb16-30"><a href="#cb16-30" tabindex="-1"></a><span class="co">#&gt; fitted_scale   true_scale </span></span>
+<span id="cb16-31"><a href="#cb16-31" tabindex="-1"></a><span class="co">#&gt;     2.788113     3.000000</span></span></code></pre></div>
+</div>
+<div id="custom-hazard-functions" class="section level2">
+<h2>Custom Hazard Functions</h2>
+<p>The real power of <code>dfr.dist</code> is modeling complex,
+non-standard hazard patterns.</p>
+<div id="bathtub-hazard" class="section level3">
+<h3>Bathtub hazard</h3>
+<p>A classic bathtub curve has three phases: 1. <strong>Infant
+mortality</strong>: High initial failure rate that decreases 2.
+<strong>Useful life</strong>: Low, relatively constant failure rate 3.
+<strong>Wear-out</strong>: Increasing failure rate as components age</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># h(t) = a * exp(-b*t) + c + d * t^k</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co"># Three components: infant mortality + baseline + wear-out</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>bathtub <span class="ot">&lt;-</span> <span class="fu">dfr_dist</span>(</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="at">rate =</span> <span class="cf">function</span>(t, par, ...) {</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>    a <span class="ot">&lt;-</span> par[<span class="dv">1</span>]  <span class="co"># infant mortality magnitude</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>    b <span class="ot">&lt;-</span> par[<span class="dv">2</span>]  <span class="co"># infant mortality decay rate</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>    c <span class="ot">&lt;-</span> par[<span class="dv">3</span>]  <span class="co"># baseline hazard (useful life)</span></span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>    d <span class="ot">&lt;-</span> par[<span class="dv">4</span>]  <span class="co"># wear-out coefficient</span></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>    k <span class="ot">&lt;-</span> par[<span class="dv">5</span>]  <span class="co"># wear-out exponent</span></span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>    a <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>b <span class="sc">*</span> t) <span class="sc">+</span> c <span class="sc">+</span> d <span class="sc">*</span> t<span class="sc">^</span>k</span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>  },</span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>  <span class="at">par =</span> <span class="fu">c</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="fl">0.02</span>, <span class="at">d =</span> <span class="fl">0.001</span>, <span class="at">k =</span> <span class="dv">2</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>)</span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co"># Plot the hazard function</span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>t_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="dv">15</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">hazard</span>(bathtub)</span>
+<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a><span class="fu">plot</span>(t_seq, <span class="fu">sapply</span>(t_seq, h), <span class="at">type =</span> <span class="st">&quot;l&quot;</span>,</span>
+<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;Time&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Hazard rate&quot;</span>,</span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Bathtub hazard curve&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" alt="Bathtub hazard curve showing three phases: high infant mortality at t=0 that decreases, then a constant useful life period, followed by increasing wear-out hazard." /></p>
+</div>
+<div id="time-covariate-interaction" class="section level3">
+<h3>Time-covariate interaction</h3>
+<p>Hazards can depend on covariates that modify the time effect:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># Proportional hazards with covariate x</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co"># h(t, x) = h0(t) * exp(beta * x)</span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co"># where h0(t) = Weibull baseline</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>ph_model <span class="ot">&lt;-</span> <span class="fu">dfr_dist</span>(</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>  <span class="at">rate =</span> <span class="cf">function</span>(t, par, <span class="at">x =</span> <span class="dv">0</span>, ...) {</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>    k <span class="ot">&lt;-</span> par[<span class="dv">1</span>]</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>    sigma <span class="ot">&lt;-</span> par[<span class="dv">2</span>]</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>    beta <span class="ot">&lt;-</span> par[<span class="dv">3</span>]</span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>    baseline <span class="ot">&lt;-</span> (k <span class="sc">/</span> sigma) <span class="sc">*</span> (t <span class="sc">/</span> sigma)<span class="sc">^</span>(k <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>    baseline <span class="sc">*</span> <span class="fu">exp</span>(beta <span class="sc">*</span> x)</span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>  },</span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>  <span class="at">par =</span> <span class="fu">c</span>(<span class="at">shape =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="dv">3</span>, <span class="at">beta =</span> <span class="fl">0.5</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>)</span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">hazard</span>(ph_model)</span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a><span class="co"># Hazard for different covariate values</span></span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a><span class="fu">h</span>(<span class="dv">2</span>, <span class="at">x =</span> <span class="dv">0</span>)  <span class="co"># Baseline</span></span>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a><span class="co">#&gt;     shape </span></span>
+<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a><span class="co">#&gt; 0.4444444</span></span>
+<span id="cb18-22"><a href="#cb18-22" tabindex="-1"></a><span class="fu">h</span>(<span class="dv">2</span>, <span class="at">x =</span> <span class="dv">1</span>)  <span class="co"># Higher risk group</span></span>
+<span id="cb18-23"><a href="#cb18-23" tabindex="-1"></a><span class="co">#&gt;    shape </span></span>
+<span id="cb18-24"><a href="#cb18-24" tabindex="-1"></a><span class="co">#&gt; 0.732765</span></span></code></pre></div>
+</div>
+</div>
+<div id="integration-with-algebraic.dist" class="section level2">
+<h2>Integration with algebraic.dist</h2>
+<p>The <code>dfr_dist</code> class inherits from
+<code>algebraic.dist</code> classes, providing access to additional
+functionality:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co"># Support is (0, Inf) for all DFR distributions</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>support <span class="ot">&lt;-</span> <span class="fu">sup</span>(exp_dist)</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="fu">print</span>(support)</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="co">#&gt; (0, Inf)</span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="co"># Parameters</span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="fu">params</span>(exp_dist)</span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="co">#&gt; lambda </span></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="co">#&gt;    0.5</span></span></code></pre></div>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>The <code>dfr.dist</code> package provides:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Flexible specification</strong>: Define distributions
+through hazard functions</li>
+<li><strong>Complete distribution interface</strong>: hazard, survival,
+CDF, PDF, quantiles, sampling</li>
+<li><strong>Likelihood model support</strong>: Log-likelihood, score,
+Hessian for MLE</li>
+<li><strong>Censoring support</strong>: Handle exact and right-censored
+survival data</li>
+<li><strong>Numerical integration</strong>: Automatic computation of
+cumulative hazard</li>
+</ol>
+<p>This makes it ideal for:</p>
+<ul>
+<li>Custom reliability models</li>
+<li>Survival analysis with non-standard hazard patterns</li>
+<li>Maximum likelihood estimation of hazard function parameters</li>
+<li>Simulation studies with flexible failure distributions</li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

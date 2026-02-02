@@ -1,5 +1,19 @@
 # dfr.dist
 
+- [dfr.dist](#dfrdist)
+  - [Why dfr.dist?](#why-dfrdist)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Quick Start](#quick-start)
+    - [Built-in Distributions](#built-in-distributions)
+    - [Maximum Likelihood Estimation](#maximum-likelihood-estimation)
+    - [Custom Hazard Functions](#custom-hazard-functions)
+    - [Model Diagnostics](#model-diagnostics)
+  - [Mathematical Background](#mathematical-background)
+  - [Likelihood for Survival Data](#likelihood-for-survival-data)
+  - [Documentation](#documentation)
+  - [Related Packages](#related-packages)
+
 **Dynamic Failure Rate Distributions for Survival Analysis**
 
 The `dfr.dist` package provides a flexible framework for specifying
@@ -8,15 +22,31 @@ functions**. Instead of choosing from a fixed catalog of distributions,
 you directly specify the hazard function, giving complete control over
 time-varying failure patterns.
 
+## Why dfr.dist?
+
+| Feature                    | dfr.dist                             | survival     | flexsurv |
+|----------------------------|--------------------------------------|--------------|----------|
+| Custom hazard functions    | **Yes**                              | No           | Limited  |
+| Built-in distributions     | Exp, Weibull, Gompertz, Log-logistic | Weibull, Exp | Many     |
+| Automatic differentiation  | **Yes** (via femtograd)              | No           | No       |
+| Exact Hessian computation  | **Yes**                              | No           | No       |
+| Likelihood model interface | **Full**                             | Basic        | Partial  |
+| Right-censoring support    | Yes                                  | Yes          | Yes      |
+
 ## Features
 
 - **Flexible hazard specification**: Define any hazard function h(t,
   par, …)
-- **Complete distribution interface**: Automatic computation of
-  survival, CDF, PDF, quantiles
+- **Built-in distributions**: Exponential, Weibull, Gompertz,
+  Log-logistic with optimized implementations
+- **Complete distribution interface**: hazard, survival, CDF, PDF,
+  quantiles, sampling
 - **Likelihood model support**: Log-likelihood, score, Hessian for MLE
+- **Automatic differentiation**: Exact gradients and Hessians via
+  femtograd integration
+- **Model diagnostics**: Residuals (Cox-Snell, Martingale) and Q-Q plots
 - **Censoring support**: Handle exact and right-censored survival data
-- **Integration with ecosystem**: Works with `algebraic.dist`,
+- **Ecosystem integration**: Works with `algebraic.dist`,
   `likelihood.model`, `algebraic.mle`
 
 ## Installation
@@ -32,22 +62,36 @@ devtools::install_github("queelius/dfr_dist")
 
 ``` r
 library(dfr.dist)
-library(algebraic.dist)
 ```
 
-### Define a distribution via its hazard function
+### Built-in Distributions
+
+Use the convenient constructors for classic survival distributions:
 
 ``` r
-# Exponential distribution: constant hazard h(t) = lambda
-exp_dist <- dfr_dist(
-  rate = function(t, par, ...) rep(par[1], length(t)),
-  par = c(lambda = 0.5)
-)
+# Exponential: constant hazard (memoryless)
+exp_dist <- dfr_exponential(lambda = 0.5)
 
-# All distribution functions are automatically available
+# Weibull: power-law hazard (wear-out or infant mortality)
+weib_dist <- dfr_weibull(shape = 2, scale = 3)
+
+# Gompertz: exponentially increasing hazard (aging)
+gomp_dist <- dfr_gompertz(a = 0.01, b = 0.1)
+
+# Log-logistic: non-monotonic hazard (increases then decreases)
+ll_dist <- dfr_loglogistic(alpha = 10, beta = 2)
+```
+
+All distribution functions are automatically available:
+
+``` r
 S <- surv(exp_dist)
 S(2)  # Survival probability at t=2
 #> [1] 0.3678794
+
+h <- hazard(weib_dist)
+h(1)  # Hazard at t=1
+#> [1] 0.2222222
 ```
 
 ### Maximum Likelihood Estimation
@@ -58,25 +102,20 @@ set.seed(42)
 times <- rexp(50, rate = 1)
 df <- data.frame(t = times, delta = 1)
 
-# Create distribution without fixed parameters
-dist <- dfr_dist(
-  rate = function(t, par, ...) rep(par[1], length(t))
-)
-
 # Fit via MLE
-solver <- fit(dist)
+solver <- fit(dfr_exponential())
 result <- solver(df, par = c(0.5), method = "BFGS")
-params(result)
+coef(result)  # Estimated rate
 #> [1] 0.8808457
 ```
 
-### Custom hazard functions
+### Custom Hazard Functions
 
-Model complex failure patterns like bathtub curves (infant mortality +
-useful life + wear-out):
+Model complex failure patterns like bathtub curves:
 
 ``` r
 # h(t) = a*exp(-b*t) + c + d*t^k
+# Infant mortality + useful life + wear-out
 bathtub <- dfr_dist(
   rate = function(t, par, ...) {
     par[1] * exp(-par[2] * t) + par[3] + par[4] * t^par[5]
@@ -89,9 +128,21 @@ curve(sapply(x, h), 0, 15, xlab = "Time", ylab = "Hazard rate",
       main = "Bathtub hazard curve")
 ```
 
-![plot of chunk bathtub](reference/figures/README-bathtub-1.png)
+![](reference/figures/README-bathtub-1.png)
 
-plot of chunk bathtub
+### Model Diagnostics
+
+Check model fit with residual analysis:
+
+``` r
+# Fit exponential to data
+fitted_exp <- dfr_exponential(lambda = coef(result))
+
+# Cox-Snell residuals Q-Q plot
+qqplot_residuals(fitted_exp, df)
+```
+
+![](reference/figures/README-diagnostics-1.png)
 
 ## Mathematical Background
 
@@ -104,7 +155,7 @@ From the hazard, all other quantities follow:
 | Cumulative hazard | $H(t) = \int_{0}^{t}h(u)du$ | [`cum_haz()`](https://queelius.github.io/dfr_dist/reference/cum_haz.md)   |
 | Survival          | $S(t) = e^{- H{(t)}}$       | [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html) |
 | CDF               | $F(t) = 1 - S(t)$           | [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html)   |
-| PDF               | $f(t) = h(t) \cdot S(t)$    | [`pdf()`](https://queelius.github.io/algebraic.dist/reference/pdf.html)   |
+| PDF               | $f(t) = h(t) \cdot S(t)$    | [`density()`](https://rdrr.io/r/stats/density.html)                       |
 
 ## Likelihood for Survival Data
 
@@ -119,15 +170,36 @@ df <- data.frame(
   delta = c(1, 1, 0, 1, 0)  # 1 = exact, 0 = censored
 )
 
-ll <- loglik(dist)
+ll <- loglik(dfr_exponential())
 ll(df, par = c(0.5))
 #> [1] -9.579442
 ```
 
 ## Documentation
 
-- [Vignette: Dynamic Failure Rate
-  Distributions](https://queelius.github.io/dfr_dist/articles/failure_rate.html)
+**Getting Started:**
+
+- [Quick Start
+  Guide](https://queelius.github.io/dfr_dist/articles/getting_started.html) -
+  5-minute introduction
+- [Dynamic Failure Rate
+  Distributions](https://queelius.github.io/dfr_dist/articles/failure_rate.html) -
+  Core concepts
+
+**Creating Custom Distributions:**
+
+- [Creating Custom
+  Distributions](https://queelius.github.io/dfr_dist/articles/custom_distributions.html) -
+  Build your own
+- [Automatic
+  Differentiation](https://queelius.github.io/dfr_dist/articles/automatic_differentiation.html) -
+  Exact derivatives
+
+**Applications:**
+
+- [Reliability
+  Engineering](https://queelius.github.io/dfr_dist/articles/reliability_engineering.html) -
+  Real-world examples
 - [Function Reference](https://queelius.github.io/dfr_dist/reference/)
 
 ## Related Packages
@@ -138,10 +210,21 @@ ll(df, par = c(0.5))
   Likelihood model framework
 - [`algebraic.mle`](https://github.com/queelius/algebraic.mle): MLE
   utilities
+- [`femtograd`](https://github.com/queelius/femtograd): Forward-mode
+  automatic differentiation
 
 # Package index
 
 ## All functions
+
+- [`ad_hessian()`](https://queelius.github.io/dfr_dist/reference/ad_hessian.md)
+  : Compute Hessian via AD Jacobian of gradient
+
+- [`ad_utils`](https://queelius.github.io/dfr_dist/reference/ad_utils.md)
+  : Automatic Differentiation Utilities for dfr.dist
+
+- [`assumptions(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/assumptions.dfr_dist.md)
+  : Retrieve the assumptions a DFR distribution makes about the data
 
 - [`cdf(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/cdf.dfr_dist.md)
   :
@@ -154,17 +237,50 @@ ll(df, par = c(0.5))
 - [`cum_haz(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/cum_haz.dfr_dist.md)
   :
 
-  Method for obtaining the hazard function of a `dfr_dist` object.
+  Method for obtaining the cumulative hazard function of a `dfr_dist`
+  object.
+
+- [`density(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/density.dfr_dist.md)
+  :
+
+  Method for obtaining the density (pdf) of a `dfr_dist` object.
 
 - [`dfr_dist()`](https://queelius.github.io/dfr_dist/reference/dfr_dist.md)
   :
 
   Constructor for `dfr_dist` objects
 
+- [`dfr_exponential()`](https://queelius.github.io/dfr_dist/reference/dfr_exponential.md)
+  : Exponential Distribution (Constant Hazard)
+
+- [`dfr_gompertz()`](https://queelius.github.io/dfr_dist/reference/dfr_gompertz.md)
+  : Gompertz Distribution (Exponential Growth Hazard)
+
+- [`dfr_loglogistic()`](https://queelius.github.io/dfr_dist/reference/dfr_loglogistic.md)
+  : Log-Logistic Distribution (Non-Monotonic Hazard)
+
+- [`dfr_weibull()`](https://queelius.github.io/dfr_dist/reference/dfr_weibull.md)
+  : Weibull Distribution (Power-Law Hazard)
+
+- [`diagnostics`](https://queelius.github.io/dfr_dist/reference/diagnostics.md)
+  : Diagnostic Methods for DFR Distributions
+
+- [`distributions`](https://queelius.github.io/dfr_dist/reference/distributions.md)
+  : Classic Survival Distribution Constructors
+
+- [`fit(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/fit.dfr_dist.md)
+  : MLE solver for dfr_dist objects
+
+- [`has_femtograd()`](https://queelius.github.io/dfr_dist/reference/has_femtograd.md)
+  : Check if femtograd is available
+
 - [`hazard(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/hazard.dfr_dist.md)
   :
 
   Method for obtaining the hazard function of a `dfr_dist` object.
+
+- [`hess_loglik(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/hess_loglik.dfr_dist.md)
+  : Hessian of log-likelihood for dfr_dist
 
 - [`inv_cdf(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/inv_cdf.dfr_dist.md)
   : Method for obtaining the quantile (inverse cdf) of an object.
@@ -184,20 +300,27 @@ ll(df, par = c(0.5))
 
   Method for obtaining the parameters of a `dfr_dist` object.
 
-- [`pdf(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/pdf.dfr_dist.md)
-  :
-
-  Method for obtaining the pdf of a `dfr_dist` object.
+- [`plot(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/plot.dfr_dist.md)
+  : Plot DFR Distribution Functions
 
 - [`print(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/print.dfr_dist.md)
   :
 
   Print method for `dfr_dist` objects.
 
+- [`qqplot_residuals()`](https://queelius.github.io/dfr_dist/reference/qqplot_residuals.md)
+  : Q-Q Plot for Cox-Snell Residuals
+
+- [`residuals(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/residuals.dfr_dist.md)
+  : Residuals for DFR Distribution Fits
+
 - [`sampler(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/sampler.dfr_dist.md)
   :
 
   Sampling function for `dfr_dist` objects.
+
+- [`score(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/score.dfr_dist.md)
+  : Score function (gradient of log-likelihood) for dfr_dist
 
 - [`sup(`*`<dfr_dist>`*`)`](https://queelius.github.io/dfr_dist/reference/sup.dfr_dist.md)
   :
@@ -213,5 +336,15 @@ ll(df, par = c(0.5))
 
 ### All vignettes
 
+- [Automatic Differentiation for Maximum Likelihood
+  Estimation](https://queelius.github.io/dfr_dist/articles/automatic_differentiation.md):
+- [Comparing AD Approaches for Survival
+  MLE](https://queelius.github.io/dfr_dist/articles/comparing_ad_approaches.md):
+- [Creating Custom
+  Distributions](https://queelius.github.io/dfr_dist/articles/custom_distributions.md):
 - [Dynamic Failure Rate
   Distributions](https://queelius.github.io/dfr_dist/articles/failure_rate.md):
+- [Getting Started with
+  dfr.dist](https://queelius.github.io/dfr_dist/articles/getting_started.md):
+- [Reliability Engineering
+  Applications](https://queelius.github.io/dfr_dist/articles/reliability_engineering.md):

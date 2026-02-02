@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,12 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Automatic Differentiation for Maximum Likelihood Estimation</a></li>
+    <li><a class="dropdown-item" href="../articles/comparing_ad_approaches.html">Comparing AD Approaches for Survival MLE</a></li>
+    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+    <li><a class="dropdown-item" href="../articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
+    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started with dfr.dist</a></li>
+    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering Applications</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -43,7 +48,7 @@
 <h3 id="features-0-1-0">Features<a class="anchor" aria-label="anchor" href="#features-0-1-0"></a></h3>
 <ul><li>
 <code><a href="../reference/dfr_dist.html">dfr_dist()</a></code> constructor for creating distributions from hazard functions</li>
-<li>Complete distribution interface: <code><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard()</a></code>, <code><a href="../reference/cum_haz.html">cum_haz()</a></code>, <code><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv()</a></code>, <code><a href="https://queelius.github.io/algebraic.dist/reference/cdf.html" class="external-link">cdf()</a></code>, <code><a href="https://queelius.github.io/algebraic.dist/reference/pdf.html" class="external-link">pdf()</a></code>, <code><a href="https://queelius.github.io/algebraic.dist/reference/inv_cdf.html" class="external-link">inv_cdf()</a></code>, <code><a href="https://queelius.github.io/algebraic.dist/reference/sampler.html" class="external-link">sampler()</a></code>
+<li>Complete distribution interface: <code><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard()</a></code>, <code><a href="../reference/cum_haz.html">cum_haz()</a></code>, <code><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv()</a></code>, <code><a href="https://queelius.github.io/algebraic.dist/reference/cdf.html" class="external-link">cdf()</a></code>, <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code>, <code><a href="https://queelius.github.io/algebraic.dist/reference/inv_cdf.html" class="external-link">inv_cdf()</a></code>, <code><a href="https://queelius.github.io/algebraic.dist/reference/sampler.html" class="external-link">sampler()</a></code>
 </li>
 <li>Likelihood model interface: <code><a href="https://queelius.github.io/likelihood.model/reference/loglik.html" class="external-link">loglik()</a></code>, <code><a href="https://queelius.github.io/likelihood.model/reference/score.html" class="external-link">score()</a></code>, <code><a href="https://queelius.github.io/likelihood.model/reference/hess_loglik.html" class="external-link">hess_loglik()</a></code>, <code><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit()</a></code>
 </li>

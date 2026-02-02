@@ -7,7 +7,15 @@ and that the support is (0, Inf).
 ## Usage
 
 ``` r
-dfr_dist(rate, par = NULL, eps = 0.01, ob_col = "t", delta_col = "delta")
+dfr_dist(
+  rate,
+  par = NULL,
+  eps = 0.01,
+  ob_col = "t",
+  delta_col = "delta",
+  cum_haz_rate = NULL,
+  score_fn = NULL
+)
 ```
 
 ## Arguments
@@ -34,6 +42,18 @@ dfr_dist(rate, par = NULL, eps = 0.01, ob_col = "t", delta_col = "delta")
   The column name for event indicators in data frames. Uses standard
   survival analysis convention: 1 = event observed (exact), 0 =
   right-censored. Defaults to "delta".
+
+- cum_haz_rate:
+
+  Optional analytical cumulative hazard function H(t, par). If provided,
+  enables exact AD-based gradient computation. Should return the
+  integral of rate from 0 to t.
+
+- score_fn:
+
+  Optional analytical score function score(df, par). If provided,
+  enables exact AD-based Hessian computation via Jacobian of the score.
+  Should return gradient vector.
 
 ## Value
 

@@ -28,13 +28,27 @@ distributions through their **hazard (failure rate) functions**. Instead of
 choosing from a fixed catalog of distributions, you directly specify the hazard
 function, giving complete control over time-varying failure patterns.
 
+## Why dfr.dist?
+
+| Feature | dfr.dist | survival | flexsurv |
+|---------|----------|----------|----------|
+| Custom hazard functions | **Yes** | No | Limited |
+| Built-in distributions | Exp, Weibull, Gompertz, Log-logistic | Weibull, Exp | Many |
+| Automatic differentiation | **Yes** (via femtograd) | No | No |
+| Exact Hessian computation | **Yes** | No | No |
+| Likelihood model interface | **Full** | Basic | Partial |
+| Right-censoring support | Yes | Yes | Yes |
+
 ## Features
 
 - **Flexible hazard specification**: Define any hazard function h(t, par, ...)
-- **Complete distribution interface**: Automatic computation of survival, CDF, PDF, quantiles
+- **Built-in distributions**: Exponential, Weibull, Gompertz, Log-logistic with optimized implementations
+- **Complete distribution interface**: hazard, survival, CDF, PDF, quantiles, sampling
 - **Likelihood model support**: Log-likelihood, score, Hessian for MLE
+- **Automatic differentiation**: Exact gradients and Hessians via femtograd integration
+- **Model diagnostics**: Residuals (Cox-Snell, Martingale) and Q-Q plots
 - **Censoring support**: Handle exact and right-censored survival data
-- **Integration with ecosystem**: Works with `algebraic.dist`, `likelihood.model`, `algebraic.mle`
+- **Ecosystem integration**: Works with `algebraic.dist`, `likelihood.model`, `algebraic.mle`
 
 ## Installation
 
@@ -49,48 +63,57 @@ devtools::install_github("queelius/dfr_dist")
 
 ```{r setup, message=FALSE, warning=FALSE}
 library(dfr.dist)
-library(algebraic.dist)
 ```
 
-### Define a distribution via its hazard function
+### Built-in Distributions
 
-```{r}
-# Exponential distribution: constant hazard h(t) = lambda
-exp_dist <- dfr_dist(
-  rate = function(t, par, ...) rep(par[1], length(t)),
-  par = c(lambda = 0.5)
-)
+Use the convenient constructors for classic survival distributions:
 
-# All distribution functions are automatically available
+```{r builtin}
+# Exponential: constant hazard (memoryless)
+exp_dist <- dfr_exponential(lambda = 0.5)
+
+# Weibull: power-law hazard (wear-out or infant mortality)
+weib_dist <- dfr_weibull(shape = 2, scale = 3)
+
+# Gompertz: exponentially increasing hazard (aging)
+gomp_dist <- dfr_gompertz(a = 0.01, b = 0.1)
+
+# Log-logistic: non-monotonic hazard (increases then decreases)
+ll_dist <- dfr_loglogistic(alpha = 10, beta = 2)
+```
+
+All distribution functions are automatically available:
+
+```{r methods}
 S <- surv(exp_dist)
 S(2)  # Survival probability at t=2
+
+h <- hazard(weib_dist)
+h(1)  # Hazard at t=1
 ```
 
 ### Maximum Likelihood Estimation
 
-```{r}
+```{r mle}
 # Simulate failure times
 set.seed(42)
 times <- rexp(50, rate = 1)
 df <- data.frame(t = times, delta = 1)
 
-# Create distribution without fixed parameters
-dist <- dfr_dist(
-  rate = function(t, par, ...) rep(par[1], length(t))
-)
-
 # Fit via MLE
-solver <- fit(dist)
+solver <- fit(dfr_exponential())
 result <- solver(df, par = c(0.5), method = "BFGS")
-params(result)
+coef(result)  # Estimated rate
 ```
 
-### Custom hazard functions
+### Custom Hazard Functions
 
-Model complex failure patterns like bathtub curves (infant mortality + useful life + wear-out):
+Model complex failure patterns like bathtub curves:
 
 ```{r bathtub, fig.height=4}
 # h(t) = a*exp(-b*t) + c + d*t^k
+# Infant mortality + useful life + wear-out
 bathtub <- dfr_dist(
   rate = function(t, par, ...) {
     par[1] * exp(-par[2] * t) + par[3] + par[4] * t^par[5]
@@ -101,6 +124,18 @@ bathtub <- dfr_dist(
 h <- hazard(bathtub)
 curve(sapply(x, h), 0, 15, xlab = "Time", ylab = "Hazard rate",
       main = "Bathtub hazard curve")
+```
+
+### Model Diagnostics
+
+Check model fit with residual analysis:
+
+```{r diagnostics}
+# Fit exponential to data
+fitted_exp <- dfr_exponential(lambda = coef(result))
+
+# Cox-Snell residuals Q-Q plot
+qqplot_residuals(fitted_exp, df)
 ```
 
 ## Mathematical Background
@@ -115,7 +150,7 @@ From the hazard, all other quantities follow:
 | Cumulative hazard | $H(t) = \int_0^t h(u) du$ | `cum_haz()` |
 | Survival | $S(t) = e^{-H(t)}$ | `surv()` |
 | CDF | $F(t) = 1 - S(t)$ | `cdf()` |
-| PDF | $f(t) = h(t) \cdot S(t)$ | `pdf()` |
+| PDF | $f(t) = h(t) \cdot S(t)$ | `density()` |
 
 ## Likelihood for Survival Data
 
@@ -123,20 +158,32 @@ For exact observations: $\log L = \log h(t) - H(t)$
 
 For right-censored: $\log L = -H(t)$
 
-```{r}
+```{r likelihood}
 # Mixed data with censoring
 df <- data.frame(
   t = c(1, 2, 3, 4, 5),
   delta = c(1, 1, 0, 1, 0)  # 1 = exact, 0 = censored
 )
 
-ll <- loglik(dist)
+ll <- loglik(dfr_exponential())
 ll(df, par = c(0.5))
 ```
 
 ## Documentation
 
-- [Vignette: Dynamic Failure Rate Distributions](https://queelius.github.io/dfr_dist/articles/failure_rate.html)
+**Getting Started:**
+
+- [Quick Start Guide](https://queelius.github.io/dfr_dist/articles/getting_started.html) - 5-minute introduction
+- [Dynamic Failure Rate Distributions](https://queelius.github.io/dfr_dist/articles/failure_rate.html) - Core concepts
+
+**Creating Custom Distributions:**
+
+- [Creating Custom Distributions](https://queelius.github.io/dfr_dist/articles/custom_distributions.html) - Build your own
+- [Automatic Differentiation](https://queelius.github.io/dfr_dist/articles/automatic_differentiation.html) - Exact derivatives
+
+**Applications:**
+
+- [Reliability Engineering](https://queelius.github.io/dfr_dist/articles/reliability_engineering.html) - Real-world examples
 - [Function Reference](https://queelius.github.io/dfr_dist/reference/)
 
 ## Related Packages
@@ -144,3 +191,4 @@ ll(df, par = c(0.5))
 - [`algebraic.dist`](https://github.com/queelius/algebraic.dist): Generic distribution interface
 - [`likelihood.model`](https://github.com/queelius/likelihood.model): Likelihood model framework
 - [`algebraic.mle`](https://github.com/queelius/algebraic.mle): MLE utilities
+- [`femtograd`](https://github.com/queelius/femtograd): Automatic differentiation via computational graphs

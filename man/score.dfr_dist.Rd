@@ -16,6 +16,6 @@ A function that computes the score vector
 }
 \description{
 Returns a function that computes the score (gradient of log-likelihood)
-with respect to parameters. Uses analytical score if provided, otherwise
-falls back to numerical differentiation.
+with respect to parameters. Uses user-provided score function if available,
+otherwise falls back to numerical differentiation via numDeriv::grad.
 }
