@@ -34,7 +34,7 @@ Every `dfr_dist` can provide up to three functions:
 |----------|---------|-----------|
 | `rate` | Hazard h(t, par) | **Yes** |
 | `cum_haz_rate` | Cumulative hazard H(t, par) | Optional (computed numerically if not provided) |
-| `score_fn` | Score function ∂ℓ/∂θ | Optional (enables exact Hessian via AD) |
+| `score_fn` | Score function ∂ℓ/∂θ | Optional (exact gradient for faster MLE) |
 
 Let's see how to provide each.
 
@@ -96,7 +96,7 @@ S(10)  # exp(-1.5) ≈ 0.223
 exp(-1.5)
 ```
 
-**Pros**: Faster, exact cumulative hazard; enables AD gradient computation.
+**Pros**: Faster, exact cumulative hazard; improves all downstream computations.
 
 **Cons**: More work to derive the integral.
 
@@ -356,17 +356,17 @@ text(17, 0.08, "Wear-out", cex = 0.8)
 | Level | Provide | Benefits |
 |-------|---------|----------|
 | 1 | `rate` only | Quick prototyping |
-| 2 | + `cum_haz_rate` | Faster, exact survival; AD gradients |
+| 2 | + `cum_haz_rate` | Faster, exact survival and CDF |
 | 3 | + `score_fn` | Exact Hessian; fastest MLE |
 
 **Rule of thumb**:
 
 - Start with Level 1 to verify your model works
-- Add Level 2 if you need better performance or AD support
+- Add Level 2 if you need better performance
 - Add Level 3 for production-quality MLE fitting
 
 ## Next Steps
 
-- **`vignette("automatic_differentiation")`** - Deep dive into AD integration
 - **`vignette("reliability_engineering")`** - Real-world applications
-- **Package source code** - Study `R/distributions.R` for more examples
+- **`vignette("automatic_differentiation")`** - Analytical derivatives for MLE
+- **Package source code** - Study `R/distributions.R` for implementation examples

@@ -18,6 +18,11 @@ knitr::opts_chunk$set(
 
 ## 5-Minute Quick Start
 
+**The Scenario**: You have failure-time data from 50 devices. Some failed during
+testing; others were still running when the test ended (right-censored). You
+suspect the failure rate increases over time. You need to: (1) fit a model,
+(2) estimate parameters with uncertainty, (3) verify the fit.
+
 The `dfr.dist` package lets you work with survival distributions through their
 **hazard functions** (also called failure rate functions). This gives you complete
 flexibility to model systems with time-varying failure patterns.
@@ -167,9 +172,10 @@ Weibull shape parameter interpretation:
 
 Now that you understand the basics, explore:
 
-1. **`vignette("failure_rate")`** - Deep dive into hazard-based modeling
-2. **`vignette("custom_distributions")`** - Create your own distributions
-3. **`vignette("reliability_engineering")`** - Real-world applications
+1. **`vignette("reliability_engineering")`** - Five real-world case studies
+2. **`vignette("failure_rate")`** - Mathematical foundations
+3. **`vignette("custom_distributions")`** - Build optimized custom distributions
+4. **`vignette("automatic_differentiation")`** - Analytical derivatives for MLE
 
 ### Available Distributions
 

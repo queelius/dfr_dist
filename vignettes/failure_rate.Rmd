@@ -459,7 +459,7 @@ This makes it ideal for:
 
 ## Next Steps
 
-- **`vignette("custom_distributions")`** - How to create your own distributions with analytical formulas
-- **`vignette("reliability_engineering")`** - Real-world reliability analysis applications
-- **`vignette("automatic_differentiation")`** - Advanced: exact derivatives via AD for faster MLE
 - **`vignette("getting_started")`** - Quick 5-minute introduction
+- **`vignette("reliability_engineering")`** - Five real-world case studies
+- **`vignette("custom_distributions")`** - The three-level optimization paradigm
+- **`vignette("automatic_differentiation")`** - Supplying analytical score and Hessian functions

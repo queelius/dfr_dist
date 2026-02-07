@@ -2,3 +2,46 @@ url: https://queelius.github.io/dfr_dist/
 template:
   bootstrap: 5
 
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [search, github]
+  components:
+    intro:
+      text: Get Started
+      href: articles/getting_started.html
+    articles:
+      text: Articles
+      menu:
+        - text: "Motivation & Applications"
+        - text: "Package Overview"
+          href: articles/dfr.dist-package.html
+        - text: Getting Started
+          href: articles/getting_started.html
+        - text: Reliability Engineering
+          href: articles/reliability_engineering.html
+        - text: "---"
+        - text: "Theory"
+        - text: Dynamic Failure Rate Distributions
+          href: articles/failure_rate.html
+        - text: "---"
+        - text: "Advanced"
+        - text: Creating Custom Distributions
+          href: articles/custom_distributions.html
+        - text: Custom Derivatives for MLE
+          href: articles/automatic_differentiation.html
+
+articles:
+  - title: Motivation & Applications
+    navbar: ~
+    contents:
+      - dfr.dist-package
+      - getting_started
+      - reliability_engineering
+  - title: Theory
+    contents:
+      - failure_rate
+  - title: Advanced
+    contents:
+      - custom_distributions
+      - automatic_differentiation

@@ -259,7 +259,7 @@ For Gompertz and log-logistic, you can supply your own `hess_fn` if needed.
 
 ## Next Steps
 
-- **`vignette("failure_rate")`** - Introduction to DFR distributions and hazard-based thinking
-- **`vignette("custom_distributions")`** - Complete guide to creating your own distributions
-- **`vignette("reliability_engineering")`** - Real-world applications in reliability analysis
 - **`vignette("getting_started")`** - Quick 5-minute introduction
+- **`vignette("reliability_engineering")`** - Real-world applications
+- **`vignette("failure_rate")`** - Mathematical foundations
+- **`vignette("custom_distributions")`** - The three-level optimization paradigm
