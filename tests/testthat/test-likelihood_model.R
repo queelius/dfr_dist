@@ -584,7 +584,7 @@ test_that("fit throws error when no parameters available", {
 
   solver <- fit(dist)
   # Should error when calling without par
-  expect_error(solver(df), "Initial parameters required")
+  expect_error(solver(df), "Parameters required")
 })
 
 # =============================================================================

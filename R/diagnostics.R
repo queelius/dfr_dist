@@ -75,12 +75,7 @@ residuals.dfr_dist <- function(object, data, par = NULL,
     type <- match.arg(type)
     H <- cum_haz(object, ...)
 
-    if (is.null(par)) {
-        par <- object$par
-        if (is.null(par)) {
-            stop("Parameters required: provide via 'par' argument or in distribution object")
-        }
-    }
+    par <- require_params(par, object$par)
 
     if (!object$ob_col %in% names(data)) {
         stop(sprintf("Time column '%s' not found in data", object$ob_col))
@@ -93,13 +88,7 @@ residuals.dfr_dist <- function(object, data, par = NULL,
         return(H_vals)
     }
 
-    if (object$delta_col %in% names(data)) {
-        delta <- data[[object$delta_col]]
-    } else {
-        delta <- rep(1, nrow(data))
-    }
-
-    delta - H_vals
+    get_delta(data, object$delta_col) - H_vals
 }
 
 # =============================================================================
@@ -172,12 +161,7 @@ plot.dfr_dist <- function(x, data = NULL, par = NULL,
                            empirical_col = "steelblue", ...) {
     what <- match.arg(what)
 
-    if (is.null(par)) {
-        par <- x$par
-        if (is.null(par)) {
-            stop("Parameters required: provide via 'par' argument or in distribution object")
-        }
-    }
+    par <- require_params(par, x$par)
 
     if (is.null(xlim)) {
         xlim <- if (!is.null(data) && x$ob_col %in% names(data)) {
@@ -210,11 +194,7 @@ plot.dfr_dist <- function(x, data = NULL, par = NULL,
 
     if (!is.null(data) && empirical && !add && x$ob_col %in% names(data)) {
         t <- data[[x$ob_col]]
-        delta <- if (x$delta_col %in% names(data)) {
-            data[[x$delta_col]]
-        } else {
-            rep(1, length(t))
-        }
+        delta <- get_delta(data, x$delta_col)
 
         km <- kaplan_meier(t, delta)
 

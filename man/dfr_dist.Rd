@@ -7,7 +7,6 @@
 dfr_dist(
   rate,
   par = NULL,
-  eps = 0.01,
   ob_col = "t",
   delta_col = "delta",
   cum_haz_rate = NULL,
@@ -20,8 +19,6 @@ dfr_dist(
 
 \item{par}{The parameters of the distribution. Defaults to \code{NULL},
 which means that the parameters are unknown.}
-
-\item{eps}{The epsilon update for numerical integration. Defaults to 0.01.}
 
 \item{ob_col}{The column name for observation times in data frames.
 Defaults to "t".}

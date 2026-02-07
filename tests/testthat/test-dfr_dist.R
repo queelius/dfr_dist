@@ -37,25 +37,6 @@ test_that("dfr_dist constructor stores parameters", {
   expect_equal(dist$par, c(lambda = 0.5))
 })
 
-test_that("dfr_dist constructor uses default eps", {
-  dist <- dfr_dist(
-    rate = function(t, par, ...) par[1],
-    par = c(1)
-  )
-
-  expect_equal(dist$eps, 0.01)
-})
-
-test_that("dfr_dist constructor accepts custom eps", {
-  dist <- dfr_dist(
-    rate = function(t, par, ...) par[1],
-    par = c(1),
-    eps = 0.001
-  )
-
-  expect_equal(dist$eps, 0.001)
-})
-
 test_that("is_dfr_dist returns TRUE for dfr_dist objects", {
   dist <- make_exponential_dfr(lambda = 1)
   expect_true(is_dfr_dist(dist))

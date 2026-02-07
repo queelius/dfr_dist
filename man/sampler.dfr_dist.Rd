@@ -9,22 +9,15 @@
 \arguments{
 \item{x}{The object to obtain the sampler of.}
 
-\item{...}{Additional arguments to pass into the survival function}
+\item{...}{Additional arguments to pass into the inverse CDF constructor.}
 }
 \value{
 A function that samples from the distribution. It accepts
-\code{n}, the number of samples to take, \code{t} is the time at which to start
-sampling, \code{par} are the parameters of the distribution, and \code{eps} is
-the  update for numerical integration. Finally, we pass additional
-arguments \code{...} into the hazard function.
+\code{n}, the number of samples to take, \code{par}, the parameters of the
+distribution, and \code{...}, additional arguments passed to the quantile
+function.
 }
 \description{
-Since S(t,par) = exp(-cum_hz(t,par)), we can sample from the
-distribution by letting t = 0 (or some other positive number if
-we want to condition on T > t_min), sampling from an exponential
-distribution with \code{lambda = rate(t, par)}, and then rejecting
-the sample if \code{runif(1) > S(t, par)}. If accepted, add that
-observation to the sample, otherwise reject it, let \code{t = t + eps}
-where \code{eps} is some small number, and repeat. We continue this
-process until we have \code{n} observations for the sample.
+Uses inverse CDF sampling: generates uniform random values and
+transforms them through the quantile function (inverse CDF).
 }

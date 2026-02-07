@@ -4,6 +4,14 @@
 #' Each provides the complete specification (rate, cum_haz_rate, score_fn,
 #' and where practical, hess_fn) for optimal performance.
 #'
+#' @section Left-Censoring Note:
+#' The analytical score and Hessian functions provided by these constructors
+#' assume event indicators in \{0, 1\} (right-censored and exact observations).
+#' For left-censored data (delta = -1), these functions are not applicable and
+#' the package automatically falls back to numerical differentiation via
+#' \code{numDeriv::grad} and \code{numDeriv::hessian} through the log-likelihood,
+#' which handles all censoring types correctly.
+#'
 #' @name distributions
 #' @family distributions
 NULL
@@ -67,11 +75,11 @@ dfr_exponential <- function(lambda = NULL) {
             par[[1]] * t
         },
         score_fn = function(df, par, ...) {
-            delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
+            delta <- get_delta(df)
             c(sum(delta == 1) / par[[1]] - sum(df$t))
         },
         hess_fn = function(df, par, ...) {
-            delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
+            delta <- get_delta(df)
             matrix(-sum(delta == 1) / par[[1]]^2, nrow = 1, ncol = 1)
         },
         par = lambda
@@ -158,7 +166,7 @@ dfr_weibull <- function(shape = NULL, scale = NULL) {
             k <- par[[1]]
             sigma <- par[[2]]
             t <- df$t
-            delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
+            delta <- get_delta(df)
 
             n_events <- sum(delta == 1)
             t_ratio <- t / sigma
@@ -175,7 +183,7 @@ dfr_weibull <- function(shape = NULL, scale = NULL) {
             k <- par[[1]]
             sigma <- par[[2]]
             t <- df$t
-            delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
+            delta <- get_delta(df)
 
             n_events <- sum(delta == 1)
             t_ratio <- t / sigma
@@ -260,7 +268,7 @@ dfr_gompertz <- function(a = NULL, b = NULL) {
             a <- par[[1]]
             b <- par[[2]]
             t <- df$t
-            delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
+            delta <- get_delta(df)
 
             exp_bt <- exp(b * t)
             n_events <- sum(delta == 1)
@@ -345,7 +353,7 @@ dfr_loglogistic <- function(alpha = NULL, beta = NULL) {
             alpha <- par[[1]]
             beta <- par[[2]]
             t <- df$t
-            delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
+            delta <- get_delta(df)
 
             t_ratio <- t / alpha
             t_ratio_beta <- t_ratio^beta

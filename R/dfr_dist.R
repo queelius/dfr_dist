@@ -7,7 +7,6 @@
 #' @param rate A function that computes the hazard rate at time `t`.
 #' @param par The parameters of the distribution. Defaults to `NULL`,
 #'            which means that the parameters are unknown.
-#' @param eps The epsilon update for numerical integration. Defaults to 0.01.
 #' @param ob_col The column name for observation times in data frames.
 #'               Defaults to "t".
 #' @param delta_col The column name for event indicators in data frames.
@@ -25,14 +24,13 @@
 #'                If NULL, falls back to numerical Hessian via numDeriv::hessian.
 #' @return A `dfr_dist` object that inherits from `likelihood_model`.
 #' @export
-dfr_dist <- function(rate, par = NULL, eps = 0.01,
+dfr_dist <- function(rate, par = NULL,
                      ob_col = "t", delta_col = "delta",
                      cum_haz_rate = NULL, score_fn = NULL,
                      hess_fn = NULL) {
     structure(
         list(rate = rate,
              par = par,
-             eps = eps,
              ob_col = ob_col,
              delta_col = delta_col,
              cum_haz_rate = cum_haz_rate,
@@ -87,13 +85,11 @@ inv_cdf.dfr_dist <- function(x, ...) {
     cdf_fn <- cdf(x, ...)
     function(p, par = NULL, ...) {
         par <- get_params(par, x$par)
-        uniroot_args <- list(
-            f = function(t) {
-                cdf_fn(t, par, ...) - p
-            },
+        uniroot(
+            f = function(t) cdf_fn(t, par, ...) - p,
             interval = c(0, 1e3),
-            extendInt = "upX")
-        do.call(uniroot, uniroot_args)$root
+            extendInt = "upX"
+        )$root
     }
 }
 
@@ -109,23 +105,16 @@ params.dfr_dist <- function(x, ...) {
 }
 
 #' Sampling function for `dfr_dist` objects.
-#' 
-#' Since S(t,par) = exp(-cum_hz(t,par)), we can sample from the
-#' distribution by letting t = 0 (or some other positive number if
-#' we want to condition on T > t_min), sampling from an exponential
-#' distribution with `lambda = rate(t, par)`, and then rejecting
-#' the sample if `runif(1) > S(t, par)`. If accepted, add that
-#' observation to the sample, otherwise reject it, let `t = t + eps`
-#' where `eps` is some small number, and repeat. We continue this
-#' process until we have `n` observations for the sample.
+#'
+#' Uses inverse CDF sampling: generates uniform random values and
+#' transforms them through the quantile function (inverse CDF).
 #'
 #' @param x The object to obtain the sampler of.
-#' @param ... Additional arguments to pass into the survival function
+#' @param ... Additional arguments to pass into the inverse CDF constructor.
 #' @return A function that samples from the distribution. It accepts
-#' `n`, the number of samples to take, `t` is the time at which to start
-#' sampling, `par` are the parameters of the distribution, and `eps` is
-#' the  update for numerical integration. Finally, we pass additional
-#' arguments `...` into the hazard function.
+#' `n`, the number of samples to take, `par`, the parameters of the
+#' distribution, and `...`, additional arguments passed to the quantile
+#' function.
 #' @importFrom algebraic.dist params surv sampler
 #' @importFrom stats runif
 #' @export
@@ -313,12 +302,7 @@ loglik.dfr_dist <- function(model, ...) {
         par <- get_params(par, model$par)
 
         t <- df[[model$ob_col]]
-
-        if (model$delta_col %in% names(df)) {
-            delta <- df[[model$delta_col]]
-        } else {
-            delta <- rep(1, length(t))
-        }
+        delta <- get_delta(df, model$delta_col)
 
         ll <- 0
 
@@ -476,13 +460,7 @@ fit.dfr_dist <- function(object, ...) {
     function(df, par = NULL,
              method = c("BFGS", "Nelder-Mead", "L-BFGS-B", "CG", "SANN"),
              control = list(), ...) {
-        if (is.null(par)) {
-            par <- params(object)
-            if (is.null(par)) {
-                stop("Initial parameters required: specify 'par' argument ",
-                     "or set parameters in dfr_dist()")
-            }
-        }
+        par <- require_params(par, params(object))
 
         control <- modifyList(list(fnscale = -1), control)
         method <- match.arg(method)
