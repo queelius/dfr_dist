@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/queelius/dfr_dist/workflows/R-CMD-check/badge.svg)](https://github.com/queelius/dfr_dist/actions)
+[![R-CMD-check](https://github.com/queelius/dfr.dist/workflows/R-CMD-check/badge.svg)](https://github.com/queelius/dfr.dist/actions)
 <!-- badges: end -->
 
 **Dynamic Failure Rate Distributions for Survival Analysis**
@@ -55,7 +55,7 @@ Install from GitHub:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("queelius/dfr_dist")
+devtools::install_github("queelius/dfr.dist")
 ```
 
 ## Quick Start
@@ -180,33 +180,33 @@ ll(df, par = c(0.5))
 **Start Here:**
 
 - [Package
-  Overview](https://queelius.github.io/dfr_dist/articles/dfr.dist-package.html) -
+  Overview](https://queelius.github.io/dfr.dist/articles/dfr.dist-package.html) -
   Motivation, complete example, and audience guide
 - [Quick Start
-  Guide](https://queelius.github.io/dfr_dist/articles/getting_started.html) -
+  Guide](https://queelius.github.io/dfr.dist/articles/getting_started.html) -
   5-minute introduction
 
 **Real-World Applications:**
 
 - [Reliability
-  Engineering](https://queelius.github.io/dfr_dist/articles/reliability_engineering.html) -
+  Engineering](https://queelius.github.io/dfr.dist/articles/reliability_engineering.html) -
   Five case studies
 
 **Going Deeper:**
 
 - [Dynamic Failure Rate
-  Distributions](https://queelius.github.io/dfr_dist/articles/failure_rate.html) -
+  Distributions](https://queelius.github.io/dfr.dist/articles/failure_rate.html) -
   Mathematical foundations
 - [Creating Custom
-  Distributions](https://queelius.github.io/dfr_dist/articles/custom_distributions.html) -
+  Distributions](https://queelius.github.io/dfr.dist/articles/custom_distributions.html) -
   The three-level optimization paradigm
 - [Custom Derivatives for
-  MLE](https://queelius.github.io/dfr_dist/articles/automatic_differentiation.html) -
+  MLE](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.html) -
   Analytical score and Hessian functions
 
 **Reference:**
 
-- [Function Reference](https://queelius.github.io/dfr_dist/reference/)
+- [Function Reference](https://queelius.github.io/dfr.dist/reference/)
 
 ## Related Packages
 
