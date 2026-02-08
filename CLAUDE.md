@@ -17,15 +17,28 @@ devtools::document()      # Update NAMESPACE and .Rd files from roxygen2
 devtools::build()         # Build package tarball
 devtools::check()         # Run R CMD check
 devtools::install()       # Install locally
-devtools::test()          # Run tests
+devtools::test()          # Run all tests
+devtools::test(filter = "derivatives")  # Run specific test file
 devtools::build_vignettes()    # Build vignettes
 pkgdown::build_site()          # Build package website
+pkgdown::deploy_to_branch()    # Deploy docs to GitHub Pages (gh-pages branch)
+covr::package_coverage()       # Check test coverage
 ```
 
 Always run
 [`devtools::document()`](https://devtools.r-lib.org/reference/document.html)
 after modifying roxygen2 comments. NAMESPACE is auto-generated - never
 edit manually.
+
+## Dependencies
+
+**Required (Imports):** - `stats`, `numDeriv` - numerical methods -
+`algebraic.dist` - distribution interface generics -
+`likelihood.model` - likelihood model interface - `generics` - generic
+function infrastructure
+
+**Optional (Suggests):** - `testthat`, `knitr`, `rmarkdown` - testing
+and documentation
 
 ## Core Architecture
 
@@ -36,16 +49,18 @@ The central abstraction in `R/dfr_dist.R`:
 ``` r
 dfr_dist(rate, par = NULL, eps = 0.01,
          ob_col = "t", delta_col = "delta",
-         cum_haz_rate = NULL, score_fn = NULL)
+         cum_haz_rate = NULL, score_fn = NULL,
+         hess_fn = NULL)
 ```
 
 - `rate`: Function computing hazard rate h(t, par, …)
 - `par`: Distribution parameters (can be NULL if unknown)
 - `eps`: Epsilon for numerical integration/sampling
 - `ob_col`, `delta_col`: Column names for survival data
-- `cum_haz_rate`: Optional analytical H(t, par) for AD gradient
-  computation
-- `score_fn`: Optional analytical score for AD Hessian via Jacobian
+- `cum_haz_rate`: Optional analytical H(t, par) for performance
+- `score_fn`: Optional score function (gradient of log-likelihood)
+- `hess_fn`: Optional Hessian function (second derivatives of
+  log-likelihood)
 
 Inherits from `"univariate_dist"` and `"dist"` classes, implementing the
 `algebraic.dist` interface.
@@ -85,64 +100,55 @@ This enables flexible parameter handling and late binding of parameters
 
 ### Distribution Methods
 
-| Method                                                                  | Returns             | Formula                                                  |
-|-------------------------------------------------------------------------|---------------------|----------------------------------------------------------|
-| `hazard()`                                                              | h(t, par, …)        | Direct rate function                                     |
-| [`cum_haz()`](https://queelius.github.io/dfr_dist/reference/cum_haz.md) | H(t, par, …)        | ∫₀ᵗ h(u) du (numerical)                                  |
-| `surv()`                                                                | S(t, par, …)        | exp(-H(t))                                               |
-| `cdf()`                                                                 | F(t, par, …)        | 1 - S(t)                                                 |
-| [`pdf()`](https://rdrr.io/r/grDevices/pdf.html)                         | f(t, par, …)        | h(t) × S(t)                                              |
-| `inv_cdf()`                                                             | t given F(t)        | Uses [`uniroot()`](https://rdrr.io/r/stats/uniroot.html) |
-| `sampler()`                                                             | Generates samples   | Inverse CDF sampling                                     |
-| `params()`                                                              | Resolved parameters | Handles NA/NULL defaults                                 |
+| Method                                                                          | Returns             | Formula                                                  |
+|---------------------------------------------------------------------------------|---------------------|----------------------------------------------------------|
+| [`hazard()`](https://queelius.github.io/algebraic.dist/reference/hazard.html)   | h(t, par, …)        | Direct rate function                                     |
+| [`cum_haz()`](https://queelius.github.io/dfr.dist/reference/cum_haz.md)         | H(t, par, …)        | ∫₀ᵗ h(u) du (numerical)                                  |
+| [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html)       | S(t, par, …)        | exp(-H(t))                                               |
+| [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html)         | F(t, par, …)        | 1 - S(t)                                                 |
+| [`density()`](https://rdrr.io/r/stats/density.html)                             | f(t, par, …)        | h(t) × S(t)                                              |
+| [`inv_cdf()`](https://queelius.github.io/algebraic.dist/reference/inv_cdf.html) | t given F(t)        | Uses [`uniroot()`](https://rdrr.io/r/stats/uniroot.html) |
+| [`sampler()`](https://queelius.github.io/algebraic.dist/reference/sampler.html) | Generates samples   | Inverse CDF sampling                                     |
+| [`params()`](https://queelius.github.io/algebraic.dist/reference/params.html)   | Resolved parameters | Handles NA/NULL defaults                                 |
 
 ### Likelihood Model Interface
 
 The `dfr_dist` class implements `likelihood_model` from the
 likelihood.model package:
 
-| Method                                                                                    | Returns                   | Usage                                  |
-|-------------------------------------------------------------------------------------------|---------------------------|----------------------------------------|
-| [`loglik()`](https://queelius.github.io/likelihood.model/reference/loglik.html)           | Log-likelihood function   | `ll <- loglik(dist); ll(df, par)`      |
-| [`score()`](https://queelius.github.io/likelihood.model/reference/score.html)             | Score function (gradient) | See fallback chain below               |
-| [`hess_loglik()`](https://queelius.github.io/likelihood.model/reference/hess_loglik.html) | Hessian of log-likelihood | See fallback chain below               |
-| [`fit()`](https://generics.r-lib.org/reference/fit.html)                                  | MLE solver                | `solver <- fit(dist); solver(df, par)` |
+| Method                                                                                    | Returns                   | Usage                                                                            |
+|-------------------------------------------------------------------------------------------|---------------------------|----------------------------------------------------------------------------------|
+| [`loglik()`](https://queelius.github.io/likelihood.model/reference/loglik.html)           | Log-likelihood function   | `ll <- loglik(dist); ll(df, par)`                                                |
+| [`score()`](https://queelius.github.io/likelihood.model/reference/score.html)             | Score function (gradient) | `score_fn` → [`numDeriv::grad`](https://rdrr.io/pkg/numDeriv/man/grad.html)      |
+| [`hess_loglik()`](https://queelius.github.io/likelihood.model/reference/hess_loglik.html) | Hessian of log-likelihood | `hess_fn` → [`numDeriv::hessian`](https://rdrr.io/pkg/numDeriv/man/hessian.html) |
+| [`fit()`](https://generics.r-lib.org/reference/fit.html)                                  | MLE solver                | `solver <- fit(dist); result <- solver(df, par)` → `fisher_mle`                  |
+| [`assumptions()`](https://queelius.github.io/likelihood.model/reference/assumptions.html) | Model assumptions         | Returns character vector of assumptions                                          |
 
-### Automatic Differentiation Integration
+### Derivative Computation
 
-The package optionally integrates with `femtograd` for exact
-gradient/Hessian computation:
+The package uses simple 2-tier fallbacks for derivatives:
 
-**Score function fallback chain:** 1. Analytical `score_fn` if provided
-→ exact 2. AD gradient via `femtograd` if `cum_haz_rate` provided →
-exact 3. Numerical gradient via
-[`numDeriv::grad()`](https://rdrr.io/pkg/numDeriv/man/grad.html) →
-approximate
+**Score:** `score_fn(df, par)` → `numDeriv::grad(loglik, par)`
+**Hessian:** `hess_fn(df, par)` → `numDeriv::hessian(loglik, par)`
 
-**Hessian fallback chain (hybrid approach):** 1. AD Jacobian of
-analytical `score_fn` via `femtograd` → exact 2. Numerical Hessian via
-[`numDeriv::hessian()`](https://rdrr.io/pkg/numDeriv/man/hessian.html) →
-approximate
+The user decides how to compute derivatives (hand-derive, use AD, etc.).
+The package just accepts functions or falls back to numerical methods.
 
-The hybrid approach (analytical gradient + AD Jacobian) is often more
-practical than full AD because: - Gradients are easier to derive
-analytically than Hessians - Forward-mode AD Jacobian of a p-dimensional
-gradient costs O(p) passes - Works even when full AD through
-log-likelihood is impractical
-
-**Example with analytical score:**
+**Example with analytical score and Hessian:**
 
 ``` r
 exp_dist <- dfr_dist(
     rate = function(t, par, ...) rep(par[1], length(t)),
     cum_haz_rate = function(t, par, ...) par[1] * t,
     score_fn = function(df, par, ...) {
-        c(sum(df$delta) / par[1] - sum(df$t))
+        delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
+        c(sum(delta) / par[1] - sum(df$t))
+    },
+    hess_fn = function(df, par, ...) {
+        delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
+        matrix(-sum(delta == 1) / par[1]^2, 1, 1)
     }
 )
-# Hessian computed via AD Jacobian of score_fn
-H <- hess_loglik(exp_dist)
-hess <- H(df, par = c(1))  # Uses femtograd if available
 ```
 
 ### Survival Data Conventions
@@ -150,10 +156,11 @@ hess <- H(df, par = c(1))  # Uses femtograd if available
 Data frames passed to likelihood methods use: - `t` column (or
 `ob_col`): Observation times - `delta` column (or `delta_col`): Event
 indicators - `1` = exact observation (failure) - `0` = right-censored
-(survived past time t)
+(survived past time t) - `-1` = left-censored (failed before time t)
 
-Log-likelihood contributions: - Exact: log L_i = log h(t_i) - H(t_i) -
-Censored: log L_i = -H(t_i)
+Log-likelihood contributions: - Exact (δ=1): log L_i = log h(t_i) -
+H(t_i) - Right-censored (δ=0): log L_i = -H(t_i) - Left-censored (δ=-1):
+log L_i = log(1 - exp(-H(t_i)))
 
 ### Numerical Methods
 
@@ -161,9 +168,9 @@ Censored: log L_i = -H(t_i)
 [`stats::integrate()`](https://rdrr.io/r/stats/integrate.html) with
 defaults: - subdivisions = 1000L, abs_tol = 1e-3 (overridable)
 
-**Sampling** uses iterative rejection: 1. Start at t = 0, sample from
-Exp(rate(t, par)) 2. Accept if runif(1) ≤ S(t, par), else increment t by
-eps
+**Sampling** uses inverse CDF method: 1. Generate u ~ Uniform(0, 1) 2.
+Return inv_cdf(u, par) via
+[`uniroot()`](https://rdrr.io/r/stats/uniroot.html)
 
 ## Package Ecosystem Integration
 
@@ -173,21 +180,27 @@ This package is designed to work with a family of related packages:
         ↓
     dfr.dist               # This package - DFR distributions
         ↓
-    likelihood.model       # Likelihood model interface (dfr_dist satisfies this)
-        ↓
-    algebraic.mle          # MLE algebra for hypothesis testing, model selection
-        ↓
-    numerical.mle          # Optimization: gradient ascent, Newton-Raphson, etc.
+    likelihood.model       # Likelihood model interface + fisher_mle class
 
 ### Usage with MLE
 
-The `dfr_dist` object satisfies the `likelihood_model` interface,
-enabling:
+The `dfr_dist` object implements the `likelihood_model` interface and
+has its own [`fit()`](https://generics.r-lib.org/reference/fit.html)
+method:
 
 ``` r
-# Fit DFR distribution to data using algebraic.mle
-library(algebraic.mle)
-mle_result <- mle(dfr_model, data, start_params)
+# Create distribution
+dist <- dfr_dist(rate = function(t, par, ...) rep(par[1], length(t)))
+
+# Fit to data
+solver <- fit(dist)
+result <- solver(df, par = c(1), method = "BFGS")
+
+# Result is a fisher_mle object with standard methods
+coef(result)      # Parameter estimates
+vcov(result)      # Variance-covariance matrix
+confint(result)   # Confidence intervals
+summary(result)   # Full summary
 ```
 
 ### Series System Packages
@@ -210,32 +223,75 @@ distribution engine for series systems, enabling time-dependent and
 covariate-dependent component hazards beyond the current
 exponential/Weibull implementations. The architectural foundation exists
 in likelihood.model.series.md’s `utils.R`
-([`cum_haz()`](https://queelius.github.io/dfr_dist/reference/cum_haz.md),
+([`cum_haz()`](https://queelius.github.io/dfr.dist/reference/cum_haz.md),
 `qcomp()`, `rcomp()` for arbitrary hazard functions).
 
 ### Core Packages
 
 - **algebraic.dist**: Provides generics (hazard, cdf, pdf, surv, etc.)
 - **likelihood.model**: Defines likelihood interface (loglik, score,
-  hess_loglik)
-- **algebraic.mle**: MLE algebra for inference
-- **numerical.mle**: Numerical optimization methods
+  hess_loglik) and fisher_mle class
+- **numerical.mle**: Numerical optimization methods (optional, for
+  advanced use)
 - **md.tools**: Masked data utilities (Boolean matrix encoding/decoding)
+
+## Helper Distribution Constructors
+
+The package provides ready-to-use constructors for classic survival
+distributions:
+
+| Constructor                    | Hazard Pattern     | Parameters                          |
+|--------------------------------|--------------------|-------------------------------------|
+| `dfr_exponential(lambda)`      | Constant           | lambda = failure rate               |
+| `dfr_weibull(shape, scale)`    | Power-law          | shape (k), scale (σ)                |
+| `dfr_gompertz(a, b)`           | Exponential growth | a = initial hazard, b = growth rate |
+| `dfr_loglogistic(alpha, beta)` | Non-monotonic      | alpha = scale, beta = shape         |
+
+Each provides analytical `rate`, `cum_haz_rate`, and `score_fn`.
+Exponential and Weibull also include analytical `hess_fn`:
+
+``` r
+# Quick creation with parameters
+weib <- dfr_weibull(shape = 2, scale = 100)
+
+# Template for fitting (parameters supplied later)
+solver <- fit(dfr_weibull())
+result <- solver(df, par = c(2, 100))
+```
+
+## Diagnostic Methods
+
+| Method                         | Purpose                               |
+|--------------------------------|---------------------------------------|
+| `residuals(dist, data, type)`  | Cox-Snell or Martingale residuals     |
+| `plot(dist, what)`             | Visualize survival, hazard, or cumhaz |
+| `qqplot_residuals(dist, data)` | Q-Q plot for model validation         |
+
+Cox-Snell residuals should follow Exp(1) if model is correct.
 
 ## File Structure
 
-- `R/dfr_dist.R`: Main S3 class and all methods (~440 lines)
-- `R/ad_utils.R`: AD helpers for femtograd integration
+- `R/dfr_dist.R`: Main S3 class and all methods
+- `R/distributions.R`: Helper constructors (dfr_exponential,
+  dfr_weibull, etc.)
+- `R/diagnostics.R`: Residuals, plot, and Q-Q plot methods
 - `R/generic_functions.R`: Generic
-  [`cum_haz()`](https://queelius.github.io/dfr_dist/reference/cum_haz.md)
+  [`cum_haz()`](https://queelius.github.io/dfr.dist/reference/cum_haz.md)
   declaration
 - `R/utils.R`: Helper `get_params()` for parameter resolution
-- `R/reexports.R`: Re-exports from likelihood.model (loglik, score,
-  etc.)
-- `tests/testthat/test-ad_integration.R`: Tests for AD integration
-- `tests/testthat/test-likelihood_model.R`: Comprehensive tests for
-  likelihood interface
-- `vignettes/failure_rate.Rmd`: Main tutorial
+- `R/reexports.R`: Re-exports from likelihood.model and algebraic.dist
+- `tests/testthat/test-dfr_dist.R`: Core distribution tests
+- `tests/testthat/test-distributions.R`: Tests for helper constructors
+- `tests/testthat/test-diagnostics.R`: Tests for diagnostic methods
+- `tests/testthat/test-derivatives.R`: Tests for score/Hessian
+  computation
+- `tests/testthat/test-likelihood_model.R`: Likelihood interface tests
+- `vignettes/getting_started.Rmd`: 5-minute quick start
+- `vignettes/failure_rate.Rmd`: Hazard-based modeling deep dive
+- `vignettes/custom_distributions.Rmd`: How to create custom
+  distributions
+- `vignettes/reliability_engineering.Rmd`: Real-world applications
+- `vignettes/automatic_differentiation.Rmd`: Custom derivatives tutorial
 
 ## Common Pitfalls
 
@@ -243,10 +299,9 @@ in likelihood.model.series.md’s `utils.R`
     NA/NULL correctly
 2.  **Integration warnings**: Cumulative hazard uses numerical
     integration - check for convergence
-3.  **Sampling efficiency**: Rejection sampler can be slow for complex
-    rate functions
+3.  **Sampling efficiency**: Inverse CDF sampling uses uniroot - can be
+    slow for complex rate functions
 4.  **Closure pattern**: Remember methods return functions, not values
     directly
-5.  **AD compatibility**: When writing `score_fn` for AD Hessian, use
-    `[[` indexing for parameters (e.g., `par[[1]]` not `par[1]`) to work
-    with femtograd dual numbers
+5.  **Derivative functions**: `score_fn(df, par, ...)` must return a
+    numeric vector; `hess_fn(df, par, ...)` must return a matrix

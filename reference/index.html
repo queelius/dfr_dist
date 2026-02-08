@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,16 +15,26 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
+<li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Automatic Differentiation for Maximum Likelihood Estimation</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
+    <li><a class="dropdown-item" href="../articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
     <li><a class="dropdown-item" href="../articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
+    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+    <li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Custom Derivatives for MLE</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr_dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -48,17 +58,10 @@
 
       <dl><dt>
 
-          <code><a href="ad_hessian.html">ad_hessian()</a></code>
+          <code><a href="assumptions.dfr_dist.html">assumptions(<i>&lt;dfr_dist&gt;</i>)</a></code>
 
         </dt>
-        <dd>Compute Hessian via AD Jacobian of gradient</dd>
-
-        <dt>
-
-          <code><a href="ad_utils.html">ad_utils</a></code>
-
-        </dt>
-        <dd>Automatic Differentiation Utilities for dfr.dist</dd>
+        <dd>Retrieve the assumptions a DFR distribution makes about the data</dd>
 
         <dt>
 
@@ -79,7 +82,14 @@
           <code><a href="cum_haz.dfr_dist.html">cum_haz(<i>&lt;dfr_dist&gt;</i>)</a></code>
 
         </dt>
-        <dd>Method for obtaining the hazard function of a <code>dfr_dist</code> object.</dd>
+        <dd>Method for obtaining the cumulative hazard function of a <code>dfr_dist</code> object.</dd>
+
+        <dt>
+
+          <code><a href="density.dfr_dist.html">density(<i>&lt;dfr_dist&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Method for obtaining the density (pdf) of a <code>dfr_dist</code> object.</dd>
 
         <dt>
 
@@ -87,6 +97,55 @@
 
         </dt>
         <dd>Constructor for <code>dfr_dist</code> objects</dd>
+
+        <dt>
+
+          <code><a href="dfr_exponential.html">dfr_exponential()</a></code>
+
+        </dt>
+        <dd>Exponential Distribution (Constant Hazard)</dd>
+
+        <dt>
+
+          <code><a href="dfr_gompertz.html">dfr_gompertz()</a></code>
+
+        </dt>
+        <dd>Gompertz Distribution (Exponential Growth Hazard)</dd>
+
+        <dt>
+
+          <code><a href="dfr_loglogistic.html">dfr_loglogistic()</a></code>
+
+        </dt>
+        <dd>Log-Logistic Distribution (Non-Monotonic Hazard)</dd>
+
+        <dt>
+
+          <code><a href="dfr_weibull.html">dfr_weibull()</a></code>
+
+        </dt>
+        <dd>Weibull Distribution (Power-Law Hazard)</dd>
+
+        <dt>
+
+          <code><a href="diagnostics.html">diagnostics</a></code>
+
+        </dt>
+        <dd>Diagnostic Methods for DFR Distributions</dd>
+
+        <dt>
+
+          <code><a href="distributions.html">distributions</a></code>
+
+        </dt>
+        <dd>Classic Survival Distribution Constructors</dd>
+
+        <dt>
+
+          <code><a href="fit.dfr_dist.html">fit(<i>&lt;dfr_dist&gt;</i>)</a></code>
+
+        </dt>
+        <dd>MLE solver for dfr_dist objects</dd>
 
         <dt>
 
@@ -132,10 +191,10 @@
 
         <dt>
 
-          <code><a href="pdf.dfr_dist.html">pdf(<i>&lt;dfr_dist&gt;</i>)</a></code>
+          <code><a href="plot.dfr_dist.html">plot(<i>&lt;dfr_dist&gt;</i>)</a></code>
 
         </dt>
-        <dd>Method for obtaining the pdf of a <code>dfr_dist</code> object.</dd>
+        <dd>Plot DFR Distribution Functions</dd>
 
         <dt>
 
@@ -143,6 +202,20 @@
 
         </dt>
         <dd>Print method for <code>dfr_dist</code> objects.</dd>
+
+        <dt>
+
+          <code><a href="qqplot_residuals.html">qqplot_residuals()</a></code>
+
+        </dt>
+        <dd>Q-Q Plot for Cox-Snell Residuals</dd>
+
+        <dt>
+
+          <code><a href="residuals.dfr_dist.html">residuals(<i>&lt;dfr_dist&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Residuals for DFR Distribution Fits</dd>
 
         <dt>
 

@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Automatic Differentiation for Maximum Likelihood Estimation • dfr.dist</title>
+<title>Custom Derivatives for Maximum Likelihood Estimation • dfr.dist</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Automatic Differentiation for Maximum Likelihood Estimation">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Custom Derivatives for Maximum Likelihood Estimation">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,12 +29,22 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Automatic Differentiation for Maximum Likelihood Estimation</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
+    <li><a class="dropdown-item" href="../articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
     <li><a class="dropdown-item" href="../articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
+    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+    <li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Custom Derivatives for MLE</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -43,7 +53,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr_dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -57,10 +67,10 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Automatic Differentiation for Maximum Likelihood Estimation</h1>
+      <h1>Custom Derivatives for Maximum Likelihood Estimation</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr_dist/blob/HEAD/vignettes/automatic_differentiation.Rmd" class="external-link"><code>vignettes/automatic_differentiation.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/HEAD/vignettes/automatic_differentiation.Rmd" class="external-link"><code>vignettes/automatic_differentiation.Rmd</code></a></small>
       <div class="d-none name"><code>automatic_differentiation.Rmd</code></div>
     </div>
 
@@ -75,41 +85,39 @@ function</strong> (gradient) is needed for optimization, and the
 <strong>Hessian matrix</strong> (second derivatives) is needed for
 computing standard errors and confidence intervals via the observed
 Fisher information.</p>
-<p>The <code>dfr.dist</code> package supports three approaches for
-computing these derivatives:</p>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Pure numerical differentiation</strong> - finite differences
-via <code>numDeriv</code>
-</li>
-<li>
-<strong>Full automatic differentiation</strong> - AD computes both
-score and Hessian</li>
-<li>
-<strong>Hybrid approach</strong> - analytical score + AD Jacobian
-for Hessian</li>
-</ol>
-<p>This vignette explores these approaches using the Weibull
-distribution as a case study, demonstrating that the <strong>hybrid
-approach</strong> offers the best combination of speed and
-precision.</p>
+<p>The <code>dfr.dist</code> package uses a simple 2-tier fallback for
+each:</p>
+<table class="table">
+<thead><tr class="header">
+<th>Derivative</th>
+<th>If provided</th>
+<th>Otherwise</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Score</td>
+<td><code>score_fn(df, par, ...)</code></td>
+<td><code><a href="https://rdrr.io/pkg/numDeriv/man/grad.html" class="external-link">numDeriv::grad()</a></code></td>
+</tr>
+<tr class="even">
+<td>Hessian</td>
+<td><code>hess_fn(df, par, ...)</code></td>
+<td><code><a href="https://rdrr.io/pkg/numDeriv/man/hessian.html" class="external-link">numDeriv::hessian()</a></code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>You decide how to compute derivatives.</strong> Hand-derive
+them, use an AD library, or let the package fall back to numerical
+methods. The package accepts functions; it doesn’t care how they were
+produced.</p>
+<p>This vignette shows how to provide custom derivatives using the
+Weibull distribution as a case study.</p>
 </div>
 <div class="section level2">
 <h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr_dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Check if femtograd is available for AD</span></span>
-<span><span class="va">has_ad</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"femtograd"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">has_ad</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">femtograd</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"femtograd available - AD examples will run\n"</span><span class="op">)</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"femtograd not installed - AD examples will be skipped\n</span></span>
-<span><span class="st">       Install with: devtools::install_github('queelius/femtograd')\n"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">#&gt; femtograd available - AD examples will run</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr.dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="the-weibull-distribution">The Weibull Distribution<a class="anchor" aria-label="anchor" href="#the-weibull-distribution"></a>
@@ -123,7 +131,7 @@ hazard function is:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>ℓ</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>,</mo><mi>σ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>n</mi><mo>log</mo><mi>k</mi><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><munder><mo>∑</mo><mi>i</mi></munder><mo>log</mo><msub><mi>t</mi><mi>i</mi></msub><mo>−</mo><mi>n</mi><mi>k</mi><mo>log</mo><mi>σ</mi><mo>−</mo><munder><mo>∑</mo><mi>i</mi></munder><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>t</mi><mi>i</mi></msub><mi>σ</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mi>k</mi></msup></mrow><annotation encoding="application/x-tex">\ell(k, \sigma) = n\log k + (k-1)\sum_i \log t_i - nk\log\sigma - \sum_i \left(\frac{t_i}{\sigma}\right)^k</annotation></semantics></math></p>
 </div>
 <div class="section level2">
-<h2 id="simulating-weibull-data">Simulating Weibull Data<a class="anchor" aria-label="anchor" href="#simulating-weibull-data"></a>
+<h2 id="simulating-data">Simulating Data<a class="anchor" aria-label="anchor" href="#simulating-data"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
@@ -131,7 +139,6 @@ hazard function is:</p>
 <span><span class="va">true_sigma</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span></span>
-<span><span class="co"># Inverse CDF sampling for Weibull</span></span>
 <span><span class="va">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
 <span><span class="va">times</span> <span class="op">&lt;-</span> <span class="va">true_sigma</span> <span class="op">*</span> <span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">true_k</span><span class="op">)</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>t <span class="op">=</span> <span class="va">times</span>, delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">n</span><span class="op">)</span><span class="op">)</span></span>
@@ -139,17 +146,15 @@ hazard function is:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Sample size:"</span>, <span class="va">n</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Sample size: 100</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"True parameters: k ="</span>, <span class="va">true_k</span>, <span class="st">", sigma ="</span>, <span class="va">true_sigma</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; True parameters: k = 2 , sigma = 3</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Sample mean:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">times</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Sample mean: 2.634</span></span></code></pre></div>
+<span><span class="co">#&gt; True parameters: k = 2 , sigma = 3</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="approach-1-pure-numerical-differentiation">Approach 1: Pure Numerical Differentiation<a class="anchor" aria-label="anchor" href="#approach-1-pure-numerical-differentiation"></a>
+<h2 id="approach-1-minimal-just-the-hazard-rate">Approach 1: Minimal — Just the Hazard Rate<a class="anchor" aria-label="anchor" href="#approach-1-minimal-just-the-hazard-rate"></a>
 </h2>
-<p>The simplest approach uses finite differences to approximate
-derivatives. This requires only the hazard rate function:</p>
+<p>The simplest approach provides only the hazard function. Everything
+else is computed numerically:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">weibull_numerical</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">weibull_minimal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
 <span>    rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
@@ -157,314 +162,183 @@ derivatives. This requires only the hazard rate function:</p>
 <span>    <span class="op">}</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Get likelihood functions</span></span>
-<span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/loglik.html" class="external-link">loglik</a></span><span class="op">(</span><span class="va">weibull_numerical</span><span class="op">)</span></span>
-<span><span class="va">score_num</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/score.html" class="external-link">score</a></span><span class="op">(</span><span class="va">weibull_numerical</span><span class="op">)</span></span>
-<span><span class="va">hess_num</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/hess_loglik.html" class="external-link">hess_loglik</a></span><span class="op">(</span><span class="va">weibull_numerical</span><span class="op">)</span></span>
+<span><span class="va">ll</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/loglik.html" class="external-link">loglik</a></span><span class="op">(</span><span class="va">weibull_minimal</span><span class="op">)</span></span>
+<span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/score.html" class="external-link">score</a></span><span class="op">(</span><span class="va">weibull_minimal</span><span class="op">)</span></span>
+<span><span class="va">H</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/hess_loglik.html" class="external-link">hess_loglik</a></span><span class="op">(</span><span class="va">weibull_minimal</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Evaluate at test point</span></span>
 <span><span class="va">test_par</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.8</span>, <span class="fl">2.8</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Log-likelihood:"</span>, <span class="fu">ll</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="st">"\n\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Log-likelihood:"</span>, <span class="fu">ll</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Log-likelihood: -179.2143</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Score (numerical gradient):\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Score (numerical gradient):</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">score_num</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] -10.494194   8.878177</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\nHessian (numerical):\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Score (numerical):"</span>, <span class="fu">s</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Score (numerical): -10.49419 8.878177</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Hessian (numerical):\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Hessian (numerical):</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu">hess_num</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu">H</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          [,1]     [,2]</span></span>
 <span><span class="co">#&gt; [1,] -73.4602  30.3417</span></span>
 <span><span class="co">#&gt; [2,]  30.3417 -50.2047</span></span></code></pre></div>
-<p><strong>Pros:</strong> Simple, no analytical derivatives needed.</p>
-<p><strong>Cons:</strong> Slow (many function evaluations), potential
-numerical precision issues.</p>
+<p><strong>Pros:</strong> No math required beyond the hazard
+function.</p>
+<p><strong>Cons:</strong> Slower (numerical integration for H(t), finite
+differences for derivatives).</p>
 </div>
 <div class="section level2">
-<h2 id="approach-2-hybrid---analytical-score-ad-jacobian">Approach 2: Hybrid - Analytical Score + AD Jacobian<a class="anchor" aria-label="anchor" href="#approach-2-hybrid---analytical-score-ad-jacobian"></a>
+<h2 id="approach-2-analytical-score-analytical-hessian">Approach 2: Analytical Score + Analytical Hessian<a class="anchor" aria-label="anchor" href="#approach-2-analytical-score-analytical-hessian"></a>
 </h2>
-<p>The score function for Weibull can be derived analytically:</p>
+<p>For the Weibull, we can derive exact gradient and Hessian
+analytically:</p>
+<p><strong>Score:</strong></p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>∂</mi><mo>ℓ</mo></mrow><mrow><mi>∂</mi><mi>k</mi></mrow></mfrac><mo>=</mo><mfrac><mi>n</mi><mi>k</mi></mfrac><mo>+</mo><munder><mo>∑</mo><mi>i</mi></munder><mo>log</mo><msub><mi>t</mi><mi>i</mi></msub><mo>−</mo><mi>n</mi><mo>log</mo><mi>σ</mi><mo>−</mo><munder><mo>∑</mo><mi>i</mi></munder><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>t</mi><mi>i</mi></msub><mi>σ</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mi>k</mi></msup><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>t</mi><mi>i</mi></msub><mi>σ</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\frac{\partial \ell}{\partial k} = \frac{n}{k} + \sum_i \log t_i - n\log\sigma - \sum_i \left(\frac{t_i}{\sigma}\right)^k \log\left(\frac{t_i}{\sigma}\right)</annotation></semantics></math></p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>∂</mi><mo>ℓ</mo></mrow><mrow><mi>∂</mi><mi>σ</mi></mrow></mfrac><mo>=</mo><mfrac><mi>k</mi><mi>σ</mi></mfrac><mrow><mo stretchy="true" form="prefix">[</mo><munder><mo>∑</mo><mi>i</mi></munder><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>t</mi><mi>i</mi></msub><mi>σ</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mi>k</mi></msup><mo>−</mo><mi>n</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\frac{\partial \ell}{\partial \sigma} = \frac{k}{\sigma}\left[\sum_i \left(\frac{t_i}{\sigma}\right)^k - n\right]</annotation></semantics></math></p>
-<p>We provide this analytical score, and let AD compute the Jacobian
-(which gives us the Hessian):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">weibull_hybrid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">weibull_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
 <span>    rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
 <span>        <span class="op">(</span><span class="va">k</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="va">t</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span><span class="op">^</span><span class="op">(</span><span class="va">k</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
 <span>    <span class="op">}</span>,</span>
 <span>    cum_haz_rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
 <span>        <span class="op">(</span><span class="va">t</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span><span class="op">^</span><span class="va">k</span></span>
 <span>    <span class="op">}</span>,</span>
 <span>    score_fn <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
 <span>        <span class="va">t</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">$</span><span class="va">t</span></span>
-<span>        <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span></span>
+<span>        <span class="va">delta</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="st">"delta"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span> <span class="va">df</span><span class="op">$</span><span class="va">delta</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span>        <span class="co"># Vectorized computation</span></span>
-<span>        <span class="va">t_over_sigma</span> <span class="op">&lt;-</span> <span class="va">t</span> <span class="op">/</span> <span class="va">sigma</span></span>
-<span>        <span class="va">t_over_sigma_k</span> <span class="op">&lt;-</span> <span class="va">t_over_sigma</span><span class="op">^</span><span class="va">k</span></span>
+<span>        <span class="va">n_events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">delta</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>        <span class="va">t_ratio</span> <span class="op">&lt;-</span> <span class="va">t</span> <span class="op">/</span> <span class="va">sigma</span></span>
+<span>        <span class="va">log_t_ratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">t_ratio</span><span class="op">)</span></span>
 <span></span>
-<span>        <span class="va">score_k</span> <span class="op">&lt;-</span> <span class="va">n</span><span class="op">/</span><span class="va">k</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="va">n</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">sigma</span><span class="op">)</span> <span class="op">-</span></span>
-<span>                   <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_over_sigma_k</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">t_over_sigma</span><span class="op">)</span><span class="op">)</span></span>
-<span>        <span class="va">score_sigma</span> <span class="op">&lt;-</span> <span class="va">k</span><span class="op">/</span><span class="va">sigma</span> <span class="op">*</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_over_sigma_k</span><span class="op">)</span> <span class="op">-</span> <span class="va">n</span><span class="op">)</span></span>
+<span>        <span class="va">dk</span> <span class="op">&lt;-</span> <span class="va">n_events</span> <span class="op">/</span> <span class="va">k</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">delta</span> <span class="op">*</span> <span class="va">log_t_ratio</span><span class="op">)</span> <span class="op">-</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_ratio</span><span class="op">^</span><span class="va">k</span> <span class="op">*</span> <span class="va">log_t_ratio</span><span class="op">)</span></span>
+<span>        <span class="va">dsigma</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="va">n_events</span> <span class="op">*</span> <span class="va">k</span> <span class="op">/</span> <span class="va">sigma</span> <span class="op">+</span></span>
+<span>            <span class="op">(</span><span class="va">k</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_ratio</span><span class="op">^</span><span class="va">k</span><span class="op">)</span></span>
 <span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">score_k</span>, <span class="va">score_sigma</span><span class="op">)</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dk</span>, <span class="va">dsigma</span><span class="op">)</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    hess_fn <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
+<span>        <span class="va">t</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">$</span><span class="va">t</span></span>
+<span>        <span class="va">delta</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="st">"delta"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span> <span class="va">df</span><span class="op">$</span><span class="va">delta</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>        <span class="va">n_events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">delta</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>        <span class="va">t_ratio</span> <span class="op">&lt;-</span> <span class="va">t</span> <span class="op">/</span> <span class="va">sigma</span></span>
+<span>        <span class="va">log_t_ratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">t_ratio</span><span class="op">)</span></span>
+<span>        <span class="va">t_ratio_k</span> <span class="op">&lt;-</span> <span class="va">t_ratio</span><span class="op">^</span><span class="va">k</span></span>
+<span></span>
+<span>        <span class="va">d2k</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="va">n_events</span> <span class="op">/</span> <span class="va">k</span><span class="op">^</span><span class="fl">2</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_ratio_k</span> <span class="op">*</span> <span class="va">log_t_ratio</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
+<span>        <span class="va">d2k_sigma</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="va">n_events</span> <span class="op">/</span> <span class="va">sigma</span> <span class="op">+</span></span>
+<span>            <span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_ratio_k</span><span class="op">)</span> <span class="op">+</span></span>
+<span>            <span class="op">(</span><span class="va">k</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_ratio_k</span> <span class="op">*</span> <span class="va">log_t_ratio</span><span class="op">)</span></span>
+<span>        <span class="va">d2sigma</span> <span class="op">&lt;-</span> <span class="va">n_events</span> <span class="op">*</span> <span class="va">k</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">^</span><span class="fl">2</span> <span class="op">-</span></span>
+<span>            <span class="va">k</span> <span class="op">*</span> <span class="op">(</span><span class="va">k</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">^</span><span class="fl">2</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_ratio_k</span><span class="op">)</span></span>
+<span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">d2k</span>, <span class="va">d2k_sigma</span>, <span class="va">d2k_sigma</span>, <span class="va">d2sigma</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">score_hybrid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/score.html" class="external-link">score</a></span><span class="op">(</span><span class="va">weibull_hybrid</span><span class="op">)</span></span>
-<span><span class="va">hess_hybrid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/hess_loglik.html" class="external-link">hess_loglik</a></span><span class="op">(</span><span class="va">weibull_hybrid</span><span class="op">)</span></span>
+<span><span class="va">s_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/score.html" class="external-link">score</a></span><span class="op">(</span><span class="va">weibull_full</span><span class="op">)</span></span>
+<span><span class="va">H_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/hess_loglik.html" class="external-link">hess_loglik</a></span><span class="op">(</span><span class="va">weibull_full</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Score (analytical):\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Score (analytical):</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">score_hybrid</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] -10.494704   8.878147</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\nHessian (AD Jacobian of analytical score):\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hessian (AD Jacobian of analytical score):</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu">hess_hybrid</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Score (analytical):"</span>, <span class="fu">s_full</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Score (analytical): -10.4947 8.878147</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Hessian (analytical):\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Hessian (analytical):</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu">H_full</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          [,1]     [,2]</span></span>
 <span><span class="co">#&gt; [1,] -73.4609  30.3410</span></span>
 <span><span class="co">#&gt; [2,]  30.3410 -50.2047</span></span></code></pre></div>
-<p><strong>Key point:</strong> The <code>score_fn</code> uses
-<code>par[[1]]</code> indexing (double brackets) for AD compatibility.
-This allows femtograd’s dual numbers to flow through the
-computation.</p>
 </div>
 <div class="section level2">
-<h2 id="approach-3-full-ad-from-log-likelihood">Approach 3: Full AD from Log-Likelihood<a class="anchor" aria-label="anchor" href="#approach-3-full-ad-from-log-likelihood"></a>
+<h2 id="approach-3-provide-score-only-let-numderiv-handle-the-hessian">Approach 3: Provide Score Only, Let numDeriv Handle the Hessian<a class="anchor" aria-label="anchor" href="#approach-3-provide-score-only-let-numderiv-handle-the-hessian"></a>
 </h2>
-<p>With AD, we can also compute the score directly from the
-log-likelihood, then get the Hessian as the Jacobian of that score:</p>
+<p>If deriving the Hessian is tedious but the score is straightforward,
+provide just <code>score_fn</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">weibull_full_ad</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">weibull_score_only</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
 <span>    rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
 <span>        <span class="op">(</span><span class="va">k</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="va">t</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span><span class="op">^</span><span class="op">(</span><span class="va">k</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
 <span>    <span class="op">}</span>,</span>
 <span>    cum_haz_rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
 <span>        <span class="op">(</span><span class="va">t</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span><span class="op">^</span><span class="va">k</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    score_fn <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>        <span class="va">sigma</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
+<span>        <span class="va">t</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">$</span><span class="va">t</span></span>
+<span>        <span class="va">delta</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="st">"delta"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span> <span class="va">df</span><span class="op">$</span><span class="va">delta</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>        <span class="va">n_events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">delta</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>        <span class="va">t_ratio</span> <span class="op">&lt;-</span> <span class="va">t</span> <span class="op">/</span> <span class="va">sigma</span></span>
+<span>        <span class="va">log_t_ratio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">t_ratio</span><span class="op">)</span></span>
+<span></span>
+<span>        <span class="va">dk</span> <span class="op">&lt;-</span> <span class="va">n_events</span> <span class="op">/</span> <span class="va">k</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">delta</span> <span class="op">*</span> <span class="va">log_t_ratio</span><span class="op">)</span> <span class="op">-</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_ratio</span><span class="op">^</span><span class="va">k</span> <span class="op">*</span> <span class="va">log_t_ratio</span><span class="op">)</span></span>
+<span>        <span class="va">dsigma</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="va">n_events</span> <span class="op">*</span> <span class="va">k</span> <span class="op">/</span> <span class="va">sigma</span> <span class="op">+</span></span>
+<span>            <span class="op">(</span><span class="va">k</span> <span class="op">/</span> <span class="va">sigma</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">t_ratio</span><span class="op">^</span><span class="va">k</span><span class="op">)</span></span>
+<span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dk</span>, <span class="va">dsigma</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
-<span>    <span class="co"># No score_fn - AD will compute it from log-likelihood</span></span>
+<span>    <span class="co"># No hess_fn -&gt; numDeriv::hessian fallback</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">score_full_ad</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/score.html" class="external-link">score</a></span><span class="op">(</span><span class="va">weibull_full_ad</span><span class="op">)</span></span>
-<span><span class="va">hess_full_ad</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/hess_loglik.html" class="external-link">hess_loglik</a></span><span class="op">(</span><span class="va">weibull_full_ad</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Score (AD gradient of log-likelihood):\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Score (AD gradient of log-likelihood):</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">score_full_ad</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] -10.494704   8.878147</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\nHessian (AD Jacobian of AD score):\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hessian (AD Jacobian of AD score):</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu">hess_full_ad</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">H_mixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/likelihood.model/reference/hess_loglik.html" class="external-link">hess_loglik</a></span><span class="op">(</span><span class="va">weibull_score_only</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Hessian (numerical fallback):\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Hessian (numerical fallback):</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu">H_mixed</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          [,1]     [,2]</span></span>
-<span><span class="co">#&gt; [1,] -73.4602  30.3417</span></span>
-<span><span class="co">#&gt; [2,]  30.3417 -50.2047</span></span></code></pre></div>
+<span><span class="co">#&gt; [1,] -73.4609  30.3410</span></span>
+<span><span class="co">#&gt; [2,]  30.3410 -50.2047</span></span></code></pre></div>
+<p>This gives you fast optimization (analytical gradient) with correct
+but slower Hessian computation at the end.</p>
 </div>
 <div class="section level2">
-<h2 id="comparing-precision">Comparing Precision<a class="anchor" aria-label="anchor" href="#comparing-precision"></a>
+<h2 id="using-pre-built-constructors">Using Pre-Built Constructors<a class="anchor" aria-label="anchor" href="#using-pre-built-constructors"></a>
 </h2>
-<p>All three approaches should give similar results. Let’s compare:</p>
+<p>The package provides helper constructors with analytical derivatives
+already implemented:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">h_num</span> <span class="op">&lt;-</span> <span class="fu">hess_num</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span></span>
-<span><span class="va">h_hybrid</span> <span class="op">&lt;-</span> <span class="fu">hess_hybrid</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span></span>
-<span><span class="va">h_full</span> <span class="op">&lt;-</span> <span class="fu">hess_full_ad</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># These include score_fn and hess_fn (where available)</span></span>
+<span><span class="va">weib</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_weibull.html">dfr_weibull</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, scale <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">exp_d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span>lambda <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Max absolute differences:\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Max absolute differences:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Hybrid vs Numerical:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">h_hybrid</span> <span class="op">-</span> <span class="va">h_num</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Hybrid vs Numerical: 0.0006991277</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Full AD vs Numerical:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">h_full</span> <span class="op">-</span> <span class="va">h_num</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Full AD vs Numerical: 0</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Hybrid vs Full AD:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">h_hybrid</span> <span class="op">-</span> <span class="va">h_full</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Hybrid vs Full AD: 0.0006991277</span></span></code></pre></div>
-<p>All methods agree to high precision (differences &lt; 0.01).</p>
-</div>
-<div class="section level2">
-<h2 id="speed-benchmark">Speed Benchmark<a class="anchor" aria-label="anchor" href="#speed-benchmark"></a>
-</h2>
-<p>The real difference is in computational speed:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Warmup</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">hess_num</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">hess_hybrid</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">hess_full_ad</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Fit the model</span></span>
+<span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">weib</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2.5</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">n_iter</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
-<span></span>
-<span><span class="co"># Numerical</span></span>
-<span><span class="va">t0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n_iter</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">hess_num</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">time_num</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">t0</span><span class="op">)</span> <span class="op">/</span> <span class="va">n_iter</span> <span class="op">*</span> <span class="fl">1000</span></span>
-<span></span>
-<span><span class="co"># Hybrid</span></span>
-<span><span class="va">t0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n_iter</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">hess_hybrid</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">time_hybrid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">t0</span><span class="op">)</span> <span class="op">/</span> <span class="va">n_iter</span> <span class="op">*</span> <span class="fl">1000</span></span>
-<span></span>
-<span><span class="co"># Full AD</span></span>
-<span><span class="va">t0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n_iter</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">hess_full_ad</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">time_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">t0</span><span class="op">)</span> <span class="op">/</span> <span class="va">n_iter</span> <span class="op">*</span> <span class="fl">1000</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Average time per Hessian computation:\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Average time per Hessian computation:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  Numerical:      %7.2f ms\n"</span>, <span class="va">time_num</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Numerical:       108.58 ms</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  Hybrid (recommended): %7.2f ms\n"</span>, <span class="va">time_hybrid</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Hybrid (recommended):    1.55 ms</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  Full AD:        %7.2f ms\n"</span>, <span class="va">time_full</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Full AD:         107.65 ms</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"\nSpeedup (Numerical / Hybrid): %.1fx\n"</span>, <span class="va">time_num</span> <span class="op">/</span> <span class="va">time_hybrid</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Fitted parameters:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Fitted parameters:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1.702321 2.963588</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\nTrue parameters: k ="</span>, <span class="va">true_k</span>, <span class="st">", sigma ="</span>, <span class="va">true_sigma</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Speedup (Numerical / Hybrid): 70.2x</span></span></code></pre></div>
+<span><span class="co">#&gt; True parameters: k = 2 , sigma = 3</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\n95% Confidence intervals:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 95% Confidence intervals:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          2.5%    97.5%</span></span>
+<span><span class="co">#&gt; [1,] 1.450448 1.954194</span></span>
+<span><span class="co">#&gt; [2,] 2.603077 3.324099</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="scaling-with-sample-size">Scaling with Sample Size<a class="anchor" aria-label="anchor" href="#scaling-with-sample-size"></a>
+<h2 id="computing-standard-errors">Computing Standard Errors<a class="anchor" aria-label="anchor" href="#computing-standard-errors"></a>
 </h2>
-<p>The advantage of the hybrid approach grows with sample size:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Scaling with sample size:\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Scaling with sample size:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%8s %10s %10s %8s\n"</span>, <span class="st">"n"</span>, <span class="st">"Hybrid"</span>, <span class="st">"Numerical"</span>, <span class="st">"Speedup"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;        n     Hybrid  Numerical  Speedup</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%8s %10s %10s %8s\n"</span>, <span class="st">"---"</span>, <span class="st">"------"</span>, <span class="st">"---------"</span>, <span class="st">"-------"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      ---     ------  ---------  -------</span></span>
-<span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">sample_n</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">100</span>, <span class="fl">500</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
-<span>    <span class="va">times_bench</span> <span class="op">&lt;-</span> <span class="va">true_sigma</span> <span class="op">*</span> <span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">sample_n</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">true_k</span><span class="op">)</span></span>
-<span>    <span class="va">df_bench</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>t <span class="op">=</span> <span class="va">times_bench</span>, delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">sample_n</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span>    <span class="co"># Time hybrid</span></span>
-<span>    <span class="va">t0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>    <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">hess_hybrid</span><span class="op">(</span><span class="va">df_bench</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="va">t_hybrid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">t0</span><span class="op">)</span> <span class="op">/</span> <span class="fl">10</span> <span class="op">*</span> <span class="fl">1000</span></span>
-<span></span>
-<span>    <span class="co"># Time numerical</span></span>
-<span>    <span class="va">t0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>    <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">hess_num</span><span class="op">(</span><span class="va">df_bench</span>, par <span class="op">=</span> <span class="va">test_par</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="va">t_num</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">t0</span><span class="op">)</span> <span class="op">/</span> <span class="fl">5</span> <span class="op">*</span> <span class="fl">1000</span></span>
-<span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%8d %9.1f ms %9.1f ms %7.0fx\n"</span>,</span>
-<span>                <span class="va">sample_n</span>, <span class="va">t_hybrid</span>, <span class="va">t_num</span>, <span class="va">t_num</span><span class="op">/</span><span class="va">t_hybrid</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">#&gt;       50       1.3 ms      54.6 ms      42x</span></span>
-<span><span class="co">#&gt;      100       1.7 ms     107.9 ms      64x</span></span>
-<span><span class="co">#&gt;      500       1.4 ms     536.4 ms     384x</span></span>
-<span><span class="co">#&gt;     1000       1.8 ms    1107.3 ms     621x</span></span></code></pre></div>
-<p>The hybrid approach stays nearly constant (~2ms) while numerical
-scales linearly with n.</p>
-</div>
-<div class="section level2">
-<h2 id="why-is-the-hybrid-approach-fastest">Why is the Hybrid Approach Fastest?<a class="anchor" aria-label="anchor" href="#why-is-the-hybrid-approach-fastest"></a>
-</h2>
-<ol style="list-style-type: decimal">
-<li><p><strong>Numerical differentiation</strong> requires many
-log-likelihood evaluations, each involving numerical integration for the
-cumulative hazard.</p></li>
-<li><p><strong>Full AD</strong> builds computation graphs for every
-observation, which has significant overhead.</p></li>
-<li><p><strong>Hybrid approach</strong> uses an analytical score that
-directly computes the gradient without numerical integration. The AD
-Jacobian then requires only 2 forward passes (one per parameter) on this
-efficient score function.</p></li>
-</ol>
-</div>
-<div class="section level2">
-<h2 id="writing-ad-compatible-score-functions">Writing AD-Compatible Score Functions<a class="anchor" aria-label="anchor" href="#writing-ad-compatible-score-functions"></a>
-</h2>
-<p>For the hybrid approach, your <code>score_fn</code> must be
-compatible with femtograd’s dual numbers:</p>
-<div class="section level3">
-<h3 id="dos">Do’s:<a class="anchor" aria-label="anchor" href="#dos"></a>
-</h3>
-<ul>
-<li>Use <code>par[[1]]</code> (double brackets) to access
-parameters</li>
-<li>Use vectorized operations: <code>t / sigma</code>,
-<code>t^k</code>
-</li>
-<li>Use <code><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum()</a></code> to reduce vectors to scalars</li>
-<li>Use standard math functions: <code><a href="https://rdrr.io/r/base/Log.html" class="external-link">log()</a></code>, <code><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp()</a></code>,
-<code>^</code>
-</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="donts">Don’ts:<a class="anchor" aria-label="anchor" href="#donts"></a>
-</h3>
-<ul>
-<li>Don’t use <code>par[1]</code> (single bracket) - it won’t extract
-dual numbers correctly</li>
-<li>Avoid control flow that depends on parameter values</li>
-<li>Don’t use functions that don’t have AD implementations</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="example-pattern">Example Pattern:<a class="anchor" aria-label="anchor" href="#example-pattern"></a>
-</h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">score_fn</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co"># Extract parameters with [[ ]]</span></span>
-<span>    <span class="va">theta1</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span>    <span class="va">theta2</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
-<span></span>
-<span>    <span class="co"># Get data (numeric, not dual)</span></span>
-<span>    <span class="va">t</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">$</span><span class="va">t</span></span>
-<span>    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span></span>
-<span></span>
-<span>    <span class="co"># Vectorized operations work with duals</span></span>
-<span>    <span class="va">z</span> <span class="op">&lt;-</span> <span class="va">t</span> <span class="op">/</span> <span class="va">theta2</span></span>
-<span></span>
-<span>    <span class="co"># Sum reduces to scalar dual</span></span>
-<span>    <span class="va">score1</span> <span class="op">&lt;-</span> <span class="va">n</span> <span class="op">/</span> <span class="va">theta1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">z</span><span class="op">^</span><span class="va">theta1</span><span class="op">)</span></span>
-<span>    <span class="va">score2</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="va">n</span> <span class="op">*</span> <span class="va">theta1</span> <span class="op">/</span> <span class="va">theta2</span> <span class="op">+</span> <span class="va">...</span></span>
-<span></span>
-<span>    <span class="co"># Return as vector</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">score1</span>, <span class="va">score2</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="computing-standard-errors-and-confidence-intervals">Computing Standard Errors and Confidence Intervals<a class="anchor" aria-label="anchor" href="#computing-standard-errors-and-confidence-intervals"></a>
-</h2>
-<p>With the Hessian, we can compute standard errors via the observed
-Fisher information:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Find MLE</span></span>
-<span><span class="va">mle_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2.5</span><span class="op">)</span>,</span>
-<span>                    <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="op">-</span><span class="fu">ll</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">p</span><span class="op">)</span>,</span>
-<span>                    method <span class="op">=</span> <span class="st">"L-BFGS-B"</span>,</span>
-<span>                    lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">mle_par</span> <span class="op">&lt;-</span> <span class="va">mle_result</span><span class="op">$</span><span class="va">par</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"MLE estimates:\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; MLE estimates:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  k ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mle_par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span>, <span class="st">"(true:"</span>, <span class="va">true_k</span>, <span class="st">")\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   k = 1.7023 (true: 2 )</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  sigma ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mle_par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span>, <span class="st">"(true:"</span>, <span class="va">true_sigma</span>, <span class="st">")\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   sigma = 2.9636 (true: 3 )</span></span>
-<span></span>
-<span><span class="co"># Hessian at MLE</span></span>
-<span><span class="va">hess_mle</span> <span class="op">&lt;-</span> <span class="fu">hess_hybrid</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">mle_par</span><span class="op">)</span></span>
+<p>With the Hessian, standard errors come from the observed Fisher
+information:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Hessian at MLE</span></span>
+<span><span class="va">mle_par</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="va">hess_mle</span> <span class="op">&lt;-</span> <span class="fu">H_full</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="va">mle_par</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Observed Fisher information = -Hessian</span></span>
 <span><span class="va">obs_info</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="va">hess_mle</span></span>
@@ -476,60 +350,66 @@ Fisher information:</p>
 <span><span class="co">#&gt; Standard errors:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  SE(k) ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">se</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   SE(k) = 0.1285</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  SE(sigma) ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">se</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span>, <span class="st">"\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   SE(sigma) = 0.1839</span></span>
-<span></span>
-<span><span class="co"># 95% confidence intervals</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"95% Confidence Intervals:\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 95% Confidence Intervals:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  k: ["</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mle_par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">1.96</span><span class="op">*</span><span class="va">se</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">","</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mle_par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1.96</span><span class="op">*</span><span class="va">se</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"]\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   k: [ 1.45 , 1.954 ]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  sigma: ["</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mle_par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="fl">1.96</span><span class="op">*</span><span class="va">se</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">","</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mle_par</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1.96</span><span class="op">*</span><span class="va">se</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"]\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   sigma: [ 2.603 , 3.324 ]</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  SE(sigma) ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">se</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   SE(sigma) = 0.1839</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+<h2 id="distribution-reference">Distribution Reference<a class="anchor" aria-label="anchor" href="#distribution-reference"></a>
 </h2>
 <table class="table">
 <thead><tr class="header">
-<th>Approach</th>
-<th>Speed</th>
-<th>Precision</th>
-<th>Effort</th>
+<th>Distribution</th>
+<th>Constructor</th>
+<th>Score</th>
+<th>Hessian</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>Numerical</td>
-<td>Slow</td>
-<td>Good</td>
-<td>Minimal</td>
+<td>Exponential</td>
+<td><code><a href="../reference/dfr_exponential.html">dfr_exponential()</a></code></td>
+<td>Analytical</td>
+<td>Analytical</td>
 </tr>
 <tr class="even">
-<td>Full AD</td>
-<td>Slow</td>
-<td>Excellent</td>
-<td>Moderate</td>
+<td>Weibull</td>
+<td><code><a href="../reference/dfr_weibull.html">dfr_weibull()</a></code></td>
+<td>Analytical</td>
+<td>Analytical</td>
 </tr>
 <tr class="odd">
-<td><strong>Hybrid</strong></td>
-<td><strong>Fast</strong></td>
-<td><strong>Excellent</strong></td>
-<td><strong>Moderate</strong></td>
+<td>Gompertz</td>
+<td><code><a href="../reference/dfr_gompertz.html">dfr_gompertz()</a></code></td>
+<td>Analytical</td>
+<td>numDeriv</td>
+</tr>
+<tr class="even">
+<td>Log-logistic</td>
+<td><code><a href="../reference/dfr_loglogistic.html">dfr_loglogistic()</a></code></td>
+<td>Analytical</td>
+<td>numDeriv</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Recommendation:</strong> For production use, implement
-analytical score functions and let AD compute the Hessian via Jacobian.
-This gives you:</p>
+<p>For Gompertz and log-logistic, you can supply your own
+<code>hess_fn</code> if needed.</p>
+</div>
+<div class="section level2">
+<h2 id="next-steps">Next Steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>
+</h2>
 <ul>
-<li>70-2000x speedup over numerical (depending on sample size)</li>
-<li>Exact derivatives (no finite difference approximation)</li>
-<li>Automatic Hessian computation (no manual second derivatives)</li>
+<li>
+<strong><code><a href="../articles/getting_started.html">vignette("getting_started")</a></code></strong> - Quick
+5-minute introduction</li>
+<li>
+<strong><code><a href="../articles/reliability_engineering.html">vignette("reliability_engineering")</a></code></strong> -
+Real-world applications</li>
+<li>
+<strong><code><a href="../articles/failure_rate.html">vignette("failure_rate")</a></code></strong> -
+Mathematical foundations</li>
+<li>
+<strong><code><a href="../articles/custom_distributions.html">vignette("custom_distributions")</a></code></strong> - The
+three-level optimization paradigm</li>
 </ul>
-<p>The initial effort to derive the score function pays off
-substantially in computational efficiency.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

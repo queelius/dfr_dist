@@ -40,35 +40,57 @@ From this, all other quantities follow:
 
 ``` r
 library(dfr.dist)
-library(algebraic.dist)
-#> 
-#> Attaching package: 'algebraic.dist'
-#> The following object is masked from 'package:grDevices':
-#> 
-#>     pdf
 ```
 
-### Creating a DFR distribution
+### Using Built-in Distributions
 
-Use
-[`dfr_dist()`](https://queelius.github.io/dfr_dist/reference/dfr_dist.md)
-to create a distribution from a hazard function:
+The package provides convenient constructors for classic survival
+distributions:
 
 ``` r
-# Exponential distribution: constant hazard h(t) = lambda
-exp_dist <- dfr_dist(
-  rate = function(t, par, ...) rep(par[1], length(t)),
-  par = c(lambda = 0.5)
-)
+# Exponential: constant hazard h(t) = lambda
+exp_dist <- dfr_exponential(lambda = 0.5)
+
+# Weibull: power-law hazard h(t) = (k/sigma)(t/sigma)^(k-1)
+weib_dist <- dfr_weibull(shape = 2, scale = 3)
+
+# Gompertz: exponentially increasing hazard h(t) = a*exp(b*t)
+gomp_dist <- dfr_gompertz(a = 0.01, b = 0.1)
+
+# Log-logistic: non-monotonic hazard (increases then decreases)
+ll_dist <- dfr_loglogistic(alpha = 10, beta = 2)
 
 print(exp_dist)
 #> Dynamic failure rate (DFR) distribution with failure rate:
-#> <srcref: file "" chars 3:10 to 3:53>
+#> function (t, par, ...) 
+#> {
+#>     rep(par[[1]], length(t))
+#> }
+#> <bytecode: 0x5e42ac5269b0>
+#> <environment: 0x5e42ac525130>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
 is_dfr_dist(exp_dist)
 #> [1] TRUE
+```
+
+### Creating Custom Distributions
+
+For non-standard hazard patterns, use
+[`dfr_dist()`](https://queelius.github.io/dfr.dist/reference/dfr_dist.md)
+directly:
+
+``` r
+# Custom: linear increasing hazard h(t) = a + b*t
+linear_dist <- dfr_dist(
+  rate = function(t, par, ...) {
+    a <- par[1]
+    b <- par[2]
+    a + b * t
+  },
+  par = c(a = 0.1, b = 0.01)
+)
 ```
 
 The `rate` function must accept:
@@ -77,21 +99,9 @@ The `rate` function must accept:
 - `par`: parameter vector
 - `...`: additional arguments
 
-### Weibull distribution
-
-The Weibull distribution has hazard
-$h(t) = \frac{k}{\sigma}\left( \frac{t}{\sigma} \right)^{k - 1}$:
-
-``` r
-weibull_dist <- dfr_dist(
-  rate = function(t, par, ...) {
-    k <- par[1]      # shape
-    sigma <- par[2]  # scale
-    (k / sigma) * (t / sigma)^(k - 1)
-  },
-  par = c(shape = 2, scale = 3)
-)
-```
+See
+[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)
+for detailed guidance on creating optimized custom distributions.
 
 ## Distribution Methods
 
@@ -105,11 +115,9 @@ H <- cum_haz(exp_dist)
 
 # Evaluate at specific times
 h(1)      # Hazard at t=1
-#> lambda 
-#>    0.5
+#> [1] 0.5
 h(c(1, 2, 3))  # Vectorized
-#> lambda lambda lambda 
-#>    0.5    0.5    0.5
+#> [1] 0.5 0.5 0.5
 
 H(2)      # Cumulative hazard at t=2
 #> [1] 1
@@ -128,18 +136,18 @@ c(survival = S(t), cdf = F(t), sum = S(t) + F(t))
 #> 0.3678794 0.6321206 1.0000000
 ```
 
-### PDF
+### PDF (Density)
 
 ``` r
-# Use algebraic.dist::pdf to avoid masking by grDevices::pdf
-pdf_fn <- algebraic.dist::pdf(exp_dist)
+# Use stats::density which dfr.dist implements as density.dfr_dist
+pdf_fn <- density(exp_dist)
 
 # For exponential: f(t) = lambda * exp(-lambda * t)
 t <- 1
 lambda <- 0.5
 c(computed = pdf_fn(t), analytical = lambda * exp(-lambda * t))
-#> computed.lambda      analytical 
-#>       0.3032653       0.3032653
+#>   computed analytical 
+#>  0.3032653  0.3032653
 ```
 
 ### Quantile function (inverse CDF)
@@ -178,8 +186,7 @@ h <- hazard(exp_dist)
 
 # Use default lambda = 0.5
 h(1)
-#> lambda 
-#>    0.5
+#> [1] 0.5
 
 # Override with lambda = 2
 h(1, par = c(2))
@@ -274,13 +281,13 @@ solver <- fit(dist)
 # Find MLE starting from initial guess
 result <- solver(df_exact, par = c(0.5), method = "BFGS")
 
-# Extract fitted parameters
-params(result)
+# Extract fitted parameters (fisher_mle uses coef())
+coef(result)
 #> [1] 0.8846654
 
 # Compare to analytical MLE: lambda_hat = n / sum(t)
 analytical_mle <- n / sum(times)
-c(fitted = params(result), analytical = analytical_mle, true = true_lambda)
+c(fitted = coef(result), analytical = analytical_mle, true = true_lambda)
 #>     fitted analytical       true 
 #>  0.8846654  0.8846654  1.0000000
 ```
@@ -309,7 +316,7 @@ result <- solver(df_mixed, par = c(0.5), method = "BFGS")
 #> Warning in log(h_exact): NaNs produced
 #> Warning in log(h_exact): NaNs produced
 #> Warning in log(h_exact): NaNs produced
-params(result)
+coef(result)
 #> [1] 0.1388889
 ```
 
@@ -341,10 +348,10 @@ df_weibull <- data.frame(t = weibull_times, delta = rep(1, n))
 solver <- fit(weibull)
 result <- solver(df_weibull, par = c(1.5, 2.5), method = "BFGS")
 
-c(fitted_shape = params(result)[1], true_shape = true_shape)
+c(fitted_shape = coef(result)[1], true_shape = true_shape)
 #> fitted_shape   true_shape 
 #>      1.92518      2.00000
-c(fitted_scale = params(result)[2], true_scale = true_scale)
+c(fitted_scale = coef(result)[2], true_scale = true_scale)
 #> fitted_scale   true_scale 
 #>     2.788113     3.000000
 ```
@@ -433,9 +440,67 @@ print(support)
 
 # Parameters
 params(exp_dist)
-#> lambda 
-#>    0.5
+#> [1] 0.5
 ```
+
+## Model Diagnostics
+
+After fitting a model, it’s essential to verify goodness-of-fit. The
+package provides diagnostic tools based on residual analysis.
+
+### Cox-Snell Residuals
+
+Cox-Snell residuals are defined as r_i = H(t_i), the cumulative hazard
+at each observation time. If the model is correctly specified, these
+residuals follow an Exp(1) distribution.
+
+``` r
+# Fit a model and check residuals
+set.seed(99)
+test_times <- rexp(80, rate = 0.3)
+test_df <- data.frame(t = test_times, delta = 1)
+
+# Fit exponential
+exp_fitted <- dfr_exponential()
+solver <- fit(exp_fitted)
+fit_result <- solver(test_df, par = c(0.5))
+#> Warning in log(h_exact): NaNs produced
+#> Warning in log(h_exact): NaNs produced
+#> Warning in log(h_exact): NaNs produced
+#> Warning in log(h_exact): NaNs produced
+#> Warning in log(h_exact): NaNs produced
+lambda_hat <- coef(fit_result)
+
+# Create fitted distribution with estimated parameters
+exp_final <- dfr_exponential(lambda = lambda_hat)
+
+# Q-Q plot of Cox-Snell residuals
+qqplot_residuals(exp_final, test_df)
+```
+
+![Cox-Snell residuals Q-Q plot showing model fit
+assessment.](failure_rate_files/figure-html/unnamed-chunk-20-1.png)
+
+Points falling along the diagonal indicate good fit. Systematic
+departures suggest model misspecification.
+
+### Martingale Residuals
+
+Martingale residuals (M_i = delta_i - H(t_i)) are useful for identifying
+individual observations that are poorly fit:
+
+``` r
+mart_resid <- residuals(exp_final, test_df, type = "martingale")
+summary(mart_resid)
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#> -4.8856 -0.4127  0.3650  0.0000  0.7569  0.9998
+
+# Large positive values: failed earlier than expected
+# Large negative values: survived longer than expected
+```
+
+For more detailed diagnostic workflows, see
+[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md).
 
 ## Summary
 
@@ -449,6 +514,7 @@ The `dfr.dist` package provides:
 4.  **Censoring support**: Handle exact and right-censored survival data
 5.  **Numerical integration**: Automatic computation of cumulative
     hazard
+6.  **Model diagnostics**: Residuals and Q-Q plots for fit assessment
 
 This makes it ideal for:
 
@@ -456,3 +522,14 @@ This makes it ideal for:
 - Survival analysis with non-standard hazard patterns
 - Maximum likelihood estimation of hazard function parameters
 - Simulation studies with flexible failure distributions
+
+## Next Steps
+
+- **[`vignette("getting_started")`](https://queelius.github.io/dfr.dist/articles/getting_started.md)** -
+  Quick 5-minute introduction
+- **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md)** -
+  Five real-world case studies
+- **[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)** -
+  The three-level optimization paradigm
+- **[`vignette("automatic_differentiation")`](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.md)** -
+  Supplying analytical score and Hessian functions

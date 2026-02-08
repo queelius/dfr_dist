@@ -9,7 +9,7 @@ the distribution parameters. The log-likelihood for survival data is:"></head><b
 
     <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,16 +17,26 @@ the distribution parameters. The log-likelihood for survival data is:"></head><b
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
+<li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Automatic Differentiation for Maximum Likelihood Estimation</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
+    <li><a class="dropdown-item" href="../articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
     <li><a class="dropdown-item" href="../articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
+    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+    <li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Custom Derivatives for MLE</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr_dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -36,7 +46,7 @@ the distribution parameters. The log-likelihood for survival data is:"></head><b
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Log-likelihood method for <code>dfr_dist</code> objects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr_dist/blob/HEAD/R/dfr_dist.R" class="external-link"><code>R/dfr_dist.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/HEAD/R/dfr_dist.R" class="external-link"><code>R/dfr_dist.R</code></a></small>
       <div class="d-none name"><code>loglik.dfr_dist.Rd</code></div>
     </div>
 
@@ -67,13 +77,15 @@ the distribution parameters. The log-likelihood for survival data is:</p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A function that computes the log-likelihood. It accepts:
 - <code>df</code>: A data frame with observation times and censoring indicators
+(delta: 1 = exact, 0 = right-censored, -1 = left-censored)
 - <code>par</code>: The parameters of the distribution
 - <code>...</code>: Additional arguments passed to internal functions</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>For exact observations (uncensored): log(f(t)) = log(h(t)) - H(t)
-For right-censored observations: log(S(t)) = -H(t)</p>
+For right-censored observations: log(S(t)) = -H(t)
+For left-censored observations: log(F(t)) = log(1 - exp(-H(t)))</p>
 <p>where h(t) is the hazard function, H(t) is the cumulative hazard,
 f(t) = h(t)*S(t) is the pdf, and S(t) = exp(-H(t)) is the survival function.</p>
     </div>
