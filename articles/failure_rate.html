@@ -70,7 +70,7 @@
       <h1>Dynamic Failure Rate Distributions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/v0.5.0/vignettes/failure_rate.Rmd" class="external-link"><code>vignettes/failure_rate.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/HEAD/vignettes/failure_rate.Rmd" class="external-link"><code>vignettes/failure_rate.Rmd</code></a></small>
       <div class="d-none name"><code>failure_rate.Rmd</code></div>
     </div>
 
@@ -165,8 +165,8 @@ distributions:</p>
 <span><span class="co">#&gt; {</span></span>
 <span><span class="co">#&gt;     rep(par[[1]], length(t))</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5641e273bd10&gt;</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5641e27401e0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x578fca36e3e0&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x578fca36cb60&gt;</span></span>
 <span><span class="co">#&gt; It has a survival function given by:</span></span>
 <span><span class="co">#&gt;     S(t|rate) = exp(-H(t,...))</span></span>
 <span><span class="co">#&gt; where H(t,...) is the cumulative hazard function.</span></span>
@@ -295,9 +295,9 @@ parameters:</p>
 <div class="section level2">
 <h2 id="likelihood-model-interface">Likelihood Model Interface<a class="anchor" aria-label="anchor" href="#likelihood-model-interface"></a>
 </h2>
-<p>The <code>dfr_dist</code> class implements the
-<code>likelihood_model</code> interface, enabling maximum likelihood
-estimation with survival data.</p>
+<p>The <code>dfr_dist</code> class implements the <a href="https://CRAN.R-project.org/package=likelihood.model" class="external-link">likelihood.model</a>
+interface, enabling maximum likelihood estimation with survival
+data.</p>
 <div class="section level3">
 <h3 id="log-likelihood-for-survival-data">Log-likelihood for survival data<a class="anchor" aria-label="anchor" href="#log-likelihood-for-survival-data"></a>
 </h3>
@@ -385,7 +385,7 @@ to parameters. It’s computed numerically by default:</p>
 <span><span class="co"># Find MLE starting from initial guess</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df_exact</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"BFGS"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Extract fitted parameters (fisher_mle uses coef())</span></span>
+<span><span class="co"># Extract fitted parameters (the fisher_mle class from likelihood.model uses coef())</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.8846654</span></span>
 <span></span>
@@ -527,9 +527,8 @@ mortality</strong>: High initial failure rate that decreases 2.
 <div class="section level2">
 <h2 id="integration-with-algebraic-dist">Integration with algebraic.dist<a class="anchor" aria-label="anchor" href="#integration-with-algebraic-dist"></a>
 </h2>
-<p>The <code>dfr_dist</code> class inherits from
-<code>algebraic.dist</code> classes, providing access to additional
-functionality:</p>
+<p>The <code>dfr_dist</code> class inherits from <a href="https://CRAN.R-project.org/package=algebraic.dist" class="external-link">algebraic.dist</a>
+classes, providing access to additional functionality:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Support is (0, Inf) for all DFR distributions</span></span>
 <span><span class="va">support</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/sup.html" class="external-link">sup</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>

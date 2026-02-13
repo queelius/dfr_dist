@@ -12,8 +12,8 @@ The `dfr.dist` package uses a simple 2-tier fallback for each:
 
 | Derivative | If provided              | Otherwise                                                              |
 |------------|--------------------------|------------------------------------------------------------------------|
-| Score      | `score_fn(df, par, ...)` | [`numDeriv::grad()`](https://rdrr.io/pkg/numDeriv/man/grad.html)       |
-| Hessian    | `hess_fn(df, par, ...)`  | [`numDeriv::hessian()`](https://rdrr.io/pkg/numDeriv/man/hessian.html) |
+| Score      | `score_fn(df, par, ...)` | [`numDeriv`](https://CRAN.R-project.org/package=numDeriv)`::grad()`    |
+| Hessian    | `hess_fn(df, par, ...)`  | [`numDeriv`](https://CRAN.R-project.org/package=numDeriv)`::hessian()` |
 
 **You decide how to compute derivatives.** Hand-derive them, use an AD
 library, or let the package fall back to numerical methods. The package
@@ -172,7 +172,7 @@ print(round(H_full(df, par = test_par), 4))
 #> [2,]  30.3410 -50.2047
 ```
 
-## Approach 3: Provide Score Only, Let numDeriv Handle the Hessian
+## Approach 3: Provide Score Only, Let [numDeriv](https://CRAN.R-project.org/package=numDeriv) Handle the Hessian
 
 If deriving the Hessian is tedious but the score is straightforward,
 provide just `score_fn`:
@@ -277,12 +277,12 @@ cat("  SE(sigma) =", round(se[2], 4), "\n")
 
 ## Distribution Reference
 
-| Distribution | Constructor                                                                             | Score      | Hessian    |
-|--------------|-----------------------------------------------------------------------------------------|------------|------------|
-| Exponential  | [`dfr_exponential()`](https://queelius.github.io/dfr.dist/reference/dfr_exponential.md) | Analytical | Analytical |
-| Weibull      | [`dfr_weibull()`](https://queelius.github.io/dfr.dist/reference/dfr_weibull.md)         | Analytical | Analytical |
-| Gompertz     | [`dfr_gompertz()`](https://queelius.github.io/dfr.dist/reference/dfr_gompertz.md)       | Analytical | numDeriv   |
-| Log-logistic | [`dfr_loglogistic()`](https://queelius.github.io/dfr.dist/reference/dfr_loglogistic.md) | Analytical | numDeriv   |
+| Distribution | Constructor                                                                             | Score      | Hessian                                                 |
+|--------------|-----------------------------------------------------------------------------------------|------------|---------------------------------------------------------|
+| Exponential  | [`dfr_exponential()`](https://queelius.github.io/dfr.dist/reference/dfr_exponential.md) | Analytical | Analytical                                              |
+| Weibull      | [`dfr_weibull()`](https://queelius.github.io/dfr.dist/reference/dfr_weibull.md)         | Analytical | Analytical                                              |
+| Gompertz     | [`dfr_gompertz()`](https://queelius.github.io/dfr.dist/reference/dfr_gompertz.md)       | Analytical | [numDeriv](https://CRAN.R-project.org/package=numDeriv) |
+| Log-logistic | [`dfr_loglogistic()`](https://queelius.github.io/dfr.dist/reference/dfr_loglogistic.md) | Analytical | [numDeriv](https://CRAN.R-project.org/package=numDeriv) |
 
 For Gompertz and log-logistic, you can supply your own `hess_fn` if
 needed.

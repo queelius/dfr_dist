@@ -70,7 +70,7 @@
       <h1>Custom Derivatives for Maximum Likelihood Estimation</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/v0.5.0/vignettes/custom_derivatives.Rmd" class="external-link"><code>vignettes/custom_derivatives.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/HEAD/vignettes/custom_derivatives.Rmd" class="external-link"><code>vignettes/custom_derivatives.Rmd</code></a></small>
       <div class="d-none name"><code>custom_derivatives.Rmd</code></div>
     </div>
 
@@ -88,6 +88,11 @@ Fisher information.</p>
 <p>The <code>dfr.dist</code> package uses a simple 2-tier fallback for
 each:</p>
 <table class="table">
+<colgroup>
+<col width="31%">
+<col width="37%">
+<col width="31%">
+</colgroup>
 <thead><tr class="header">
 <th>Derivative</th>
 <th>If provided</th>
@@ -97,12 +102,16 @@ each:</p>
 <tr class="odd">
 <td>Score</td>
 <td><code>score_fn(df, par, ...)</code></td>
-<td><code><a href="https://rdrr.io/pkg/numDeriv/man/grad.html" class="external-link">numDeriv::grad()</a></code></td>
+<td>
+<a href="https://CRAN.R-project.org/package=numDeriv" class="external-link"><code>numDeriv</code></a><code>::grad()</code>
+</td>
 </tr>
 <tr class="even">
 <td>Hessian</td>
 <td><code>hess_fn(df, par, ...)</code></td>
-<td><code><a href="https://rdrr.io/pkg/numDeriv/man/hessian.html" class="external-link">numDeriv::hessian()</a></code></td>
+<td>
+<a href="https://CRAN.R-project.org/package=numDeriv" class="external-link"><code>numDeriv</code></a><code>::hessian()</code>
+</td>
 </tr>
 </tbody>
 </table>
@@ -255,7 +264,8 @@ analytically:</p>
 <span><span class="co">#&gt; [2,]  30.3410 -50.2047</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="approach-3-provide-score-only-let-numderiv-handle-the-hessian">Approach 3: Provide Score Only, Let numDeriv Handle the Hessian<a class="anchor" aria-label="anchor" href="#approach-3-provide-score-only-let-numderiv-handle-the-hessian"></a>
+<h2 id="approach-3-provide-score-only-let-numderiv-handle-the-hessian">Approach 3: Provide Score Only, Let <a href="https://CRAN.R-project.org/package=numDeriv" class="external-link">numDeriv</a> Handle
+the Hessian<a class="anchor" aria-label="anchor" href="#approach-3-provide-score-only-let-numderiv-handle-the-hessian"></a>
 </h2>
 <p>If deriving the Hessian is tedious but the score is straightforward,
 provide just <code>score_fn</code>:</p>
@@ -357,6 +367,12 @@ information:</p>
 <h2 id="distribution-reference">Distribution Reference<a class="anchor" aria-label="anchor" href="#distribution-reference"></a>
 </h2>
 <table class="table">
+<colgroup>
+<col width="31%">
+<col width="29%">
+<col width="17%">
+<col width="21%">
+</colgroup>
 <thead><tr class="header">
 <th>Distribution</th>
 <th>Constructor</th>
@@ -380,13 +396,13 @@ information:</p>
 <td>Gompertz</td>
 <td><code><a href="../reference/dfr_gompertz.html">dfr_gompertz()</a></code></td>
 <td>Analytical</td>
-<td>numDeriv</td>
+<td><a href="https://CRAN.R-project.org/package=numDeriv" class="external-link">numDeriv</a></td>
 </tr>
 <tr class="even">
 <td>Log-logistic</td>
 <td><code><a href="../reference/dfr_loglogistic.html">dfr_loglogistic()</a></code></td>
 <td>Analytical</td>
-<td>numDeriv</td>
+<td><a href="https://CRAN.R-project.org/package=numDeriv" class="external-link">numDeriv</a></td>
 </tr>
 </tbody>
 </table>
