@@ -181,8 +181,9 @@ h(1, par = c(2))
 
 ## Likelihood Model Interface
 
-The `dfr_dist` class implements the `likelihood_model` interface, enabling
-maximum likelihood estimation with survival data.
+The `dfr_dist` class implements the
+[likelihood.model](https://CRAN.R-project.org/package=likelihood.model) interface,
+enabling maximum likelihood estimation with survival data.
 
 ### Log-likelihood for survival data
 
@@ -257,7 +258,7 @@ solver <- fit(dist)
 # Find MLE starting from initial guess
 result <- solver(df_exact, par = c(0.5), method = "BFGS")
 
-# Extract fitted parameters (fisher_mle uses coef())
+# Extract fitted parameters (the fisher_mle class from likelihood.model uses coef())
 coef(result)
 
 # Compare to analytical MLE: lambda_hat = n / sum(t)
@@ -379,8 +380,9 @@ h(2, x = 1)  # Higher risk group
 
 ## Integration with algebraic.dist
 
-The `dfr_dist` class inherits from `algebraic.dist` classes, providing access
-to additional functionality:
+The `dfr_dist` class inherits from
+[algebraic.dist](https://CRAN.R-project.org/package=algebraic.dist) classes,
+providing access to additional functionality:
 
 ```{r}
 # Support is (0, Inf) for all DFR distributions
