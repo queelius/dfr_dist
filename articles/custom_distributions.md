@@ -314,13 +314,13 @@ ll3 <- loglik(dist_v3)
 # Single evaluation timing (run multiple times for accuracy)
 system.time(for(i in 1:100) ll1(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   2.572   0.024   2.597
+#>   2.292   0.018   2.311
 system.time(for(i in 1:100) ll2(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.443   0.001   0.445
+#>   0.405   0.002   0.406
 system.time(for(i in 1:100) ll3(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.450   0.000   0.451
+#>     0.4     0.0     0.4
 ```
 
 ## Real-World Example: Bathtub Curve
