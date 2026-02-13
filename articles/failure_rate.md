@@ -66,8 +66,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x5e42ac5269b0>
-#> <environment: 0x5e42ac525130>
+#> <bytecode: 0x56c223fb28c0>
+#> <environment: 0x56c223fb1040>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -531,5 +531,5 @@ This makes it ideal for:
   Five real-world case studies
 - **[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)** -
   The three-level optimization paradigm
-- **[`vignette("automatic_differentiation")`](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.md)** -
+- **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)** -
   Supplying analytical score and Hessian functions

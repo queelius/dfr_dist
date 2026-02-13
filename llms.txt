@@ -120,7 +120,9 @@ curve(sapply(x, h), 0, 15, xlab = "Time", ylab = "Hazard rate",
       main = "Bathtub hazard curve")
 ```
 
-![](reference/figures/README-bathtub-1.png)
+![plot of chunk bathtub](reference/figures/README-bathtub-1.png)
+
+plot of chunk bathtub
 
 ### Model Diagnostics
 
@@ -134,7 +136,9 @@ fitted_exp <- dfr_exponential(lambda = coef(result))
 qqplot_residuals(fitted_exp, df)
 ```
 
-![](reference/figures/README-diagnostics-1.png)
+![plot of chunk diagnostics](reference/figures/README-diagnostics-1.png)
+
+plot of chunk diagnostics
 
 ## Mathematical Background
 
@@ -193,7 +197,7 @@ ll(df, par = c(0.5))
   Distributions](https://queelius.github.io/dfr.dist/articles/custom_distributions.html) -
   The three-level optimization paradigm
 - [Custom Derivatives for
-  MLE](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.html) -
+  MLE](https://queelius.github.io/dfr.dist/articles/custom_derivatives.html) -
   Analytical score and Hessian functions
 
 **Reference:**
@@ -340,4 +344,4 @@ ll(df, par = c(0.5))
 - [Creating Custom
   Distributions](https://queelius.github.io/dfr.dist/articles/custom_distributions.md):
 - [Custom Derivatives for Maximum Likelihood
-  Estimation](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.md):
+  Estimation](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md):

@@ -44,7 +44,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
     <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
-    <li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Custom Derivatives for MLE</a></li>
+    <li><a class="dropdown-item" href="../articles/custom_derivatives.html">Custom Derivatives for MLE</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -406,13 +406,13 @@ these guidelines:</p>
 <span><span class="co"># Single evaluation timing (run multiple times for accuracy)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll1</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.154   0.020   2.175</span></span>
+<span><span class="co">#&gt;   2.623   0.030   2.654</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll2</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.383   0.000   0.383</span></span>
+<span><span class="co">#&gt;   0.450   0.001   0.451</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll3</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.367   0.000   0.367</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.438   0.000   0.439</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="real-world-example-bathtub-curve">Real-World Example: Bathtub Curve<a class="anchor" aria-label="anchor" href="#real-world-example-bathtub-curve"></a>
@@ -498,8 +498,8 @@ these guidelines:</p>
 <strong><code><a href="../articles/reliability_engineering.html">vignette("reliability_engineering")</a></code></strong> -
 Real-world applications</li>
 <li>
-<strong><code><a href="../articles/automatic_differentiation.html">vignette("automatic_differentiation")</a></code></strong>
-- Analytical derivatives for MLE</li>
+<strong><code><a href="../articles/custom_derivatives.html">vignette("custom_derivatives")</a></code></strong> -
+Analytical derivatives for MLE</li>
 <li>
 <strong>Package source code</strong> - Study
 <code>R/distributions.R</code> for implementation examples</li>

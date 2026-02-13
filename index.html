@@ -46,7 +46,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
     <li><a class="dropdown-item" href="articles/custom_distributions.html">Creating Custom Distributions</a></li>
-    <li><a class="dropdown-item" href="articles/automatic_differentiation.html">Custom Derivatives for MLE</a></li>
+    <li><a class="dropdown-item" href="articles/custom_derivatives.html">Custom Derivatives for MLE</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -76,10 +76,10 @@
 </h2>
 <table class="table">
 <colgroup>
-<col width="31%">
-<col width="42%">
-<col width="15%">
-<col width="11%">
+<col width="23%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
 </colgroup>
 <thead><tr class="header">
 <th>Feature</th>
@@ -221,7 +221,11 @@
 <span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard</a></span><span class="op">(</span><span class="va">bathtub</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html" class="external-link">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">h</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">15</span>, xlab <span class="op">=</span> <span class="st">"Time"</span>, ylab <span class="op">=</span> <span class="st">"Hazard rate"</span>,</span>
 <span>      main <span class="op">=</span> <span class="st">"Bathtub hazard curve"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-bathtub-1.png" width="100%"></p>
+<div class="figure">
+<img src="reference/figures/README-bathtub-1.png" alt="plot of chunk bathtub" width="100%"><p class="caption">
+plot of chunk bathtub
+</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="model-diagnostics">Model Diagnostics<a class="anchor" aria-label="anchor" href="#model-diagnostics"></a>
@@ -233,7 +237,11 @@
 <span></span>
 <span><span class="co"># Cox-Snell residuals Q-Q plot</span></span>
 <span><span class="fu"><a href="reference/qqplot_residuals.html">qqplot_residuals</a></span><span class="op">(</span><span class="va">fitted_exp</span>, <span class="va">df</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-diagnostics-1.png" width="100%"></p>
+<div class="figure">
+<img src="reference/figures/README-diagnostics-1.png" alt="plot of chunk diagnostics" width="100%"><p class="caption">
+plot of chunk diagnostics
+</p>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -309,7 +317,7 @@
 <li>
 <a href="https://queelius.github.io/dfr.dist/articles/custom_distributions.html">Creating Custom Distributions</a> - The three-level optimization paradigm</li>
 <li>
-<a href="https://queelius.github.io/dfr.dist/articles/automatic_differentiation.html">Custom Derivatives for MLE</a> - Analytical score and Hessian functions</li>
+<a href="https://queelius.github.io/dfr.dist/articles/custom_derivatives.html">Custom Derivatives for MLE</a> - Analytical score and Hessian functions</li>
 </ul>
 <p><strong>Reference:</strong></p>
 <ul>

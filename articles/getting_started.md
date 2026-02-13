@@ -43,8 +43,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x574428eb3b60>
-#> <environment: 0x574428eb6110>
+#> <bytecode: 0x629d26adf1d0>
+#> <environment: 0x629d26ae1780>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -217,7 +217,7 @@ Now that you understand the basics, explore:
     Mathematical foundations
 3.  **[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)** -
     Build optimized custom distributions
-4.  **[`vignette("automatic_differentiation")`](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.md)** -
+4.  **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)** -
     Analytical derivatives for MLE
 
 ### Available Distributions

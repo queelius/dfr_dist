@@ -19,4 +19,4 @@
 - [Creating Custom
   Distributions](https://queelius.github.io/dfr.dist/articles/custom_distributions.md):
 - [Custom Derivatives for Maximum Likelihood
-  Estimation](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.md):
+  Estimation](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md):

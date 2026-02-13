@@ -185,5 +185,5 @@ analytical derivatives or fall back to numerical methods.
     — Mathematical foundations of hazard-based modeling
 4.  **[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)**
     — The three-level optimization paradigm
-5.  **[`vignette("automatic_differentiation")`](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.md)**
+5.  **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)**
     — Analytical score and Hessian functions

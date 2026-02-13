@@ -314,13 +314,13 @@ ll3 <- loglik(dist_v3)
 # Single evaluation timing (run multiple times for accuracy)
 system.time(for(i in 1:100) ll1(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   2.154   0.020   2.175
+#>   2.623   0.030   2.654
 system.time(for(i in 1:100) ll2(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.383   0.000   0.383
+#>   0.450   0.001   0.451
 system.time(for(i in 1:100) ll3(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.367   0.000   0.367
+#>   0.438   0.000   0.439
 ```
 
 ## Real-World Example: Bathtub Curve
@@ -384,7 +384,7 @@ wear-out.](custom_distributions_files/figure-html/unnamed-chunk-8-1.png)
 
 - **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md)** -
   Real-world applications
-- **[`vignette("automatic_differentiation")`](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.md)** -
+- **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)** -
   Analytical derivatives for MLE
 - **Package source code** - Study `R/distributions.R` for implementation
   examples
