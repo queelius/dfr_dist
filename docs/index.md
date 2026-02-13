@@ -1,26 +1,17 @@
 # dfr.dist
 
-- [dfr.dist](#dfrdist)
-  - [Why dfr.dist?](#why-dfrdist)
-  - [Features](#features)
-  - [Installation](#installation)
-  - [Quick Start](#quick-start)
-    - [Built-in Distributions](#built-in-distributions)
-    - [Maximum Likelihood Estimation](#maximum-likelihood-estimation)
-    - [Custom Hazard Functions](#custom-hazard-functions)
-    - [Model Diagnostics](#model-diagnostics)
-  - [Mathematical Background](#mathematical-background)
-  - [Likelihood for Survival Data](#likelihood-for-survival-data)
-  - [Documentation](#documentation)
-  - [Related Packages](#related-packages)
-
 **Dynamic Failure Rate Distributions for Survival Analysis**
 
-The `dfr.dist` package provides a flexible framework for specifying
-survival distributions through their **hazard (failure rate)
-functions**. Instead of choosing from a fixed catalog of distributions,
-you directly specify the hazard function, giving complete control over
-time-varying failure patterns.
+Capacitors that wear out faster than any Weibull can describe. Software
+systems with bathtub-shaped crash rates. Post-surgical patients whose
+risk drops sharply, then slowly climbs again. Standard parametric
+survival families cannot express these hazard patterns — but `dfr.dist`
+can.
+
+**Write the hazard function you need — any R function of time and
+parameters — and the package derives everything else**: survival curves,
+CDFs, densities, quantiles, sampling, log-likelihoods, MLE fitting, and
+residual diagnostics.
 
 ## Why dfr.dist?
 
@@ -28,10 +19,10 @@ time-varying failure patterns.
 |----------------------------|--------------------------------------|--------------|----------|
 | Custom hazard functions    | **Yes**                              | No           | Limited  |
 | Built-in distributions     | Exp, Weibull, Gompertz, Log-logistic | Weibull, Exp | Many     |
-| Automatic differentiation  | **Yes** (via femtograd)              | No           | No       |
-| Exact Hessian computation  | **Yes**                              | No           | No       |
+| User-supplied derivatives  | **score + Hessian**                  | No           | No       |
+| Censoring support          | Right + Left                         | Right        | Right    |
+| Model diagnostics          | Cox-Snell, Martingale, Q-Q           | Limited      | Limited  |
 | Likelihood model interface | **Full**                             | Basic        | Partial  |
-| Right-censoring support    | Yes                                  | Yes          | Yes      |
 
 ## Features
 
@@ -42,10 +33,11 @@ time-varying failure patterns.
 - **Complete distribution interface**: hazard, survival, CDF, PDF,
   quantiles, sampling
 - **Likelihood model support**: Log-likelihood, score, Hessian for MLE
-- **Automatic differentiation**: Exact gradients and Hessians via
-  femtograd integration
+- **Custom derivatives**: Supply analytical score and Hessian functions,
+  or let the package fall back to numerical differentiation via numDeriv
 - **Model diagnostics**: Residuals (Cox-Snell, Martingale) and Q-Q plots
-- **Censoring support**: Handle exact and right-censored survival data
+- **Censoring support**: Handle exact, right-censored, and left-censored
+  survival data
 - **Ecosystem integration**: Works with `algebraic.dist`,
   `likelihood.model`, `algebraic.mle`
 
@@ -55,7 +47,7 @@ Install from GitHub:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("queelius/dfr_dist")
+devtools::install_github("queelius/dfr.dist")
 ```
 
 ## Quick Start
@@ -128,7 +120,9 @@ curve(sapply(x, h), 0, 15, xlab = "Time", ylab = "Hazard rate",
       main = "Bathtub hazard curve")
 ```
 
-![](reference/figures/README-bathtub-1.png)
+![plot of chunk bathtub](reference/figures/README-bathtub-1.png)
+
+plot of chunk bathtub
 
 ### Model Diagnostics
 
@@ -142,7 +136,9 @@ fitted_exp <- dfr_exponential(lambda = coef(result))
 qqplot_residuals(fitted_exp, df)
 ```
 
-![](reference/figures/README-diagnostics-1.png)
+![plot of chunk diagnostics](reference/figures/README-diagnostics-1.png)
+
+plot of chunk diagnostics
 
 ## Mathematical Background
 
@@ -152,7 +148,7 @@ From the hazard, all other quantities follow:
 
 | Function          | Formula                     | Method                                                                    |
 |-------------------|-----------------------------|---------------------------------------------------------------------------|
-| Cumulative hazard | $H(t) = \int_{0}^{t}h(u)du$ | [`cum_haz()`](https://queelius.github.io/dfr_dist/reference/cum_haz.md)   |
+| Cumulative hazard | $H(t) = \int_{0}^{t}h(u)du$ | [`cum_haz()`](https://queelius.github.io/dfr.dist/reference/cum_haz.md)   |
 | Survival          | $S(t) = e^{- H{(t)}}$       | [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html) |
 | CDF               | $F(t) = 1 - S(t)$           | [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html)   |
 | PDF               | $f(t) = h(t) \cdot S(t)$    | [`density()`](https://rdrr.io/r/stats/density.html)                       |
@@ -177,30 +173,36 @@ ll(df, par = c(0.5))
 
 ## Documentation
 
-**Getting Started:**
+**Start Here:**
 
+- [Package
+  Overview](https://queelius.github.io/dfr.dist/articles/dfr.dist-package.html) -
+  Motivation, complete example, and audience guide
 - [Quick Start
-  Guide](https://queelius.github.io/dfr_dist/articles/getting_started.html) -
+  Guide](https://queelius.github.io/dfr.dist/articles/getting_started.html) -
   5-minute introduction
-- [Dynamic Failure Rate
-  Distributions](https://queelius.github.io/dfr_dist/articles/failure_rate.html) -
-  Core concepts
 
-**Creating Custom Distributions:**
-
-- [Creating Custom
-  Distributions](https://queelius.github.io/dfr_dist/articles/custom_distributions.html) -
-  Build your own
-- [Automatic
-  Differentiation](https://queelius.github.io/dfr_dist/articles/automatic_differentiation.html) -
-  Exact derivatives
-
-**Applications:**
+**Real-World Applications:**
 
 - [Reliability
-  Engineering](https://queelius.github.io/dfr_dist/articles/reliability_engineering.html) -
-  Real-world examples
-- [Function Reference](https://queelius.github.io/dfr_dist/reference/)
+  Engineering](https://queelius.github.io/dfr.dist/articles/reliability_engineering.html) -
+  Five case studies
+
+**Going Deeper:**
+
+- [Dynamic Failure Rate
+  Distributions](https://queelius.github.io/dfr.dist/articles/failure_rate.html) -
+  Mathematical foundations
+- [Creating Custom
+  Distributions](https://queelius.github.io/dfr.dist/articles/custom_distributions.html) -
+  The three-level optimization paradigm
+- [Custom Derivatives for
+  MLE](https://queelius.github.io/dfr.dist/articles/custom_derivatives.html) -
+  Analytical score and Hessian functions
+
+**Reference:**
+
+- [Function Reference](https://queelius.github.io/dfr.dist/reference/)
 
 ## Related Packages
 
@@ -210,5 +212,3 @@ ll(df, par = c(0.5))
   Likelihood model framework
 - [`algebraic.mle`](https://github.com/queelius/algebraic.mle): MLE
   utilities
-- [`femtograd`](https://github.com/queelius/femtograd): Forward-mode
-  automatic differentiation

@@ -1,8 +1,8 @@
 # Hessian of log-likelihood for dfr_dist
 
 Returns a function that computes the Hessian matrix of the
-log-likelihood. If analytical score is provided, uses AD Jacobian for
-exact computation. Otherwise falls back to numerical differentiation.
+log-likelihood. Uses user-provided Hessian function if available,
+otherwise falls back to numerical differentiation via numDeriv::hessian.
 
 ## Usage
 
@@ -19,7 +19,7 @@ hess_loglik(model, ...)
 
 - ...:
 
-  Additional arguments passed to score
+  Additional arguments passed to loglik
 
 ## Value
 

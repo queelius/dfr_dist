@@ -10,11 +10,11 @@ and that the support is (0, Inf).
 dfr_dist(
   rate,
   par = NULL,
-  eps = 0.01,
   ob_col = "t",
   delta_col = "delta",
   cum_haz_rate = NULL,
-  score_fn = NULL
+  score_fn = NULL,
+  hess_fn = NULL
 )
 ```
 
@@ -29,10 +29,6 @@ dfr_dist(
   The parameters of the distribution. Defaults to `NULL`, which means
   that the parameters are unknown.
 
-- eps:
-
-  The epsilon update for numerical integration. Defaults to 0.01.
-
 - ob_col:
 
   The column name for observation times in data frames. Defaults to "t".
@@ -46,14 +42,20 @@ dfr_dist(
 - cum_haz_rate:
 
   Optional analytical cumulative hazard function H(t, par). If provided,
-  enables exact AD-based gradient computation. Should return the
-  integral of rate from 0 to t.
+  used for faster exact cumulative hazard computation instead of
+  numerical integration. Should return the integral of rate from 0 to t.
 
 - score_fn:
 
-  Optional analytical score function score(df, par). If provided,
-  enables exact AD-based Hessian computation via Jacobian of the score.
-  Should return gradient vector.
+  Optional score function (gradient of log-likelihood). Signature:
+  score_fn(df, par, ...) returning a numeric vector. If NULL, falls back
+  to numerical gradient via numDeriv::grad.
+
+- hess_fn:
+
+  Optional Hessian function (second derivatives of log-likelihood).
+  Signature: hess_fn(df, par, ...) returning a matrix. If NULL, falls
+  back to numerical Hessian via numDeriv::hessian.
 
 ## Value
 

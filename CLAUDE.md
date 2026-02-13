@@ -254,7 +254,7 @@ Cox-Snell residuals should follow Exp(1) if model is correct.
 - `vignettes/failure_rate.Rmd`: Hazard-based modeling deep dive
 - `vignettes/custom_distributions.Rmd`: How to create custom distributions
 - `vignettes/reliability_engineering.Rmd`: Real-world applications
-- `vignettes/automatic_differentiation.Rmd`: Custom derivatives tutorial
+- `vignettes/custom_derivatives.Rmd`: Custom derivatives tutorial
 
 ## Common Pitfalls
 

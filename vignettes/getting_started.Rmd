@@ -175,7 +175,7 @@ Now that you understand the basics, explore:
 1. **`vignette("reliability_engineering")`** - Five real-world case studies
 2. **`vignette("failure_rate")`** - Mathematical foundations
 3. **`vignette("custom_distributions")`** - Build optimized custom distributions
-4. **`vignette("automatic_differentiation")`** - Analytical derivatives for MLE
+4. **`vignette("custom_derivatives")`** - Analytical derivatives for MLE
 
 ### Available Distributions
 

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,16 +29,22 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Automatic Differentiation for Maximum Likelihood Estimation</a></li>
-    <li><a class="dropdown-item" href="../articles/comparing_ad_approaches.html">Comparing AD Approaches for Survival MLE</a></li>
-    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
+    <li><a class="dropdown-item" href="../articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
     <li><a class="dropdown-item" href="../articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
-    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started with dfr.dist</a></li>
-    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering Applications</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
+    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+    <li><a class="dropdown-item" href="../articles/custom_derivatives.html">Custom Derivatives for MLE</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -47,7 +53,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr_dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -64,7 +70,7 @@
       <h1>Creating Custom Distributions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr_dist/blob/HEAD/vignettes/custom_distributions.Rmd" class="external-link"><code>vignettes/custom_distributions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/HEAD/vignettes/custom_distributions.Rmd" class="external-link"><code>vignettes/custom_distributions.Rmd</code></a></small>
       <div class="d-none name"><code>custom_distributions.Rmd</code></div>
     </div>
 
@@ -78,7 +84,7 @@ distribution through its <strong>hazard function</strong> (failure
 rate). This guide teaches you how to create your own distributions, from
 simple to optimized.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr_dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr.dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="the-three-functions">The Three Functions<a class="anchor" aria-label="anchor" href="#the-three-functions"></a>
@@ -109,7 +115,7 @@ simple to optimized.</p>
 <tr class="odd">
 <td><code>score_fn</code></td>
 <td>Score function ∂ℓ/∂θ</td>
-<td>Optional (enables exact Hessian via AD)</td>
+<td>Optional (exact gradient for faster MLE)</td>
 </tr>
 </tbody>
 </table>
@@ -174,8 +180,8 @@ integration (slower, less accurate).</p>
 <span><span class="co">#&gt; [1] 0.2231302</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.2231302</span></span></code></pre></div>
-<p><strong>Pros</strong>: Faster, exact cumulative hazard; enables AD
-gradient computation.</p>
+<p><strong>Pros</strong>: Faster, exact cumulative hazard; improves all
+downstream computations.</p>
 <p><strong>Cons</strong>: More work to derive the integral.</p>
 </div>
 <div class="section level2">
@@ -337,43 +343,35 @@ components:</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="ad-compatibility-checklist">AD Compatibility Checklist<a class="anchor" aria-label="anchor" href="#ad-compatibility-checklist"></a>
+<h2 id="writing-custom-derivative-functions">Writing Custom Derivative Functions<a class="anchor" aria-label="anchor" href="#writing-custom-derivative-functions"></a>
 </h2>
-<p>When writing functions for automatic differentiation, follow these
-rules:</p>
+<p>When writing <code>score_fn</code> and <code>hess_fn</code>, follow
+these guidelines:</p>
 <div class="section level3">
-<h3 id="do-use-for-parameter-indexing">Do: Use <code>[[]]</code> for Parameter Indexing<a class="anchor" aria-label="anchor" href="#do-use-for-parameter-indexing"></a>
+<h3 id="use-standard-r-indexing">Use Standard R Indexing<a class="anchor" aria-label="anchor" href="#use-standard-r-indexing"></a>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># GOOD - works with AD</span></span>
-<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># BAD - breaks AD</span></span>
-<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>  <span class="co"># Returns vector, not scalar</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Both work fine for score_fn and hess_fn</span></span>
+<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>  <span class="co"># or par[1]</span></span>
+<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>  <span class="co"># or par[2]</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="dont-use-functions-that-dont-support-ad">Don’t: Use Functions That Don’t Support AD<a class="anchor" aria-label="anchor" href="#dont-use-functions-that-dont-support-ad"></a>
+<h3 id="return-correct-types">Return Correct Types<a class="anchor" aria-label="anchor" href="#return-correct-types"></a>
 </h3>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># GOOD</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">a</span> <span class="op">+</span> <span class="va">b</span> <span class="op">*</span> <span class="va">t</span></span>
-<span></span>
-<span><span class="co"># BAD - rep() doesn't work with femtograd's AD objects</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">a</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># GOOD alternative</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">a</span> <span class="op">+</span> <span class="fl">0</span> <span class="op">*</span> <span class="va">t</span>  <span class="co"># Broadcasts correctly</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="do-return-numeric-vectors">Do: Return Numeric Vectors<a class="anchor" aria-label="anchor" href="#do-return-numeric-vectors"></a>
-</h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># GOOD</span></span>
+<code class="sourceCode R"><span><span class="co"># score_fn should return a numeric vector</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">da</span>, <span class="va">db</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># BAD - named vectors can cause issues</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="va">da</span>, b <span class="op">=</span> <span class="va">db</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># hess_fn should return a matrix</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">d2a</span>, <span class="va">d2ab</span>, <span class="va">d2ab</span>, <span class="va">d2b</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="handle-censoring">Handle Censoring<a class="anchor" aria-label="anchor" href="#handle-censoring"></a>
+</h3>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Always check for the delta column</span></span>
+<span><span class="va">delta</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="st">"delta"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span> <span class="va">df</span><span class="op">$</span><span class="va">delta</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">n_events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">delta</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -408,13 +406,13 @@ rules:</p>
 <span><span class="co"># Single evaluation timing (run multiple times for accuracy)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll1</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   4.264   0.034   4.392</span></span>
+<span><span class="co">#&gt;   2.724   0.020   2.746</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll2</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.842   0.000   0.849</span></span>
+<span><span class="co">#&gt;   0.518   0.001   0.520</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll3</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.690   0.002   0.700</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.467   0.000   0.468</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="real-world-example-bathtub-curve">Real-World Example: Bathtub Curve<a class="anchor" aria-label="anchor" href="#real-world-example-bathtub-curve"></a>
@@ -475,7 +473,7 @@ rules:</p>
 <td>2</td>
 <td>+ <code>cum_haz_rate</code>
 </td>
-<td>Faster, exact survival; AD gradients</td>
+<td>Faster, exact survival and CDF</td>
 </tr>
 <tr class="odd">
 <td>3</td>
@@ -488,7 +486,7 @@ rules:</p>
 <p><strong>Rule of thumb</strong>:</p>
 <ul>
 <li>Start with Level 1 to verify your model works</li>
-<li>Add Level 2 if you need better performance or AD support</li>
+<li>Add Level 2 if you need better performance</li>
 <li>Add Level 3 for production-quality MLE fitting</li>
 </ul>
 </div>
@@ -497,14 +495,14 @@ rules:</p>
 </h2>
 <ul>
 <li>
-<strong><code><a href="../articles/automatic_differentiation.html">vignette("automatic_differentiation")</a></code></strong>
-- Deep dive into AD integration</li>
-<li>
 <strong><code><a href="../articles/reliability_engineering.html">vignette("reliability_engineering")</a></code></strong> -
 Real-world applications</li>
 <li>
+<strong><code><a href="../articles/custom_derivatives.html">vignette("custom_derivatives")</a></code></strong> -
+Analytical derivatives for MLE</li>
+<li>
 <strong>Package source code</strong> - Study
-<code>R/distributions.R</code> for more examples</li>
+<code>R/distributions.R</code> for implementation examples</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

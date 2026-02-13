@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,16 +29,22 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Automatic Differentiation for Maximum Likelihood Estimation</a></li>
-    <li><a class="dropdown-item" href="../articles/comparing_ad_approaches.html">Comparing AD Approaches for Survival MLE</a></li>
-    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
+    <li><a class="dropdown-item" href="../articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
     <li><a class="dropdown-item" href="../articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
-    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started with dfr.dist</a></li>
-    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering Applications</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
+    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+    <li><a class="dropdown-item" href="../articles/custom_derivatives.html">Custom Derivatives for MLE</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -47,7 +53,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr_dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -64,7 +70,7 @@
       <h1>Reliability Engineering Applications</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr_dist/blob/HEAD/vignettes/reliability_engineering.Rmd" class="external-link"><code>vignettes/reliability_engineering.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/HEAD/vignettes/reliability_engineering.Rmd" class="external-link"><code>vignettes/reliability_engineering.Rmd</code></a></small>
       <div class="d-none name"><code>reliability_engineering.Rmd</code></div>
     </div>
 
@@ -73,11 +79,31 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This vignette demonstrates how to use <code>dfr.dist</code> for
-practical reliability engineering problems: analyzing product lifetimes,
-planning maintenance, and predicting failures.</p>
+<p>Reliability engineers think in failure rates — not densities, not
+CDFs. The question is always: <em>given that a unit has survived this
+long, how likely is it to fail in the next instant?</em> That makes
+hazard-based modeling a natural fit for reliability work.</p>
+<p>This vignette walks through five case studies that show how
+<code>dfr.dist</code> handles real reliability engineering problems:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Capacitor lifetime analysis</strong> — Fit competing models
+to censored test data</li>
+<li>
+<strong>B-life calculations</strong> — Compute B10, B50, B90
+warranty metrics</li>
+<li>
+<strong>Warranty analysis</strong> — Predict field failure rates
+from accelerated testing</li>
+<li>
+<strong>Maintenance scheduling</strong> — Find optimal intervals for
+aging systems</li>
+<li>
+<strong>Competing failure modes</strong> — Decompose additive
+hazards from multiple mechanisms</li>
+</ol>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr_dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr.dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="case-study-1-capacitor-lifetime-analysis">Case Study 1: Capacitor Lifetime Analysis<a class="anchor" aria-label="anchor" href="#case-study-1-capacitor-lifetime-analysis"></a>

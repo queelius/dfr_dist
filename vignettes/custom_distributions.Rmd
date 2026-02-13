@@ -368,5 +368,5 @@ text(17, 0.08, "Wear-out", cex = 0.8)
 ## Next Steps
 
 - **`vignette("reliability_engineering")`** - Real-world applications
-- **`vignette("automatic_differentiation")`** - Analytical derivatives for MLE
+- **`vignette("custom_derivatives")`** - Analytical derivatives for MLE
 - **Package source code** - Study `R/distributions.R` for implementation examples

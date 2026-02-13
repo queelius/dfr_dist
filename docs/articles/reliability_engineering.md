@@ -2,9 +2,23 @@
 
 ## Introduction
 
-This vignette demonstrates how to use `dfr.dist` for practical
-reliability engineering problems: analyzing product lifetimes, planning
-maintenance, and predicting failures.
+Reliability engineers think in failure rates — not densities, not CDFs.
+The question is always: *given that a unit has survived this long, how
+likely is it to fail in the next instant?* That makes hazard-based
+modeling a natural fit for reliability work.
+
+This vignette walks through five case studies that show how `dfr.dist`
+handles real reliability engineering problems:
+
+1.  **Capacitor lifetime analysis** — Fit competing models to censored
+    test data
+2.  **B-life calculations** — Compute B10, B50, B90 warranty metrics
+3.  **Warranty analysis** — Predict field failure rates from accelerated
+    testing
+4.  **Maintenance scheduling** — Find optimal intervals for aging
+    systems
+5.  **Competing failure modes** — Decompose additive hazards from
+    multiple mechanisms
 
 ``` r
 library(dfr.dist)

@@ -57,7 +57,7 @@ Use methods like [`coef()`](https://rdrr.io/r/stats/coef.html),
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # Exponential distribution
 exp_dist <- dfr_dist(
   rate = function(t, par, ...) rep(par[1], length(t)),
@@ -72,6 +72,18 @@ df <- data.frame(t = rexp(100, rate = 2), delta = 1)
 solver <- fit(exp_dist)
 result <- solver(df, par = c(1))
 summary(result)
+#> Maximum Likelihood Estimate (Fisherian)
+#> ----------------------------------------
+#> 
+#> Coefficients:
+#>      Estimate Std. Error   2.5% 97.5%
+#> [1,]   1.7789     0.1779 1.4302 2.128
+#> 
+#> Log-likelihood: -42.4 
+#> AIC: 86.8 
+#> Number of observations: 100 
 confint(result)
-} # }
+#>          2.5%   97.5%
+#> [1,] 1.430217 2.12752
+# }
 ```

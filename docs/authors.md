@@ -8,18 +8,18 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/queelius/dfr_dist/blob/HEAD/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/queelius/dfr.dist/blob/HEAD/DESCRIPTION)
 
 Towell A (2026). *dfr.dist: Dynamic Failure Rate Distributions for
-Survival Analysis*. R package version 0.2.0,
-https://queelius.github.io/dfr_dist/,
-<https://github.com/queelius/dfr_dist>.
+Survival Analysis*. R package version 0.5.0,
+https://queelius.github.io/dfr.dist/,
+<https://github.com/queelius/dfr.dist>.
 
     @Manual{,
       title = {dfr.dist: Dynamic Failure Rate Distributions for Survival Analysis},
       author = {Alexander Towell},
       year = {2026},
-      note = {R package version 0.2.0,
-        https://queelius.github.io/dfr_dist/},
-      url = {https://github.com/queelius/dfr_dist},
+      note = {R package version 0.5.0,
+        https://queelius.github.io/dfr.dist/},
+      url = {https://github.com/queelius/dfr.dist},
     }

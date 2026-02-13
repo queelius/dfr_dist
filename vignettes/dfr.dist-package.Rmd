@@ -182,4 +182,4 @@ the option to supply analytical derivatives or fall back to numerical methods.
 2. **`vignette("reliability_engineering")`** — Five real-world case studies
 3. **`vignette("failure_rate")`** — Mathematical foundations of hazard-based modeling
 4. **`vignette("custom_distributions")`** — The three-level optimization paradigm
-5. **`vignette("automatic_differentiation")`** — Analytical score and Hessian functions
+5. **`vignette("custom_derivatives")`** — Analytical score and Hessian functions

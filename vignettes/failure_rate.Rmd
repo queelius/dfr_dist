@@ -462,4 +462,4 @@ This makes it ideal for:
 - **`vignette("getting_started")`** - Quick 5-minute introduction
 - **`vignette("reliability_engineering")`** - Five real-world case studies
 - **`vignette("custom_distributions")`** - The three-level optimization paradigm
-- **`vignette("automatic_differentiation")`** - Supplying analytical score and Hessian functions
+- **`vignette("custom_derivatives")`** - Supplying analytical score and Hessian functions

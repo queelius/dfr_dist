@@ -18,7 +18,7 @@ Every `dfr_dist` can provide up to three functions:
 |----------------|-----------------------------|-------------------------------------------------|
 | `rate`         | Hazard h(t, par)            | **Yes**                                         |
 | `cum_haz_rate` | Cumulative hazard H(t, par) | Optional (computed numerically if not provided) |
-| `score_fn`     | Score function ∂ℓ/∂θ        | Optional (enables exact Hessian via AD)         |
+| `score_fn`     | Score function ∂ℓ/∂θ        | Optional (exact gradient for faster MLE)        |
 
 Let’s see how to provide each.
 
@@ -86,8 +86,8 @@ exp(-1.5)
 #> [1] 0.2231302
 ```
 
-**Pros**: Faster, exact cumulative hazard; enables AD gradient
-computation.
+**Pros**: Faster, exact cumulative hazard; improves all downstream
+computations.
 
 **Cons**: More work to derive the integral.
 
@@ -252,43 +252,34 @@ rbind(analytical = analytical, numerical = numerical)
 #> numerical  178.0942 343.8909 4.836547
 ```
 
-## AD Compatibility Checklist
+## Writing Custom Derivative Functions
 
-When writing functions for automatic differentiation, follow these
-rules:
+When writing `score_fn` and `hess_fn`, follow these guidelines:
 
-### Do: Use `[[]]` for Parameter Indexing
+### Use Standard R Indexing
 
 ``` r
-# GOOD - works with AD
-a <- par[[1]]
-b <- par[[2]]
-
-# BAD - breaks AD
-a <- par[1]  # Returns vector, not scalar
+# Both work fine for score_fn and hess_fn
+a <- par[[1]]  # or par[1]
+b <- par[[2]]  # or par[2]
 ```
 
-### Don’t: Use Functions That Don’t Support AD
+### Return Correct Types
 
 ``` r
-# GOOD
-result <- a + b * t
-
-# BAD - rep() doesn't work with femtograd's AD objects
-result <- rep(a, length(t))
-
-# GOOD alternative
-result <- a + 0 * t  # Broadcasts correctly
-```
-
-### Do: Return Numeric Vectors
-
-``` r
-# GOOD
+# score_fn should return a numeric vector
 c(da, db)
 
-# BAD - named vectors can cause issues
-c(a = da, b = db)
+# hess_fn should return a matrix
+matrix(c(d2a, d2ab, d2ab, d2b), nrow = 2)
+```
+
+### Handle Censoring
+
+``` r
+# Always check for the delta column
+delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
+n_events <- sum(delta == 1)
 ```
 
 ## Performance Comparison
@@ -323,13 +314,13 @@ ll3 <- loglik(dist_v3)
 # Single evaluation timing (run multiple times for accuracy)
 system.time(for(i in 1:100) ll1(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   4.264   0.034   4.392
+#>   2.724   0.020   2.746
 system.time(for(i in 1:100) ll2(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.842   0.000   0.849
+#>   0.518   0.001   0.520
 system.time(for(i in 1:100) ll3(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.690   0.002   0.700
+#>   0.467   0.000   0.468
 ```
 
 ## Real-World Example: Bathtub Curve
@@ -377,22 +368,23 @@ wear-out.](custom_distributions_files/figure-html/unnamed-chunk-8-1.png)
 
 ## Summary
 
-| Level | Provide           | Benefits                             |
-|-------|-------------------|--------------------------------------|
-| 1     | `rate` only       | Quick prototyping                    |
-| 2     | \+ `cum_haz_rate` | Faster, exact survival; AD gradients |
-| 3     | \+ `score_fn`     | Exact Hessian; fastest MLE           |
+| Level | Provide           | Benefits                       |
+|-------|-------------------|--------------------------------|
+| 1     | `rate` only       | Quick prototyping              |
+| 2     | \+ `cum_haz_rate` | Faster, exact survival and CDF |
+| 3     | \+ `score_fn`     | Exact Hessian; fastest MLE     |
 
 **Rule of thumb**:
 
 - Start with Level 1 to verify your model works
-- Add Level 2 if you need better performance or AD support
+- Add Level 2 if you need better performance
 - Add Level 3 for production-quality MLE fitting
 
 ## Next Steps
 
-- **[`vignette("automatic_differentiation")`](https://queelius.github.io/dfr_dist/articles/automatic_differentiation.md)** -
-  Deep dive into AD integration
-- **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr_dist/articles/reliability_engineering.md)** -
+- **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md)** -
   Real-world applications
-- **Package source code** - Study `R/distributions.R` for more examples
+- **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)** -
+  Analytical derivatives for MLE
+- **Package source code** - Study `R/distributions.R` for implementation
+  examples

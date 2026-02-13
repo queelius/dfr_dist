@@ -29,7 +29,7 @@ navbar:
         - text: Creating Custom Distributions
           href: articles/custom_distributions.html
         - text: Custom Derivatives for MLE
-          href: articles/automatic_differentiation.html
+          href: articles/custom_derivatives.html
 
 articles:
   - title: Motivation & Applications
@@ -44,4 +44,4 @@ articles:
   - title: Advanced
     contents:
       - custom_distributions
-      - automatic_differentiation
+      - custom_derivatives

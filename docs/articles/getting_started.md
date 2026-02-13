@@ -2,6 +2,12 @@
 
 ## 5-Minute Quick Start
 
+**The Scenario**: You have failure-time data from 50 devices. Some
+failed during testing; others were still running when the test ended
+(right-censored). You suspect the failure rate increases over time. You
+need to: (1) fit a model, (2) estimate parameters with uncertainty, (3)
+verify the fit.
+
 The `dfr.dist` package lets you work with survival distributions through
 their **hazard functions** (also called failure rate functions). This
 gives you complete flexibility to model systems with time-varying
@@ -37,8 +43,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x5cdeabcf2a40>
-#> <environment: 0x5cdeabcf5370>
+#> <bytecode: 0x6038b1d0bea8>
+#> <environment: 0x6038b1d0e458>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -205,21 +211,23 @@ Weibull shape parameter interpretation:
 
 Now that you understand the basics, explore:
 
-1.  **[`vignette("failure_rate")`](https://queelius.github.io/dfr_dist/articles/failure_rate.md)** -
-    Deep dive into hazard-based modeling
-2.  **[`vignette("custom_distributions")`](https://queelius.github.io/dfr_dist/articles/custom_distributions.md)** -
-    Create your own distributions
-3.  **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr_dist/articles/reliability_engineering.md)** -
-    Real-world applications
+1.  **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md)** -
+    Five real-world case studies
+2.  **[`vignette("failure_rate")`](https://queelius.github.io/dfr.dist/articles/failure_rate.md)** -
+    Mathematical foundations
+3.  **[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)** -
+    Build optimized custom distributions
+4.  **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)** -
+    Analytical derivatives for MLE
 
 ### Available Distributions
 
 | Constructor                                                                             | Hazard Pattern           | Use Case                     |
 |-----------------------------------------------------------------------------------------|--------------------------|------------------------------|
-| [`dfr_exponential()`](https://queelius.github.io/dfr_dist/reference/dfr_exponential.md) | Constant                 | Random failures, useful life |
-| [`dfr_weibull()`](https://queelius.github.io/dfr_dist/reference/dfr_weibull.md)         | Power-law (↑ or ↓)       | Wear-out, infant mortality   |
-| [`dfr_gompertz()`](https://queelius.github.io/dfr_dist/reference/dfr_gompertz.md)       | Exponential growth       | Biological aging             |
-| [`dfr_loglogistic()`](https://queelius.github.io/dfr_dist/reference/dfr_loglogistic.md) | Non-monotonic (↑ then ↓) | Initial risk that diminishes |
+| [`dfr_exponential()`](https://queelius.github.io/dfr.dist/reference/dfr_exponential.md) | Constant                 | Random failures, useful life |
+| [`dfr_weibull()`](https://queelius.github.io/dfr.dist/reference/dfr_weibull.md)         | Power-law (↑ or ↓)       | Wear-out, infant mortality   |
+| [`dfr_gompertz()`](https://queelius.github.io/dfr.dist/reference/dfr_gompertz.md)       | Exponential growth       | Biological aging             |
+| [`dfr_loglogistic()`](https://queelius.github.io/dfr.dist/reference/dfr_loglogistic.md) | Non-monotonic (↑ then ↓) | Initial risk that diminishes |
 
 ### Key Functions
 

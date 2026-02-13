@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,16 +29,22 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="active nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/automatic_differentiation.html">Automatic Differentiation for Maximum Likelihood Estimation</a></li>
-    <li><a class="dropdown-item" href="../articles/comparing_ad_approaches.html">Comparing AD Approaches for Survival MLE</a></li>
-    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
+    <li><a class="dropdown-item" href="../articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
     <li><a class="dropdown-item" href="../articles/failure_rate.html">Dynamic Failure Rate Distributions</a></li>
-    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started with dfr.dist</a></li>
-    <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering Applications</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
+    <li><a class="dropdown-item" href="../articles/custom_distributions.html">Creating Custom Distributions</a></li>
+    <li><a class="dropdown-item" href="../articles/custom_derivatives.html">Custom Derivatives for MLE</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -47,7 +53,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr_dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -64,7 +70,7 @@
       <h1>Getting Started with dfr.dist</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr_dist/blob/HEAD/vignettes/getting_started.Rmd" class="external-link"><code>vignettes/getting_started.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/HEAD/vignettes/getting_started.Rmd" class="external-link"><code>vignettes/getting_started.Rmd</code></a></small>
       <div class="d-none name"><code>getting_started.Rmd</code></div>
     </div>
 
@@ -73,6 +79,11 @@
 <div class="section level2">
 <h2 id="minute-quick-start">5-Minute Quick Start<a class="anchor" aria-label="anchor" href="#minute-quick-start"></a>
 </h2>
+<p><strong>The Scenario</strong>: You have failure-time data from 50
+devices. Some failed during testing; others were still running when the
+test ended (right-censored). You suspect the failure rate increases over
+time. You need to: (1) fit a model, (2) estimate parameters with
+uncertainty, (3) verify the fit.</p>
 <p>The <code>dfr.dist</code> package lets you work with survival
 distributions through their <strong>hazard functions</strong> (also
 called failure rate functions). This gives you complete flexibility to
@@ -88,7 +99,7 @@ model systems with time-varying failure patterns.</p>
 <h3 id="load-the-package">Load the Package<a class="anchor" aria-label="anchor" href="#load-the-package"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr_dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr.dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -108,8 +119,8 @@ constant failure rate.</p>
 <span><span class="co">#&gt; {</span></span>
 <span><span class="co">#&gt;     rep(par[[1]], length(t))</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5cdeabcf2a40&gt;</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5cdeabcf5370&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x6038b1d0bea8&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x6038b1d0e458&gt;</span></span>
 <span><span class="co">#&gt; It has a survival function given by:</span></span>
 <span><span class="co">#&gt;     S(t|rate) = exp(-H(t,...))</span></span>
 <span><span class="co">#&gt; where H(t,...) is the cumulative hazard function.</span></span></code></pre></div>
@@ -274,14 +285,17 @@ aging)</li>
 <p>Now that you understand the basics, explore:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong><code><a href="../articles/failure_rate.html">vignette("failure_rate")</a></code></strong> - Deep dive
-into hazard-based modeling</li>
+<strong><code><a href="../articles/reliability_engineering.html">vignette("reliability_engineering")</a></code></strong> -
+Five real-world case studies</li>
+<li>
+<strong><code><a href="../articles/failure_rate.html">vignette("failure_rate")</a></code></strong> -
+Mathematical foundations</li>
 <li>
 <strong><code><a href="../articles/custom_distributions.html">vignette("custom_distributions")</a></code></strong> -
-Create your own distributions</li>
+Build optimized custom distributions</li>
 <li>
-<strong><code><a href="../articles/reliability_engineering.html">vignette("reliability_engineering")</a></code></strong> -
-Real-world applications</li>
+<strong><code><a href="../articles/custom_derivatives.html">vignette("custom_derivatives")</a></code></strong> -
+Analytical derivatives for MLE</li>
 </ol>
 <div class="section level3">
 <h3 id="available-distributions">Available Distributions<a class="anchor" aria-label="anchor" href="#available-distributions"></a>

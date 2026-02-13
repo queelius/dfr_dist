@@ -66,8 +66,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x5b6334bea390>
-#> <environment: 0x5b6334be8e90>
+#> <bytecode: 0x59ba762da740>
+#> <environment: 0x59ba762dec10>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -78,7 +78,7 @@ is_dfr_dist(exp_dist)
 ### Creating Custom Distributions
 
 For non-standard hazard patterns, use
-[`dfr_dist()`](https://queelius.github.io/dfr_dist/reference/dfr_dist.md)
+[`dfr_dist()`](https://queelius.github.io/dfr.dist/reference/dfr_dist.md)
 directly:
 
 ``` r
@@ -100,7 +100,7 @@ The `rate` function must accept:
 - `...`: additional arguments
 
 See
-[`vignette("custom_distributions")`](https://queelius.github.io/dfr_dist/articles/custom_distributions.md)
+[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)
 for detailed guidance on creating optimized custom distributions.
 
 ## Distribution Methods
@@ -500,7 +500,7 @@ summary(mart_resid)
 ```
 
 For more detailed diagnostic workflows, see
-[`vignette("reliability_engineering")`](https://queelius.github.io/dfr_dist/articles/reliability_engineering.md).
+[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md).
 
 ## Summary
 
@@ -525,11 +525,11 @@ This makes it ideal for:
 
 ## Next Steps
 
-- **[`vignette("custom_distributions")`](https://queelius.github.io/dfr_dist/articles/custom_distributions.md)** -
-  How to create your own distributions with analytical formulas
-- **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr_dist/articles/reliability_engineering.md)** -
-  Real-world reliability analysis applications
-- **[`vignette("automatic_differentiation")`](https://queelius.github.io/dfr_dist/articles/automatic_differentiation.md)** -
-  Advanced: exact derivatives via AD for faster MLE
-- **[`vignette("getting_started")`](https://queelius.github.io/dfr_dist/articles/getting_started.md)** -
+- **[`vignette("getting_started")`](https://queelius.github.io/dfr.dist/articles/getting_started.md)** -
   Quick 5-minute introduction
+- **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md)** -
+  Five real-world case studies
+- **[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)** -
+  The three-level optimization paradigm
+- **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)** -
+  Supplying analytical score and Hessian functions

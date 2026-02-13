@@ -188,7 +188,7 @@ ll(df, par = c(0.5))
 
 - [Dynamic Failure Rate Distributions](https://queelius.github.io/dfr.dist/articles/failure_rate.html) - Mathematical foundations
 - [Creating Custom Distributions](https://queelius.github.io/dfr.dist/articles/custom_distributions.html) - The three-level optimization paradigm
-- [Custom Derivatives for MLE](https://queelius.github.io/dfr.dist/articles/automatic_differentiation.html) - Analytical score and Hessian functions
+- [Custom Derivatives for MLE](https://queelius.github.io/dfr.dist/articles/custom_derivatives.html) - Analytical score and Hessian functions
 
 **Reference:**
 
