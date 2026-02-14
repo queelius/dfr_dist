@@ -25,8 +25,10 @@ pkgdown::deploy_to_branch()    # Deploy docs to GitHub Pages (gh-pages branch)
 covr::package_coverage()       # Check test coverage
 ```
 
-Always run `devtools::document()` after modifying roxygen2 comments.
-NAMESPACE is auto-generated - never edit manually.
+Always run
+[`devtools::document()`](https://devtools.r-lib.org/reference/document.html)
+after modifying roxygen2 comments. NAMESPACE is auto-generated - never
+edit manually.
 
 ## Dependencies
 
