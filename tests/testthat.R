@@ -2,6 +2,6 @@
 # Learn more about testthat at https://testthat.r-lib.org
 
 library(testthat)
-library(dfr.dist)
+library(flexhaz)
 
-test_check("dfr.dist")
+test_check("flexhaz")

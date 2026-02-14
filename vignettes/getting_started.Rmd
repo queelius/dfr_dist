@@ -1,10 +1,10 @@
 ---
-title: "Getting Started with dfr.dist"
+title: "Getting Started with flexhaz"
 output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Getting Started with dfr.dist}
+  %\VignetteIndexEntry{Getting Started with flexhaz}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,7 +23,7 @@ testing; others were still running when the test ended (right-censored). You
 suspect the failure rate increases over time. You need to: (1) fit a model,
 (2) estimate parameters with uncertainty, (3) verify the fit.
 
-The `dfr.dist` package lets you work with survival distributions through their
+The `flexhaz` package lets you work with survival distributions through their
 **hazard functions** (also called failure rate functions). This gives you complete
 flexibility to model systems with time-varying failure patterns.
 
@@ -31,13 +31,13 @@ flexibility to model systems with time-varying failure patterns.
 
 ```{r eval=FALSE}
 # From GitHub
-remotes::install_github("queelius/dfr.dist")
+install.packages("flexhaz", repos = "https://queelius.r-universe.dev")
 ```
 
 ### Load the Package
 
 ```{r setup}
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ## Your First DFR Distribution

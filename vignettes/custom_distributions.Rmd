@@ -18,12 +18,12 @@ knitr::opts_chunk$set(
 
 ## The Power of Custom Hazards
 
-The `dfr.dist` package lets you define any survival distribution through its
+The `flexhaz` package lets you define any survival distribution through its
 **hazard function** (failure rate). This guide teaches you how to create your
 own distributions, from simple to optimized.
 
 ```{r setup}
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ## The Three Functions

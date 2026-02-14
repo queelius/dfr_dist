@@ -8,10 +8,10 @@ output:
 
 
 
-# dfr.dist
+# flexhaz
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/queelius/dfr.dist/workflows/R-CMD-check/badge.svg)](https://github.com/queelius/dfr.dist/actions)
+[![R-CMD-check](https://github.com/queelius/flexhaz/workflows/R-CMD-check/badge.svg)](https://github.com/queelius/flexhaz/actions)
 <!-- badges: end -->
 
 **Dynamic Failure Rate Distributions for Survival Analysis**
@@ -19,15 +19,15 @@ output:
 Capacitors that wear out faster than any Weibull can describe. Software systems
 with bathtub-shaped crash rates. Post-surgical patients whose risk drops sharply,
 then slowly climbs again. Standard parametric survival families cannot express
-these hazard patterns — but `dfr.dist` can.
+these hazard patterns — but `flexhaz` can.
 
 **Write the hazard function you need — any R function of time and parameters —
 and the package derives everything else**: survival curves, CDFs, densities,
 quantiles, sampling, log-likelihoods, MLE fitting, and residual diagnostics.
 
-## Why dfr.dist?
+## Why flexhaz?
 
-| Feature | dfr.dist | survival | flexsurv |
+| Feature | flexhaz | survival | flexsurv |
 |---------|----------|----------|----------|
 | Custom hazard functions | **Yes** | No | Limited |
 | Built-in distributions | Exp, Weibull, Gompertz, Log-logistic | Weibull, Exp | Many |
@@ -49,18 +49,17 @@ quantiles, sampling, log-likelihoods, MLE fitting, and residual diagnostics.
 
 ## Installation
 
-Install from GitHub:
+Install from [r-universe](https://queelius.r-universe.dev):
 
 ```r
-# install.packages("devtools")
-devtools::install_github("queelius/dfr.dist")
+install.packages("flexhaz", repos = "https://queelius.r-universe.dev")
 ```
 
 ## Quick Start
 
 
 ``` r
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ### Built-in Distributions
@@ -191,22 +190,22 @@ ll(df, par = c(0.5))
 
 **Start Here:**
 
-- [Package Overview](https://queelius.github.io/dfr.dist/articles/dfr.dist-package.html) - Motivation, complete example, and audience guide
-- [Quick Start Guide](https://queelius.github.io/dfr.dist/articles/getting_started.html) - 5-minute introduction
+- [Package Overview](https://queelius.github.io/flexhaz/articles/flexhaz-package.html) - Motivation, complete example, and audience guide
+- [Quick Start Guide](https://queelius.github.io/flexhaz/articles/getting_started.html) - 5-minute introduction
 
 **Real-World Applications:**
 
-- [Reliability Engineering](https://queelius.github.io/dfr.dist/articles/reliability_engineering.html) - Five case studies
+- [Reliability Engineering](https://queelius.github.io/flexhaz/articles/reliability_engineering.html) - Five case studies
 
 **Going Deeper:**
 
-- [Dynamic Failure Rate Distributions](https://queelius.github.io/dfr.dist/articles/failure_rate.html) - Mathematical foundations
-- [Creating Custom Distributions](https://queelius.github.io/dfr.dist/articles/custom_distributions.html) - The three-level optimization paradigm
-- [Custom Derivatives for MLE](https://queelius.github.io/dfr.dist/articles/custom_derivatives.html) - Analytical score and Hessian functions
+- [Dynamic Failure Rate Distributions](https://queelius.github.io/flexhaz/articles/failure_rate.html) - Mathematical foundations
+- [Creating Custom Distributions](https://queelius.github.io/flexhaz/articles/custom_distributions.html) - The three-level optimization paradigm
+- [Custom Derivatives for MLE](https://queelius.github.io/flexhaz/articles/custom_derivatives.html) - Analytical score and Hessian functions
 
 **Reference:**
 
-- [Function Reference](https://queelius.github.io/dfr.dist/reference/)
+- [Function Reference](https://queelius.github.io/flexhaz/reference/)
 
 ## Related Packages
 

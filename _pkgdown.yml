@@ -1,4 +1,4 @@
-url: https://queelius.github.io/dfr.dist/
+url: https://queelius.github.io/flexhaz/
 template:
   bootstrap: 5
 
@@ -15,7 +15,7 @@ navbar:
       menu:
         - text: "Motivation & Applications"
         - text: "Package Overview"
-          href: articles/dfr.dist-package.html
+          href: articles/flexhaz-package.html
         - text: Getting Started
           href: articles/getting_started.html
         - text: Reliability Engineering
@@ -35,7 +35,7 @@ articles:
   - title: Motivation & Applications
     navbar: ~
     contents:
-      - dfr.dist-package
+      - flexhaz-package
       - getting_started
       - reliability_engineering
   - title: Theory

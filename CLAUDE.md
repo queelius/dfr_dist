@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-`dfr.dist` is an R package for working with dynamic failure rate (DFR) distributions in survival analysis. The package parameterizes distributions using flexible failure rate (hazard) functions that can depend on time and any set of predictors/covariates.
+`flexhaz` is an R package for working with dynamic failure rate (DFR) distributions in survival analysis. The package parameterizes distributions using flexible failure rate (hazard) functions that can depend on time and any set of predictors/covariates.
 
 ## Development Commands
 
@@ -165,7 +165,7 @@ This package is designed to work with a family of related packages:
 ```
 algebraic.dist          # Generic distribution interface (imported)
     ↓
-dfr.dist               # This package - DFR distributions
+flexhaz               # This package - DFR distributions
     ↓
 likelihood.model       # Likelihood model interface + fisher_mle class
 ```
@@ -192,11 +192,11 @@ summary(result)   # Full summary
 
 Two packages handle **series systems** (systems that fail when any component fails) with **masked failure data** (where the causing component is uncertain):
 
-- **likelihood.model.series.md**: Series system likelihood models with masked component cause data. Currently implements exponential and Weibull components. Its README explicitly mentions dfr_dist as a future integration for general series systems with arbitrary component hazard functions.
+- **maskedcauses**: Series system likelihood models with masked component cause data. Currently implements exponential and Weibull components. Its README explicitly mentions dfr_dist as a future integration for general series systems with arbitrary component hazard functions.
 
 - **mdrelax**: Relaxed masking conditions for series systems (Weibull/exponential).
 
-**Integration potential**: dfr_dist could serve as a component distribution engine for series systems, enabling time-dependent and covariate-dependent component hazards beyond the current exponential/Weibull implementations. The architectural foundation exists in likelihood.model.series.md's `utils.R` (`cum_haz()`, `qcomp()`, `rcomp()` for arbitrary hazard functions).
+**Integration potential**: dfr_dist could serve as a component distribution engine for series systems, enabling time-dependent and covariate-dependent component hazards beyond the current exponential/Weibull implementations. The architectural foundation exists in maskedcauses's `utils.R` (`cum_haz()`, `qcomp()`, `rcomp()` for arbitrary hazard functions).
 
 ### Core Packages
 

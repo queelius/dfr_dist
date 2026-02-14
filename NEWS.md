@@ -1,4 +1,4 @@
-# dfr.dist 0.5.0
+# flexhaz 0.5.0
 
 ## Changes
 
@@ -15,7 +15,7 @@
 * Removed femtograd dependency — users supply their own derivative functions
   via `score_fn` and `hess_fn`, or the package falls back to numDeriv.
 
-# dfr.dist 0.1.0
+# flexhaz 0.1.0
 
 Initial release.
 

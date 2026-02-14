@@ -1,4 +1,4 @@
-Package: dfr.dist
+Package: flexhaz
 Title: Dynamic Failure Rate Distributions for Survival Analysis
 Version: 0.5.0
 Authors@R:
@@ -29,6 +29,6 @@ Imports:
 Depends:
     R (>= 3.5.0)
 VignetteBuilder: knitr
-URL: https://github.com/queelius/dfr.dist,
-    https://queelius.github.io/dfr.dist/
-BugReports: https://github.com/queelius/dfr.dist/issues
+URL: https://github.com/queelius/flexhaz,
+    https://queelius.github.io/flexhaz/
+BugReports: https://github.com/queelius/flexhaz/issues

@@ -152,7 +152,7 @@ test_that("kaplan_meier computes correct estimates", {
     time <- c(1, 2, 3, 4, 5)
     delta <- c(1, 0, 1, 1, 0)  # Events at 1, 3, 4; censored at 2, 5
 
-    km <- dfr.dist:::kaplan_meier(time, delta)
+    km <- flexhaz:::kaplan_meier(time, delta)
 
     # Event times should be 1, 3, 4
     expect_equal(km$time, c(1, 3, 4))
@@ -171,7 +171,7 @@ test_that("kaplan_meier handles all censored data", {
     time <- c(1, 2, 3)
     delta <- c(0, 0, 0)  # All censored
 
-    km <- dfr.dist:::kaplan_meier(time, delta)
+    km <- flexhaz:::kaplan_meier(time, delta)
 
     # No event times
     expect_equal(length(km$time), 0)

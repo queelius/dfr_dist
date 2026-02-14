@@ -1,4 +1,4 @@
-# Shared test fixtures for dfr.dist tests
+# Shared test fixtures for flexhaz tests
 #
 # These helper functions are automatically loaded by testthat before running
 # any tests. They provide common DFR distribution fixtures used across

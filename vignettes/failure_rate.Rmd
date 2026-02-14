@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-The `dfr.dist` package provides a flexible framework for working with survival
+The `flexhaz` package provides a flexible framework for working with survival
 distributions defined through their **hazard (failure rate) functions**. Instead
 of choosing from a fixed catalog of distributions, you directly specify the
 hazard function itself, giving complete flexibility to model systems with
@@ -56,7 +56,7 @@ From this, all other quantities follow:
 ## Getting Started
 
 ```{r setup}
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ### Using Built-in Distributions
@@ -135,7 +135,7 @@ c(survival = S(t), cdf = F(t), sum = S(t) + F(t))
 ### PDF (Density)
 
 ```{r}
-# Use stats::density which dfr.dist implements as density.dfr_dist
+# Use stats::density which flexhaz implements as density.dfr_dist
 pdf_fn <- density(exp_dist)
 
 # For exponential: f(t) = lambda * exp(-lambda * t)
@@ -319,7 +319,7 @@ c(fitted_scale = coef(result)[2], true_scale = true_scale)
 
 ## Custom Hazard Functions
 
-The real power of `dfr.dist` is modeling complex, non-standard hazard patterns.
+The real power of `flexhaz` is modeling complex, non-standard hazard patterns.
 
 ### Bathtub hazard
 
@@ -443,7 +443,7 @@ For more detailed diagnostic workflows, see `vignette("reliability_engineering")
 
 ## Summary
 
-The `dfr.dist` package provides:
+The `flexhaz` package provides:
 
 1. **Flexible specification**: Define distributions through hazard functions
 2. **Complete distribution interface**: hazard, survival, CDF, PDF, quantiles, sampling

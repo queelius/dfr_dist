@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 Maximum likelihood estimation (MLE) for survival models requires computing derivatives of the log-likelihood function. The **score function** (gradient) is needed for optimization, and the **Hessian matrix** (second derivatives) is needed for computing standard errors and confidence intervals via the observed Fisher information.
 
-The `dfr.dist` package uses a simple 2-tier fallback for each:
+The `flexhaz` package uses a simple 2-tier fallback for each:
 
 | Derivative | If provided | Otherwise |
 |-----------|-------------|-----------|
@@ -32,7 +32,7 @@ This vignette shows how to provide custom derivatives using the Weibull distribu
 ## Setup
 
 ```{r setup, message=FALSE, warning=FALSE}
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ## The Weibull Distribution
