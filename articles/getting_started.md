@@ -43,8 +43,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x564d97fd73c8>
-#> <environment: 0x564d97fd5b48>
+#> <bytecode: 0x55e772ca33c8>
+#> <environment: 0x55e772ca1b48>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
