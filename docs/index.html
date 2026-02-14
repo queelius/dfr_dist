@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Dynamic Failure Rate Distributions for Survival Analysis • dfr.dist</title>
+<title>Dynamic Failure Rate Distributions for Survival Analysis • flexhaz</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -20,7 +20,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="index.html">dfr.dist</a>
+    <a class="navbar-brand me-2" href="index.html">flexhaz</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
@@ -37,7 +37,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
-    <li><a class="dropdown-item" href="articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="articles/flexhaz-package.html">Package Overview</a></li>
     <li><a class="dropdown-item" href="articles/getting_started.html">Getting Started</a></li>
     <li><a class="dropdown-item" href="articles/reliability_engineering.html">Reliability Engineering</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -55,7 +55,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/flexhaz/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -64,15 +64,15 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="dfrdist">dfr.dist<a class="anchor" aria-label="anchor" href="#dfrdist"></a>
+<div class="page-header"><h1 id="flexhaz">flexhaz<a class="anchor" aria-label="anchor" href="#flexhaz"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p><strong>Dynamic Failure Rate Distributions for Survival Analysis</strong></p>
-<p>Capacitors that wear out faster than any Weibull can describe. Software systems with bathtub-shaped crash rates. Post-surgical patients whose risk drops sharply, then slowly climbs again. Standard parametric survival families cannot express these hazard patterns — but <code>dfr.dist</code> can.</p>
+<p>Capacitors that wear out faster than any Weibull can describe. Software systems with bathtub-shaped crash rates. Post-surgical patients whose risk drops sharply, then slowly climbs again. Standard parametric survival families cannot express these hazard patterns — but <code>flexhaz</code> can.</p>
 <p><strong>Write the hazard function you need — any R function of time and parameters — and the package derives everything else</strong>: survival curves, CDFs, densities, quantiles, sampling, log-likelihoods, MLE fitting, and residual diagnostics.</p>
 <div class="section level2">
-<h2 id="why-dfrdist">Why dfr.dist?<a class="anchor" aria-label="anchor" href="#why-dfrdist"></a>
+<h2 id="why-flexhaz">Why flexhaz?<a class="anchor" aria-label="anchor" href="#why-flexhaz"></a>
 </h2>
 <table class="table">
 <colgroup>
@@ -83,7 +83,7 @@
 </colgroup>
 <thead><tr class="header">
 <th>Feature</th>
-<th>dfr.dist</th>
+<th>flexhaz</th>
 <th>survival</th>
 <th>flexsurv</th>
 </tr></thead>
@@ -153,16 +153,15 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Install from GitHub:</p>
+<p>Install from <a href="https://queelius.r-universe.dev" class="external-link">r-universe</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"queelius/dfr.dist"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"flexhaz"</span>, repos <span class="op">=</span> <span class="st">"https://queelius.r-universe.dev"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr.dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/flexhaz" class="external-link">flexhaz</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="built-in-distributions">Built-in Distributions<a class="anchor" aria-label="anchor" href="#built-in-distributions"></a>
 </h3>
@@ -301,27 +300,27 @@ plot of chunk diagnostics
 <p><strong>Start Here:</strong></p>
 <ul>
 <li>
-<a href="https://queelius.github.io/dfr.dist/articles/dfr.dist-package.html">Package Overview</a> - Motivation, complete example, and audience guide</li>
+<a href="https://queelius.github.io/flexhaz/articles/flexhaz-package.html">Package Overview</a> - Motivation, complete example, and audience guide</li>
 <li>
-<a href="https://queelius.github.io/dfr.dist/articles/getting_started.html">Quick Start Guide</a> - 5-minute introduction</li>
+<a href="https://queelius.github.io/flexhaz/articles/getting_started.html">Quick Start Guide</a> - 5-minute introduction</li>
 </ul>
 <p><strong>Real-World Applications:</strong></p>
 <ul>
 <li>
-<a href="https://queelius.github.io/dfr.dist/articles/reliability_engineering.html">Reliability Engineering</a> - Five case studies</li>
+<a href="https://queelius.github.io/flexhaz/articles/reliability_engineering.html">Reliability Engineering</a> - Five case studies</li>
 </ul>
 <p><strong>Going Deeper:</strong></p>
 <ul>
 <li>
-<a href="https://queelius.github.io/dfr.dist/articles/failure_rate.html">Dynamic Failure Rate Distributions</a> - Mathematical foundations</li>
+<a href="https://queelius.github.io/flexhaz/articles/failure_rate.html">Dynamic Failure Rate Distributions</a> - Mathematical foundations</li>
 <li>
-<a href="https://queelius.github.io/dfr.dist/articles/custom_distributions.html">Creating Custom Distributions</a> - The three-level optimization paradigm</li>
+<a href="https://queelius.github.io/flexhaz/articles/custom_distributions.html">Creating Custom Distributions</a> - The three-level optimization paradigm</li>
 <li>
-<a href="https://queelius.github.io/dfr.dist/articles/custom_derivatives.html">Custom Derivatives for MLE</a> - Analytical score and Hessian functions</li>
+<a href="https://queelius.github.io/flexhaz/articles/custom_derivatives.html">Custom Derivatives for MLE</a> - Analytical score and Hessian functions</li>
 </ul>
 <p><strong>Reference:</strong></p>
 <ul>
-<li><a href="https://queelius.github.io/dfr.dist/reference/">Function Reference</a></li>
+<li><a href="https://queelius.github.io/flexhaz/reference/">Function Reference</a></li>
 </ul>
 </div>
 <div class="section level2">
@@ -340,8 +339,8 @@ plot of chunk diagnostics
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/queelius/dfr.dist/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/queelius/dfr.dist/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/queelius/flexhaz/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/queelius/flexhaz/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -357,7 +356,7 @@ plot of chunk diagnostics
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing dfr.dist</a></li>
+<li><a href="authors.html#citation">Citing flexhaz</a></li>
 </ul>
 </div>
 
@@ -371,7 +370,7 @@ plot of chunk diagnostics
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/queelius/dfr.dist/actions" class="external-link"><img src="https://github.com/queelius/dfr.dist/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/queelius/flexhaz/actions" class="external-link"><img src="https://github.com/queelius/flexhaz/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
 

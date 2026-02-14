@@ -1,4 +1,4 @@
-# dfr.dist: Hazard-First Survival Modeling
+# flexhaz: Hazard-First Survival Modeling
 
 ## The Problem
 
@@ -21,7 +21,7 @@ closed-form quantities like mean time to failure.
 
 ## The Idea
 
-`dfr.dist` takes a different approach: **you write the hazard function,
+`flexhaz` takes a different approach: **you write the hazard function,
 and the package derives everything else**.
 
 Given a hazard (failure rate) function $h(t)$, the full distribution
@@ -30,7 +30,7 @@ follows:
 $$h(t)\;\overset{\;\int\;}{\rightarrow}\; H(t) = \int_{0}^{t}h(u)\, du\;\overset{\;\exp\;}{\rightarrow}\; S(t) = e^{- H{(t)}}\;\overset{\; \times h\;}{\rightarrow}\; f(t) = h(t)\, S(t)$$
 
 If you can express $h(t)$ as an R function of time and parameters,
-`dfr.dist` gives you survival curves, CDFs, densities, quantiles, random
+`flexhaz` gives you survival curves, CDFs, densities, quantiles, random
 sampling, log-likelihoods, MLE fitting, and residual diagnostics —
 automatically.
 
@@ -41,7 +41,7 @@ risk (infant mortality), a stable useful-life period, and accelerating
 wear-out.
 
 ``` r
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ### Define the hazard
@@ -77,7 +77,7 @@ plot(t_seq, sapply(t_seq, h), type = "l", lwd = 2, col = "darkred",
 
 ![Bathtub hazard curve showing high infant mortality at left, flat
 useful life in the middle, and rising wear-out on the
-right.](dfr.dist-package_files/figure-html/plot-hazard-1.png)
+right.](flexhaz-package_files/figure-html/plot-hazard-1.png)
 
 ### Plot the survival curve
 
@@ -89,7 +89,7 @@ plot(bathtub, what = "survival", xlim = c(0, 30),
 
 ![Survival curve derived from the bathtub hazard, showing rapid early
 decline that stabilizes then drops
-again.](dfr.dist-package_files/figure-html/plot-surv-1.png)
+again.](flexhaz-package_files/figure-html/plot-surv-1.png)
 
 ### Simulate data and fit via MLE
 
@@ -140,7 +140,7 @@ qqplot_residuals(fitted_bathtub, df)
 ```
 
 ![Cox-Snell residuals Q-Q plot for the bathtub
-model.](dfr.dist-package_files/figure-html/qq-plot-1.png)
+model.](flexhaz-package_files/figure-html/qq-plot-1.png)
 
 Points near the diagonal indicate the model captures the failure pattern
 well.
@@ -163,14 +163,14 @@ analytical derivatives for faster, more accurate MLE.
 ## Who Is This For?
 
 **Reliability engineers**: If you think in failure rates, MTBF, and
-bathtub curves, `dfr.dist` speaks your language. Define the hazard
+bathtub curves, `flexhaz` speaks your language. Define the hazard
 function that matches your failure physics, fit it to test data with
 censoring, and extract B-life estimates, warranty predictions, and
 maintenance intervals — all from a single object.
 
 **Statisticians and survival analysts**: If you work with censored
 lifetime data and need more flexibility than Weibull or Cox regression,
-`dfr.dist` gives you fully parametric models with arbitrary hazard
+`flexhaz` gives you fully parametric models with arbitrary hazard
 shapes. You get proper likelihood inference (score, Hessian, confidence
 intervals) and residual diagnostics, with the option to supply
 analytical derivatives or fall back to numerical methods.

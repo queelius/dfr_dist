@@ -5,7 +5,7 @@ with code in this repository.
 
 ## Project Overview
 
-`dfr.dist` is an R package for working with dynamic failure rate (DFR)
+`flexhaz` is an R package for working with dynamic failure rate (DFR)
 distributions in survival analysis. The package parameterizes
 distributions using flexible failure rate (hazard) functions that can
 depend on time and any set of predictors/covariates.
@@ -103,7 +103,7 @@ This enables flexible parameter handling and late binding of parameters
 | Method                                                                          | Returns             | Formula                                                  |
 |---------------------------------------------------------------------------------|---------------------|----------------------------------------------------------|
 | [`hazard()`](https://queelius.github.io/algebraic.dist/reference/hazard.html)   | h(t, par, …)        | Direct rate function                                     |
-| [`cum_haz()`](https://queelius.github.io/dfr.dist/reference/cum_haz.md)         | H(t, par, …)        | ∫₀ᵗ h(u) du (numerical)                                  |
+| [`cum_haz()`](https://queelius.github.io/flexhaz/reference/cum_haz.md)          | H(t, par, …)        | ∫₀ᵗ h(u) du (numerical)                                  |
 | [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html)       | S(t, par, …)        | exp(-H(t))                                               |
 | [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html)         | F(t, par, …)        | 1 - S(t)                                                 |
 | [`density()`](https://rdrr.io/r/stats/density.html)                             | f(t, par, …)        | h(t) × S(t)                                              |
@@ -178,7 +178,7 @@ This package is designed to work with a family of related packages:
 
     algebraic.dist          # Generic distribution interface (imported)
         ↓
-    dfr.dist               # This package - DFR distributions
+    flexhaz               # This package - DFR distributions
         ↓
     likelihood.model       # Likelihood model interface + fisher_mle class
 
@@ -209,11 +209,11 @@ Two packages handle **series systems** (systems that fail when any
 component fails) with **masked failure data** (where the causing
 component is uncertain):
 
-- **likelihood.model.series.md**: Series system likelihood models with
-  masked component cause data. Currently implements exponential and
-  Weibull components. Its README explicitly mentions dfr_dist as a
-  future integration for general series systems with arbitrary component
-  hazard functions.
+- **maskedcauses**: Series system likelihood models with masked
+  component cause data. Currently implements exponential and Weibull
+  components. Its README explicitly mentions dfr_dist as a future
+  integration for general series systems with arbitrary component hazard
+  functions.
 
 - **mdrelax**: Relaxed masking conditions for series systems
   (Weibull/exponential).
@@ -222,8 +222,8 @@ component is uncertain):
 distribution engine for series systems, enabling time-dependent and
 covariate-dependent component hazards beyond the current
 exponential/Weibull implementations. The architectural foundation exists
-in likelihood.model.series.md’s `utils.R`
-([`cum_haz()`](https://queelius.github.io/dfr.dist/reference/cum_haz.md),
+in maskedcauses’s `utils.R`
+([`cum_haz()`](https://queelius.github.io/flexhaz/reference/cum_haz.md),
 `qcomp()`, `rcomp()` for arbitrary hazard functions).
 
 ### Core Packages
@@ -276,7 +276,7 @@ Cox-Snell residuals should follow Exp(1) if model is correct.
   dfr_weibull, etc.)
 - `R/diagnostics.R`: Residuals, plot, and Q-Q plot methods
 - `R/generic_functions.R`: Generic
-  [`cum_haz()`](https://queelius.github.io/dfr.dist/reference/cum_haz.md)
+  [`cum_haz()`](https://queelius.github.io/flexhaz/reference/cum_haz.md)
   declaration
 - `R/utils.R`: Helper `get_params()` for parameter resolution
 - `R/reexports.R`: Re-exports from likelihood.model and algebraic.dist

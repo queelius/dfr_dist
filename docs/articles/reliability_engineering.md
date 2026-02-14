@@ -7,7 +7,7 @@ The question is always: *given that a unit has survived this long, how
 likely is it to fail in the next instant?* That makes hazard-based
 modeling a natural fit for reliability work.
 
-This vignette walks through five case studies that show how `dfr.dist`
+This vignette walks through five case studies that show how `flexhaz`
 handles real reliability engineering problems:
 
 1.  **Capacitor lifetime analysis** — Fit competing models to censored
@@ -21,7 +21,7 @@ handles real reliability engineering problems:
     multiple mechanisms
 
 ``` r
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ## Case Study 1: Capacitor Lifetime Analysis
@@ -70,7 +70,7 @@ Compare exponential (constant failure rate) vs Weibull (allows
 increasing/decreasing):
 
 ``` r
-# Prepare data in dfr.dist format
+# Prepare data in flexhaz format
 df <- data.frame(t = capacitor_data$hours, delta = capacitor_data$failed)
 
 # Fit exponential
@@ -318,7 +318,7 @@ suggest model misspecification.
 
 ## Summary
 
-Key reliability metrics you can compute with `dfr.dist`:
+Key reliability metrics you can compute with `flexhaz`:
 
 | Metric           | Function                                                                        | Purpose                                    |
 |------------------|---------------------------------------------------------------------------------|--------------------------------------------|

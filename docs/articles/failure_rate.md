@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The `dfr.dist` package provides a flexible framework for working with
+The `flexhaz` package provides a flexible framework for working with
 survival distributions defined through their **hazard (failure rate)
 functions**. Instead of choosing from a fixed catalog of distributions,
 you directly specify the hazard function itself, giving complete
@@ -39,7 +39,7 @@ From this, all other quantities follow:
 ## Getting Started
 
 ``` r
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ### Using Built-in Distributions
@@ -66,8 +66,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x59ba762da740>
-#> <environment: 0x59ba762dec10>
+#> <bytecode: 0x60bb279d8e48>
+#> <environment: 0x60bb279db3f8>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -78,7 +78,7 @@ is_dfr_dist(exp_dist)
 ### Creating Custom Distributions
 
 For non-standard hazard patterns, use
-[`dfr_dist()`](https://queelius.github.io/dfr.dist/reference/dfr_dist.md)
+[`dfr_dist()`](https://queelius.github.io/flexhaz/reference/dfr_dist.md)
 directly:
 
 ``` r
@@ -100,7 +100,7 @@ The `rate` function must accept:
 - `...`: additional arguments
 
 See
-[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)
+[`vignette("custom_distributions")`](https://queelius.github.io/flexhaz/articles/custom_distributions.md)
 for detailed guidance on creating optimized custom distributions.
 
 ## Distribution Methods
@@ -139,7 +139,7 @@ c(survival = S(t), cdf = F(t), sum = S(t) + F(t))
 ### PDF (Density)
 
 ``` r
-# Use stats::density which dfr.dist implements as density.dfr_dist
+# Use stats::density which flexhaz implements as density.dfr_dist
 pdf_fn <- density(exp_dist)
 
 # For exponential: f(t) = lambda * exp(-lambda * t)
@@ -195,8 +195,9 @@ h(1, par = c(2))
 
 ## Likelihood Model Interface
 
-The `dfr_dist` class implements the `likelihood_model` interface,
-enabling maximum likelihood estimation with survival data.
+The `dfr_dist` class implements the
+[likelihood.model](https://CRAN.R-project.org/package=likelihood.model)
+interface, enabling maximum likelihood estimation with survival data.
 
 ### Log-likelihood for survival data
 
@@ -281,7 +282,7 @@ solver <- fit(dist)
 # Find MLE starting from initial guess
 result <- solver(df_exact, par = c(0.5), method = "BFGS")
 
-# Extract fitted parameters (fisher_mle uses coef())
+# Extract fitted parameters (the fisher_mle class from likelihood.model uses coef())
 coef(result)
 #> [1] 0.8846654
 
@@ -358,7 +359,7 @@ c(fitted_scale = coef(result)[2], true_scale = true_scale)
 
 ## Custom Hazard Functions
 
-The real power of `dfr.dist` is modeling complex, non-standard hazard
+The real power of `flexhaz` is modeling complex, non-standard hazard
 patterns.
 
 ### Bathtub hazard
@@ -429,8 +430,9 @@ h(2, x = 1)  # Higher risk group
 
 ## Integration with algebraic.dist
 
-The `dfr_dist` class inherits from `algebraic.dist` classes, providing
-access to additional functionality:
+The `dfr_dist` class inherits from
+[algebraic.dist](https://CRAN.R-project.org/package=algebraic.dist)
+classes, providing access to additional functionality:
 
 ``` r
 # Support is (0, Inf) for all DFR distributions
@@ -500,11 +502,11 @@ summary(mart_resid)
 ```
 
 For more detailed diagnostic workflows, see
-[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md).
+[`vignette("reliability_engineering")`](https://queelius.github.io/flexhaz/articles/reliability_engineering.md).
 
 ## Summary
 
-The `dfr.dist` package provides:
+The `flexhaz` package provides:
 
 1.  **Flexible specification**: Define distributions through hazard
     functions
@@ -525,11 +527,11 @@ This makes it ideal for:
 
 ## Next Steps
 
-- **[`vignette("getting_started")`](https://queelius.github.io/dfr.dist/articles/getting_started.md)** -
+- **[`vignette("getting_started")`](https://queelius.github.io/flexhaz/articles/getting_started.md)** -
   Quick 5-minute introduction
-- **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md)** -
+- **[`vignette("reliability_engineering")`](https://queelius.github.io/flexhaz/articles/reliability_engineering.md)** -
   Five real-world case studies
-- **[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)** -
+- **[`vignette("custom_distributions")`](https://queelius.github.io/flexhaz/articles/custom_distributions.md)** -
   The three-level optimization paradigm
-- **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)** -
+- **[`vignette("custom_derivatives")`](https://queelius.github.io/flexhaz/articles/custom_derivatives.md)** -
   Supplying analytical score and Hessian functions

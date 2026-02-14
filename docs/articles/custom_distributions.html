@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Creating Custom Distributions • dfr.dist</title>
+<title>Creating Custom Distributions • flexhaz</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
+    <a class="navbar-brand me-2" href="../index.html">flexhaz</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
@@ -35,7 +35,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
-    <li><a class="dropdown-item" href="../articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview</a></li>
     <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
     <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -53,7 +53,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/flexhaz/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -70,7 +70,7 @@
       <h1>Creating Custom Distributions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/HEAD/vignettes/custom_distributions.Rmd" class="external-link"><code>vignettes/custom_distributions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/flexhaz/blob/HEAD/vignettes/custom_distributions.Rmd" class="external-link"><code>vignettes/custom_distributions.Rmd</code></a></small>
       <div class="d-none name"><code>custom_distributions.Rmd</code></div>
     </div>
 
@@ -79,12 +79,12 @@
 <div class="section level2">
 <h2 id="the-power-of-custom-hazards">The Power of Custom Hazards<a class="anchor" aria-label="anchor" href="#the-power-of-custom-hazards"></a>
 </h2>
-<p>The <code>dfr.dist</code> package lets you define any survival
+<p>The <code>flexhaz</code> package lets you define any survival
 distribution through its <strong>hazard function</strong> (failure
 rate). This guide teaches you how to create your own distributions, from
 simple to optimized.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr.dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/flexhaz" class="external-link">flexhaz</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="the-three-functions">The Three Functions<a class="anchor" aria-label="anchor" href="#the-three-functions"></a>
@@ -406,13 +406,13 @@ these guidelines:</p>
 <span><span class="co"># Single evaluation timing (run multiple times for accuracy)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll1</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.724   0.020   2.746</span></span>
+<span><span class="co">#&gt;   2.768   0.021   2.797</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll2</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.518   0.001   0.520</span></span>
+<span><span class="co">#&gt;   0.478   0.000   0.478</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll3</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.467   0.000   0.468</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.497   0.000   0.497</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="real-world-example-bathtub-curve">Real-World Example: Bathtub Curve<a class="anchor" aria-label="anchor" href="#real-world-example-bathtub-curve"></a>

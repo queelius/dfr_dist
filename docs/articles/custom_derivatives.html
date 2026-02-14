@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Custom Derivatives for Maximum Likelihood Estimation • dfr.dist</title>
+<title>Custom Derivatives for Maximum Likelihood Estimation • flexhaz</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
+    <a class="navbar-brand me-2" href="../index.html">flexhaz</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
@@ -35,7 +35,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
-    <li><a class="dropdown-item" href="../articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview</a></li>
     <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
     <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -53,7 +53,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/flexhaz/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -70,7 +70,7 @@
       <h1>Custom Derivatives for Maximum Likelihood Estimation</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/HEAD/vignettes/custom_derivatives.Rmd" class="external-link"><code>vignettes/custom_derivatives.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/flexhaz/blob/HEAD/vignettes/custom_derivatives.Rmd" class="external-link"><code>vignettes/custom_derivatives.Rmd</code></a></small>
       <div class="d-none name"><code>custom_derivatives.Rmd</code></div>
     </div>
 
@@ -85,9 +85,14 @@ function</strong> (gradient) is needed for optimization, and the
 <strong>Hessian matrix</strong> (second derivatives) is needed for
 computing standard errors and confidence intervals via the observed
 Fisher information.</p>
-<p>The <code>dfr.dist</code> package uses a simple 2-tier fallback for
+<p>The <code>flexhaz</code> package uses a simple 2-tier fallback for
 each:</p>
 <table class="table">
+<colgroup>
+<col width="31%">
+<col width="37%">
+<col width="31%">
+</colgroup>
 <thead><tr class="header">
 <th>Derivative</th>
 <th>If provided</th>
@@ -97,12 +102,16 @@ each:</p>
 <tr class="odd">
 <td>Score</td>
 <td><code>score_fn(df, par, ...)</code></td>
-<td><code><a href="https://rdrr.io/pkg/numDeriv/man/grad.html" class="external-link">numDeriv::grad()</a></code></td>
+<td>
+<a href="https://CRAN.R-project.org/package=numDeriv" class="external-link"><code>numDeriv</code></a><code>::grad()</code>
+</td>
 </tr>
 <tr class="even">
 <td>Hessian</td>
 <td><code>hess_fn(df, par, ...)</code></td>
-<td><code><a href="https://rdrr.io/pkg/numDeriv/man/hessian.html" class="external-link">numDeriv::hessian()</a></code></td>
+<td>
+<a href="https://CRAN.R-project.org/package=numDeriv" class="external-link"><code>numDeriv</code></a><code>::hessian()</code>
+</td>
 </tr>
 </tbody>
 </table>
@@ -117,7 +126,7 @@ Weibull distribution as a case study.</p>
 <h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr.dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/flexhaz" class="external-link">flexhaz</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="the-weibull-distribution">The Weibull Distribution<a class="anchor" aria-label="anchor" href="#the-weibull-distribution"></a>
@@ -255,7 +264,8 @@ analytically:</p>
 <span><span class="co">#&gt; [2,]  30.3410 -50.2047</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="approach-3-provide-score-only-let-numderiv-handle-the-hessian">Approach 3: Provide Score Only, Let numDeriv Handle the Hessian<a class="anchor" aria-label="anchor" href="#approach-3-provide-score-only-let-numderiv-handle-the-hessian"></a>
+<h2 id="approach-3-provide-score-only-let-numderiv-handle-the-hessian">Approach 3: Provide Score Only, Let <a href="https://CRAN.R-project.org/package=numDeriv" class="external-link">numDeriv</a> Handle
+the Hessian<a class="anchor" aria-label="anchor" href="#approach-3-provide-score-only-let-numderiv-handle-the-hessian"></a>
 </h2>
 <p>If deriving the Hessian is tedious but the score is straightforward,
 provide just <code>score_fn</code>:</p>
@@ -357,6 +367,12 @@ information:</p>
 <h2 id="distribution-reference">Distribution Reference<a class="anchor" aria-label="anchor" href="#distribution-reference"></a>
 </h2>
 <table class="table">
+<colgroup>
+<col width="31%">
+<col width="29%">
+<col width="17%">
+<col width="21%">
+</colgroup>
 <thead><tr class="header">
 <th>Distribution</th>
 <th>Constructor</th>
@@ -380,13 +396,13 @@ information:</p>
 <td>Gompertz</td>
 <td><code><a href="../reference/dfr_gompertz.html">dfr_gompertz()</a></code></td>
 <td>Analytical</td>
-<td>numDeriv</td>
+<td><a href="https://CRAN.R-project.org/package=numDeriv" class="external-link">numDeriv</a></td>
 </tr>
 <tr class="even">
 <td>Log-logistic</td>
 <td><code><a href="../reference/dfr_loglogistic.html">dfr_loglogistic()</a></code></td>
 <td>Analytical</td>
-<td>numDeriv</td>
+<td><a href="https://CRAN.R-project.org/package=numDeriv" class="external-link">numDeriv</a></td>
 </tr>
 </tbody>
 </table>
