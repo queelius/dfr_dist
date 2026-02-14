@@ -70,7 +70,7 @@
       <h1>Creating Custom Distributions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/flexhaz/blob/HEAD/vignettes/custom_distributions.Rmd" class="external-link"><code>vignettes/custom_distributions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/flexhaz/blob/main/vignettes/custom_distributions.Rmd" class="external-link"><code>vignettes/custom_distributions.Rmd</code></a></small>
       <div class="d-none name"><code>custom_distributions.Rmd</code></div>
     </div>
 
@@ -406,13 +406,13 @@ these guidelines:</p>
 <span><span class="co"># Single evaluation timing (run multiple times for accuracy)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll1</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   3.138   0.037   3.201</span></span>
+<span><span class="co">#&gt;   2.287   0.011   2.299</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll2</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.564   0.000   0.566</span></span>
+<span><span class="co">#&gt;   0.411   0.000   0.411</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span> <span class="fu">ll3</span><span class="op">(</span><span class="va">test_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.561   0.000   0.562</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.399   0.000   0.399</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="real-world-example-bathtub-curve">Real-World Example: Bathtub Curve<a class="anchor" aria-label="anchor" href="#real-world-example-bathtub-curve"></a>
