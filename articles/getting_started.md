@@ -1,4 +1,4 @@
-# Getting Started with dfr.dist
+# Getting Started with flexhaz
 
 ## 5-Minute Quick Start
 
@@ -8,7 +8,7 @@ failed during testing; others were still running when the test ended
 need to: (1) fit a model, (2) estimate parameters with uncertainty, (3)
 verify the fit.
 
-The `dfr.dist` package lets you work with survival distributions through
+The `flexhaz` package lets you work with survival distributions through
 their **hazard functions** (also called failure rate functions). This
 gives you complete flexibility to model systems with time-varying
 failure patterns.
@@ -17,13 +17,13 @@ failure patterns.
 
 ``` r
 # From GitHub
-remotes::install_github("queelius/dfr.dist")
+install.packages("flexhaz", repos = "https://queelius.r-universe.dev")
 ```
 
 ### Load the Package
 
 ``` r
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ## Your First DFR Distribution
@@ -43,8 +43,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x55ae75d07288>
-#> <environment: 0x55ae75d05a08>
+#> <bytecode: 0x563c9ba5a3c8>
+#> <environment: 0x563c9ba58b48>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -211,23 +211,23 @@ Weibull shape parameter interpretation:
 
 Now that you understand the basics, explore:
 
-1.  **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md)** -
+1.  **[`vignette("reliability_engineering")`](https://queelius.github.io/flexhaz/articles/reliability_engineering.md)** -
     Five real-world case studies
-2.  **[`vignette("failure_rate")`](https://queelius.github.io/dfr.dist/articles/failure_rate.md)** -
+2.  **[`vignette("failure_rate")`](https://queelius.github.io/flexhaz/articles/failure_rate.md)** -
     Mathematical foundations
-3.  **[`vignette("custom_distributions")`](https://queelius.github.io/dfr.dist/articles/custom_distributions.md)** -
+3.  **[`vignette("custom_distributions")`](https://queelius.github.io/flexhaz/articles/custom_distributions.md)** -
     Build optimized custom distributions
-4.  **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)** -
+4.  **[`vignette("custom_derivatives")`](https://queelius.github.io/flexhaz/articles/custom_derivatives.md)** -
     Analytical derivatives for MLE
 
 ### Available Distributions
 
-| Constructor                                                                             | Hazard Pattern           | Use Case                     |
-|-----------------------------------------------------------------------------------------|--------------------------|------------------------------|
-| [`dfr_exponential()`](https://queelius.github.io/dfr.dist/reference/dfr_exponential.md) | Constant                 | Random failures, useful life |
-| [`dfr_weibull()`](https://queelius.github.io/dfr.dist/reference/dfr_weibull.md)         | Power-law (↑ or ↓)       | Wear-out, infant mortality   |
-| [`dfr_gompertz()`](https://queelius.github.io/dfr.dist/reference/dfr_gompertz.md)       | Exponential growth       | Biological aging             |
-| [`dfr_loglogistic()`](https://queelius.github.io/dfr.dist/reference/dfr_loglogistic.md) | Non-monotonic (↑ then ↓) | Initial risk that diminishes |
+| Constructor                                                                            | Hazard Pattern           | Use Case                     |
+|----------------------------------------------------------------------------------------|--------------------------|------------------------------|
+| [`dfr_exponential()`](https://queelius.github.io/flexhaz/reference/dfr_exponential.md) | Constant                 | Random failures, useful life |
+| [`dfr_weibull()`](https://queelius.github.io/flexhaz/reference/dfr_weibull.md)         | Power-law (↑ or ↓)       | Wear-out, infant mortality   |
+| [`dfr_gompertz()`](https://queelius.github.io/flexhaz/reference/dfr_gompertz.md)       | Exponential growth       | Biological aging             |
+| [`dfr_loglogistic()`](https://queelius.github.io/flexhaz/reference/dfr_loglogistic.md) | Non-monotonic (↑ then ↓) | Initial risk that diminishes |
 
 ### Key Functions
 

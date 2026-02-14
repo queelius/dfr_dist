@@ -2,12 +2,12 @@
 
 ## The Power of Custom Hazards
 
-The `dfr.dist` package lets you define any survival distribution through
+The `flexhaz` package lets you define any survival distribution through
 its **hazard function** (failure rate). This guide teaches you how to
 create your own distributions, from simple to optimized.
 
 ``` r
-library(dfr.dist)
+library(flexhaz)
 ```
 
 ## The Three Functions
@@ -314,13 +314,13 @@ ll3 <- loglik(dist_v3)
 # Single evaluation timing (run multiple times for accuracy)
 system.time(for(i in 1:100) ll1(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   2.292   0.018   2.311
+#>   2.221   0.019   2.240
 system.time(for(i in 1:100) ll2(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.405   0.002   0.406
+#>   0.410   0.000   0.411
 system.time(for(i in 1:100) ll3(test_data, c(0.1)))
 #>    user  system elapsed 
-#>     0.4     0.0     0.4
+#>   0.398   0.000   0.399
 ```
 
 ## Real-World Example: Bathtub Curve
@@ -382,9 +382,9 @@ wear-out.](custom_distributions_files/figure-html/unnamed-chunk-8-1.png)
 
 ## Next Steps
 
-- **[`vignette("reliability_engineering")`](https://queelius.github.io/dfr.dist/articles/reliability_engineering.md)** -
+- **[`vignette("reliability_engineering")`](https://queelius.github.io/flexhaz/articles/reliability_engineering.md)** -
   Real-world applications
-- **[`vignette("custom_derivatives")`](https://queelius.github.io/dfr.dist/articles/custom_derivatives.md)** -
+- **[`vignette("custom_derivatives")`](https://queelius.github.io/flexhaz/articles/custom_derivatives.md)** -
   Analytical derivatives for MLE
 - **Package source code** - Study `R/distributions.R` for implementation
   examples

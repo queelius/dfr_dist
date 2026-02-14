@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Dynamic Failure Rate Distributions • dfr.dist</title>
+<title>Dynamic Failure Rate Distributions • flexhaz</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">dfr.dist</a>
+    <a class="navbar-brand me-2" href="../index.html">flexhaz</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
@@ -35,7 +35,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
-    <li><a class="dropdown-item" href="../articles/dfr.dist-package.html">Package Overview</a></li>
+    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview</a></li>
     <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
     <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -53,7 +53,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/dfr.dist/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/queelius/flexhaz/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -70,7 +70,7 @@
       <h1>Dynamic Failure Rate Distributions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/queelius/dfr.dist/blob/main/vignettes/failure_rate.Rmd" class="external-link"><code>vignettes/failure_rate.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/queelius/flexhaz/blob/main/vignettes/failure_rate.Rmd" class="external-link"><code>vignettes/failure_rate.Rmd</code></a></small>
       <div class="d-none name"><code>failure_rate.Rmd</code></div>
     </div>
 
@@ -79,7 +79,7 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The <code>dfr.dist</code> package provides a flexible framework for
+<p>The <code>flexhaz</code> package provides a flexible framework for
 working with survival distributions defined through their <strong>hazard
 (failure rate) functions</strong>. Instead of choosing from a fixed
 catalog of distributions, you directly specify the hazard function
@@ -140,7 +140,7 @@ H(t) = \int_0^t h(u) \, du
 <h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/dfr.dist" class="external-link">dfr.dist</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/flexhaz" class="external-link">flexhaz</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="using-built-in-distributions">Using Built-in Distributions<a class="anchor" aria-label="anchor" href="#using-built-in-distributions"></a>
 </h3>
@@ -165,8 +165,8 @@ distributions:</p>
 <span><span class="co">#&gt; {</span></span>
 <span><span class="co">#&gt;     rep(par[[1]], length(t))</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55f8efbe4b30&gt;</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55f8efbe70e0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55cf0103f860&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x55cf01041e10&gt;</span></span>
 <span><span class="co">#&gt; It has a survival function given by:</span></span>
 <span><span class="co">#&gt;     S(t|rate) = exp(-H(t,...))</span></span>
 <span><span class="co">#&gt; where H(t,...) is the cumulative hazard function.</span></span>
@@ -238,7 +238,7 @@ guidance on creating optimized custom distributions.</p>
 <h3 id="pdf-density">PDF (Density)<a class="anchor" aria-label="anchor" href="#pdf-density"></a>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Use stats::density which dfr.dist implements as density.dfr_dist</span></span>
+<code class="sourceCode R"><span><span class="co"># Use stats::density which flexhaz implements as density.dfr_dist</span></span>
 <span><span class="va">pdf_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/density.html" class="external-link">density</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># For exponential: f(t) = lambda * exp(-lambda * t)</span></span>
@@ -461,7 +461,7 @@ mixed data:</p>
 <div class="section level2">
 <h2 id="custom-hazard-functions">Custom Hazard Functions<a class="anchor" aria-label="anchor" href="#custom-hazard-functions"></a>
 </h2>
-<p>The real power of <code>dfr.dist</code> is modeling complex,
+<p>The real power of <code>flexhaz</code> is modeling complex,
 non-standard hazard patterns.</p>
 <div class="section level3">
 <h3 id="bathtub-hazard">Bathtub hazard<a class="anchor" aria-label="anchor" href="#bathtub-hazard"></a>
@@ -596,7 +596,7 @@ identifying individual observations that are poorly fit:</p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
-<p>The <code>dfr.dist</code> package provides:</p>
+<p>The <code>flexhaz</code> package provides:</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Flexible specification</strong>: Define distributions

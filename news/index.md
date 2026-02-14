@@ -1,28 +1,28 @@
 # Changelog
 
-## dfr.dist 0.5.0
+## flexhaz 0.5.0
 
 ### Changes
 
 - Added helper distribution constructors:
-  [`dfr_exponential()`](https://queelius.github.io/dfr.dist/reference/dfr_exponential.md),
-  [`dfr_weibull()`](https://queelius.github.io/dfr.dist/reference/dfr_weibull.md),
-  [`dfr_gompertz()`](https://queelius.github.io/dfr.dist/reference/dfr_gompertz.md),
-  [`dfr_loglogistic()`](https://queelius.github.io/dfr.dist/reference/dfr_loglogistic.md)
+  [`dfr_exponential()`](https://queelius.github.io/flexhaz/reference/dfr_exponential.md),
+  [`dfr_weibull()`](https://queelius.github.io/flexhaz/reference/dfr_weibull.md),
+  [`dfr_gompertz()`](https://queelius.github.io/flexhaz/reference/dfr_gompertz.md),
+  [`dfr_loglogistic()`](https://queelius.github.io/flexhaz/reference/dfr_loglogistic.md)
   with analytical hazard, cumulative hazard, score, and Hessian
   functions where available.
 - Added diagnostic methods:
   [`residuals()`](https://rdrr.io/r/stats/residuals.html) (Cox-Snell and
   Martingale), [`plot()`](https://rdrr.io/r/graphics/plot.default.html)
   (survival, hazard, cumulative hazard),
-  [`qqplot_residuals()`](https://queelius.github.io/dfr.dist/reference/qqplot_residuals.md).
+  [`qqplot_residuals()`](https://queelius.github.io/flexhaz/reference/qqplot_residuals.md).
 - Added [`density()`](https://rdrr.io/r/stats/density.html) method
   (alias for pdf).
 - Added
   [`assumptions()`](https://queelius.github.io/likelihood.model/reference/assumptions.html)
   method for listing model assumptions.
 - Added
-  [`kaplan_meier()`](https://queelius.github.io/dfr.dist/reference/kaplan_meier.md)
+  [`kaplan_meier()`](https://queelius.github.io/flexhaz/reference/kaplan_meier.md)
   internal utility for empirical survival estimation.
 - Added support for left-censored observations (delta = -1).
 - Improved numerical stability in log-likelihood computation.
@@ -30,17 +30,17 @@
   functions via `score_fn` and `hess_fn`, or the package falls back to
   numDeriv.
 
-## dfr.dist 0.1.0
+## flexhaz 0.1.0
 
 Initial release.
 
 ### Features
 
-- [`dfr_dist()`](https://queelius.github.io/dfr.dist/reference/dfr_dist.md)
+- [`dfr_dist()`](https://queelius.github.io/flexhaz/reference/dfr_dist.md)
   constructor for creating distributions from hazard functions
 - Complete distribution interface:
   [`hazard()`](https://queelius.github.io/algebraic.dist/reference/hazard.html),
-  [`cum_haz()`](https://queelius.github.io/dfr.dist/reference/cum_haz.md),
+  [`cum_haz()`](https://queelius.github.io/flexhaz/reference/cum_haz.md),
   [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html),
   [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html),
   [`pdf()`](https://rdrr.io/r/grDevices/pdf.html),
