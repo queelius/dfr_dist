@@ -140,9 +140,6 @@ set.seed(42)
 test_data <- data.frame(t = sampler(linear_hazard_v3)(50), delta = 1)
 solver <- fit(linear_hazard_v3)
 result <- solver(test_data, par = c(0.05, 0.005))
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
 
 s <- score(linear_hazard_v3)
 s(test_data, par = coef(result))  # Should be ≈ (0, 0)
@@ -314,10 +311,10 @@ ll3 <- loglik(dist_v3)
 # Single evaluation timing (run multiple times for accuracy)
 system.time(for(i in 1:100) ll1(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   2.225   0.023   2.248
+#>   2.939   0.011   2.951
 system.time(for(i in 1:100) ll2(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.406   0.000   0.405
+#>   0.397   0.000   0.397
 system.time(for(i in 1:100) ll3(test_data, c(0.1)))
 #>    user  system elapsed 
 #>   0.397   0.000   0.397

@@ -29,14 +29,13 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/flexhaz-package.html">Get Started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
-    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview</a></li>
-    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview &amp; Quick Start</a></li>
     <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
@@ -165,8 +164,8 @@ distributions:</p>
 <span><span class="co">#&gt; {</span></span>
 <span><span class="co">#&gt;     rep(par[[1]], length(t))</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55b83d180ff0&gt;</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x55b83d1835a0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x564aaccc7018&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x564aaccc9398&gt;</span></span>
 <span><span class="co">#&gt; It has a survival function given by:</span></span>
 <span><span class="co">#&gt;     S(t|rate) = exp(-H(t,...))</span></span>
 <span><span class="co">#&gt; where H(t,...) is the cumulative hazard function.</span></span>
@@ -411,13 +410,6 @@ mixed data:</p>
 <span><span class="co"># Fit with censored data</span></span>
 <span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df_mixed</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"BFGS"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.1388889</span></span></code></pre></div>
 </div>
@@ -560,11 +552,6 @@ these residuals follow an Exp(1) distribution.</p>
 <span><span class="va">exp_fitted</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">exp_fitted</span><span class="op">)</span></span>
 <span><span class="va">fit_result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">test_df</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
 <span><span class="va">lambda_hat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit_result</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create fitted distribution with estimated parameters</span></span>
@@ -608,8 +595,8 @@ CDF, PDF, quantiles, sampling</li>
 <strong>Likelihood model support</strong>: Log-likelihood, score,
 Hessian for MLE</li>
 <li>
-<strong>Censoring support</strong>: Handle exact and right-censored
-survival data</li>
+<strong>Censoring support</strong>: Handle exact, right-censored,
+and left-censored survival data</li>
 <li>
 <strong>Numerical integration</strong>: Automatic computation of
 cumulative hazard</li>
@@ -630,8 +617,8 @@ assessment</li>
 </h2>
 <ul>
 <li>
-<strong><code><a href="../articles/getting_started.html">vignette("getting_started")</a></code></strong> - Quick
-5-minute introduction</li>
+<strong><code><a href="../articles/flexhaz-package.html">vignette("flexhaz-package")</a></code></strong> - Package
+introduction and quick start</li>
 <li>
 <strong><code><a href="../articles/reliability_engineering.html">vignette("reliability_engineering")</a></code></strong> -
 Five real-world case studies</li>

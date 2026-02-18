@@ -19,13 +19,12 @@ and that the support is (0, Inf)."></head><body>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/flexhaz-package.html">Get Started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
-    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview</a></li>
-    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview &amp; Quick Start</a></li>
     <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
@@ -92,7 +91,8 @@ Defaults to "t".</p></dd>
 <dt id="arg-delta-col">delta_col<a class="anchor" aria-label="anchor" href="#arg-delta-col"></a></dt>
 <dd><p>The column name for event indicators in data frames.
 Uses standard survival analysis convention: 1 = event
-observed (exact), 0 = right-censored. Defaults to "delta".</p></dd>
+observed (exact), 0 = right-censored, -1 = left-censored.
+Defaults to "delta".</p></dd>
 
 
 <dt id="arg-cum-haz-rate">cum_haz_rate<a class="anchor" aria-label="anchor" href="#arg-cum-haz-rate"></a></dt>
@@ -104,14 +104,24 @@ Should return the integral of rate from 0 to t.</p></dd>
 
 <dt id="arg-score-fn">score_fn<a class="anchor" aria-label="anchor" href="#arg-score-fn"></a></dt>
 <dd><p>Optional score function (gradient of log-likelihood).
-Signature: score_fn(df, par, ...) returning a numeric vector.
-If NULL, falls back to numerical gradient via numDeriv::grad.</p></dd>
+Signature: score_fn(df, par, ob_col, delta_col, ...)
+returning a numeric vector. The ob_col and delta_col arguments
+indicate which columns in df contain observation times and event
+indicators. If NULL, falls back to numerical gradient via
+numDeriv::grad. Analytical score functions that only handle
+delta in {0, 1} are automatically bypassed when left-censored
+data (delta = -1) is present.</p></dd>
 
 
 <dt id="arg-hess-fn">hess_fn<a class="anchor" aria-label="anchor" href="#arg-hess-fn"></a></dt>
 <dd><p>Optional Hessian function (second derivatives of log-likelihood).
-Signature: hess_fn(df, par, ...) returning a matrix.
-If NULL, falls back to numerical Hessian via numDeriv::hessian.</p></dd>
+Signature: hess_fn(df, par, ob_col, delta_col, ...) returning
+a matrix. The ob_col and delta_col arguments indicate which
+columns in df contain observation times and event indicators.
+If NULL, falls back to numerical Hessian via numDeriv::hessian.
+Analytical Hessian functions that only handle delta in {0, 1}
+are automatically bypassed when left-censored data (delta = -1)
+is present.</p></dd>
 
 </dl></div>
     <div class="section level2">

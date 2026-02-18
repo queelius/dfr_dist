@@ -76,11 +76,6 @@ df <- data.frame(t = capacitor_data$hours, delta = capacitor_data$failed)
 # Fit exponential
 exp_solver <- fit(dfr_exponential())
 exp_result <- exp_solver(df, par = c(0.001))
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
 exp_lambda <- coef(exp_result)
 cat("Exponential lambda:", round(exp_lambda, 6), "\n")
 #> Exponential lambda: 0.001506
@@ -88,7 +83,6 @@ cat("Exponential lambda:", round(exp_lambda, 6), "\n")
 # Fit Weibull
 weib_solver <- fit(dfr_weibull())
 weib_result <- weib_solver(df, par = c(2, 600))
-#> Warning in log(h_exact): NaNs produced
 weib_params <- coef(weib_result)
 cat("Weibull shape:", round(weib_params[1], 3), "\n")
 #> Weibull shape: 1.823

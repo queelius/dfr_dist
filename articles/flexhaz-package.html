@@ -29,14 +29,13 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
+<li class="active nav-item"><a class="nav-link" href="../articles/flexhaz-package.html">Get Started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
-    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview</a></li>
-    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview &amp; Quick Start</a></li>
     <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
@@ -124,24 +123,301 @@ log-likelihoods, MLE fitting, and residual diagnostics —
 automatically.</p>
 </div>
 <div class="section level2">
-<h2 id="a-complete-example">A Complete Example<a class="anchor" aria-label="anchor" href="#a-complete-example"></a>
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Let’s model a system with a <strong>bathtub-shaped</strong> failure
-rate: high early risk (infant mortality), a stable useful-life period,
-and accelerating wear-out.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># From r-universe</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"flexhaz"</span>, repos <span class="op">=</span> <span class="st">"https://queelius.r-universe.dev"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="your-first-distribution">Your First Distribution<a class="anchor" aria-label="anchor" href="#your-first-distribution"></a>
+</h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/flexhaz" class="external-link">flexhaz</a></span><span class="op">)</span></span></code></pre></div>
+<p>Let’s start with the simplest case: the exponential distribution with
+constant failure rate.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Exponential with failure rate lambda = 0.1 (MTTF = 10 time units)</span></span>
+<span><span class="va">exp_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span>lambda <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Dynamic failure rate (DFR) distribution with failure rate:</span></span>
+<span><span class="co">#&gt; function (t, par, ...) </span></span>
+<span><span class="co">#&gt; {</span></span>
+<span><span class="co">#&gt;     rep(par[[1]], length(t))</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55b4b71aba10&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x55b4b71add90&gt;</span></span>
+<span><span class="co">#&gt; It has a survival function given by:</span></span>
+<span><span class="co">#&gt;     S(t|rate) = exp(-H(t,...))</span></span>
+<span><span class="co">#&gt; where H(t,...) is the cumulative hazard function.</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="define-the-hazard">Define the hazard<a class="anchor" aria-label="anchor" href="#define-the-hazard"></a>
+<h3 id="get-distribution-functions">Get Distribution Functions<a class="anchor" aria-label="anchor" href="#get-distribution-functions"></a>
+</h3>
+<p>All distribution functions follow a two-step pattern — the method
+returns a <strong>closure</strong> that you then call with time
+values:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get closures</span></span>
+<span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
+<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
+<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/density.html" class="external-link">density</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Evaluate at specific times</span></span>
+<span><span class="fu">S</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>   <span class="co"># P(survive past t=10) = exp(-0.1 * 10) ~ 0.37</span></span>
+<span><span class="co">#&gt; [1] 0.3678794</span></span>
+<span><span class="fu">h</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>   <span class="co"># Hazard at t=10 = 0.1 (constant for exponential)</span></span>
+<span><span class="co">#&gt; [1] 0.1</span></span>
+<span><span class="fu">f</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>   <span class="co"># PDF at t=10</span></span>
+<span><span class="co">#&gt; [1] 0.03678794</span></span></code></pre></div>
+<p>You can verify these analytically:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>10</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>0.1</mn><mo>×</mo><mn>10</mn></mrow></msup><mo>=</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>≈</mo><mn>0.368</mn></mrow><annotation encoding="application/x-tex">S(10) = e^{-0.1 \times 10} = e^{-1} \approx 0.368</annotation></semantics></math>,
+the hazard is constant at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\lambda = 0.1</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>10</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>λ</mi><mspace width="0.167em"></mspace><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>10</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.1</mn><mo>×</mo><mn>0.368</mn><mo>≈</mo><mn>0.0368</mn></mrow><annotation encoding="application/x-tex">f(10) = \lambda \, S(10) = 0.1 \times 0.368 \approx 0.0368</annotation></semantics></math>.</p>
+</div>
+<div class="section level3">
+<h3 id="generate-samples">Generate Samples<a class="anchor" aria-label="anchor" href="#generate-samples"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">samp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/sampler.html" class="external-link">sampler</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">failure_times</span> <span class="op">&lt;-</span> <span class="fu">samp</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Sample mean should be close to MTTF = 1/lambda = 10</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">failure_times</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 13.31295</span></span></code></pre></div>
+<p>With only 20 samples the mean can deviate noticeably from the
+theoretical MTTF of 10. Larger samples converge closer.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="fitting-to-data">Fitting to Data<a class="anchor" aria-label="anchor" href="#fitting-to-data"></a>
+</h2>
+<p>Now let’s fit a model to survival data using maximum likelihood
+estimation.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  t <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="va">n</span>, rate <span class="op">=</span> <span class="fl">0.08</span><span class="op">)</span>,   <span class="co"># True lambda = 0.08</span></span>
+<span>  delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">n</span><span class="op">)</span>            <span class="co"># All exact observations</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            t delta</span></span>
+<span><span class="co">#&gt; 1 10.5432158     1</span></span>
+<span><span class="co">#&gt; 2  7.2076284     1</span></span>
+<span><span class="co">#&gt; 3 16.6131858     1</span></span>
+<span><span class="co">#&gt; 4  0.3947170     1</span></span>
+<span><span class="co">#&gt; 5  0.7026372     1</span></span>
+<span><span class="co">#&gt; 6  3.9562652     1</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="maximum-likelihood-estimation">Maximum Likelihood Estimation<a class="anchor" aria-label="anchor" href="#maximum-likelihood-estimation"></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Template with no parameters (to be estimated)</span></span>
+<span><span class="va">exp_template</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">exp_template</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>  <span class="co"># Initial guess</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.07077333</span></span>
+<span></span>
+<span><span class="co"># Compare to analytical MLE: lambda_hat = n / sum(t)</span></span>
+<span><span class="va">n</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">t</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.07077323</span></span></code></pre></div>
+<p>The numerical MLE matches the closed-form solution
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>λ</mi><mo accent="true">̂</mo></mover><mo>=</mo><mi>n</mi><mi>/</mi><mo>∑</mo><msub><mi>t</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\hat\lambda = n / \sum t_i</annotation></semantics></math>
+to five decimal places. Both estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>≈</mo><mn>0.071</mn></mrow><annotation encoding="application/x-tex">\lambda \approx 0.071</annotation></semantics></math>,
+which is consistent with the true value of 0.08 given the sampling
+variability at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>50</mn></mrow><annotation encoding="application/x-tex">n = 50</annotation></semantics></math>.</p>
+</div>
+<div class="section level3">
+<h3 id="model-diagnostics">Model Diagnostics<a class="anchor" aria-label="anchor" href="#model-diagnostics"></a>
+</h3>
+<p>Check model fit using Cox-Snell residuals (should follow the Exp(1)
+diagonal):</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fitted_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span>lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/qqplot_residuals.html">qqplot_residuals</a></span><span class="op">(</span><span class="va">fitted_dist</span>, <span class="va">df</span><span class="op">)</span></span></code></pre></div>
+<p><img src="flexhaz-package_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Cox-Snell residuals Q-Q plot showing points close to diagonal line, indicating good fit." width="672"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="working-with-censored-data">Working with Censored Data<a class="anchor" aria-label="anchor" href="#working-with-censored-data"></a>
+</h2>
+<p>Real survival data often includes <strong>censoring</strong> —
+observations where the exact failure time is not directly observed. The
+<code>flexhaz</code> package uses a <code>delta</code> column to encode
+three types of observation:</p>
+<table class="table">
+<thead><tr class="header">
+<th><code>delta</code></th>
+<th>Meaning</th>
+<th>Log-likelihood contribution</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>1</code></td>
+<td>Exact failure</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log h(t) - H(t)</annotation></semantics></math></td>
+</tr>
+<tr class="even">
+<td><code>0</code></td>
+<td>Right-censored (survived past
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">-H(t)</annotation></semantics></math></td>
+</tr>
+<tr class="odd">
+<td><code>-1</code></td>
+<td>Left-censored (failed before
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log(1 - e^{-H(t)})</annotation></semantics></math></td>
+</tr>
+</tbody>
+</table>
+<div class="section level3">
+<h3 id="right-censoring">Right-Censoring<a class="anchor" aria-label="anchor" href="#right-censoring"></a>
+</h3>
+<p>Right-censoring is the most common type — the subject was still alive
+(or the device was still running) when observation ended.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_censored</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  t <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">8</span>, <span class="fl">12</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">25</span>, <span class="fl">30</span>, <span class="fl">30</span>, <span class="fl">30</span>, <span class="fl">30</span><span class="op">)</span>,</span>
+<span>  delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>  <span class="co"># Last 5 right-censored at t=30</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df_censored</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.02439454</span></span></code></pre></div>
+<p>The censored MLE properly accounts for the five units that survived
+past
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>30</mn></mrow><annotation encoding="application/x-tex">t = 30</annotation></semantics></math>.
+You can verify: the analytical MLE for censored exponential data is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>λ</mi><mo accent="true">̂</mo></mover><mo>=</mo><mi>d</mi><mi>/</mi><mo>∑</mo><msub><mi>t</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\hat\lambda = d / \sum t_i</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>
+is the number of failures, giving
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mi>/</mi><mn>205</mn><mo>≈</mo><mn>0.024</mn></mrow><annotation encoding="application/x-tex">5 / 205 \approx 0.024</annotation></semantics></math>
+— exactly what the optimizer returns.</p>
+</div>
+<div class="section level3">
+<h3 id="left-censoring">Left-Censoring<a class="anchor" aria-label="anchor" href="#left-censoring"></a>
+</h3>
+<p>Left-censoring arises when we know failure occurred <em>before</em>
+an inspection time, but not exactly when. This is common in
+periodic-inspection studies: you check a device at time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
+and discover it has already failed.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df_left</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  t <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">20</span><span class="op">)</span>,</span>
+<span>  delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>   <span class="co"># left-censored, left-censored, exact, right-censored</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df_left</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.07184419</span></span></code></pre></div>
+<p>This dataset mixes all three observation types: two left-censored,
+one exact failure at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>15</mn></mrow><annotation encoding="application/x-tex">t = 15</annotation></semantics></math>,
+and one right-censored at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">t = 20</annotation></semantics></math>.
+The estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>λ</mi><mo accent="true">̂</mo></mover><mo>≈</mo><mn>0.072</mn></mrow><annotation encoding="application/x-tex">\hat\lambda \approx 0.072</annotation></semantics></math>
+is higher than a right-censored-only estimate because the left-censored
+observations provide evidence of earlier failures. All three types can
+coexist in the same dataset — the log-likelihood sums the appropriate
+contribution for each observation.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="custom-column-names">Custom Column Names<a class="anchor" aria-label="anchor" href="#custom-column-names"></a>
+</h2>
+<p>By default, <code>flexhaz</code> looks for columns named
+<code>t</code> (observation time) and <code>delta</code> (event
+indicator). When your data uses different column names — as is common
+with clinical datasets — use the <code>ob_col</code> and
+<code>delta_col</code> arguments:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">clinical_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">8</span>, <span class="fl">12</span>, <span class="fl">15</span>, <span class="fl">20</span><span class="op">)</span>,</span>
+<span>  status <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">dist</span><span class="op">$</span><span class="va">ob_col</span> <span class="op">&lt;-</span> <span class="st">"time"</span></span>
+<span><span class="va">dist</span><span class="op">$</span><span class="va">delta_col</span> <span class="op">&lt;-</span> <span class="st">"status"</span></span>
+<span></span>
+<span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">clinical_data</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.05</span></span></code></pre></div>
+<p>The estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>λ</mi><mo accent="true">̂</mo></mover><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">\hat\lambda = 0.05</annotation></semantics></math>
+equals
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mi>/</mi><mn>60</mn><mo>=</mo><mi>d</mi><mi>/</mi><mo>∑</mo><msub><mi>t</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">3 / 60 = d / \sum t_i</annotation></semantics></math>,
+confirming that the column mapping works correctly.</p>
+<p>You can also set custom columns at construction time via
+<code><a href="../reference/dfr_dist.html">dfr_dist()</a></code>:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
+<span>  rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  cum_haz_rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="va">par</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">*</span> <span class="va">t</span>,</span>
+<span>  ob_col <span class="op">=</span> <span class="st">"time"</span>,</span>
+<span>  delta_col <span class="op">=</span> <span class="st">"status"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="beyond-exponential-weibull">Beyond Exponential: Weibull<a class="anchor" aria-label="anchor" href="#beyond-exponential-weibull"></a>
+</h2>
+<p>The exponential assumes constant failure rate. For
+<strong>increasing</strong> or <strong>decreasing</strong> failure
+rates, use Weibull:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Weibull with increasing failure rate (wear-out)</span></span>
+<span><span class="va">weib_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_weibull.html">dfr_weibull</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">2</span>, scale <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Compare hazard functions</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">weib_dist</span>, what <span class="op">=</span> <span class="st">"hazard"</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">30</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"blue"</span>,</span>
+<span>     main <span class="op">=</span> <span class="st">"Hazard Comparison"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span>lambda <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span>, what <span class="op">=</span> <span class="st">"hazard"</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Weibull (shape=2)"</span>, <span class="st">"Exponential"</span><span class="op">)</span>,</span>
+<span>       col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"red"</span><span class="op">)</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p><img src="flexhaz-package_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="Two hazard curves: exponential (flat line) and Weibull shape=2 (increasing curve)." width="672"></p>
+<p>Weibull shape parameter interpretation:</p>
+<ul>
+<li>
+<strong>shape &lt; 1</strong>: Decreasing hazard (infant mortality,
+burn-in failures)</li>
+<li>
+<strong>shape = 1</strong>: Constant hazard (exponential)</li>
+<li>
+<strong>shape &gt; 1</strong>: Increasing hazard (wear-out,
+aging)</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="the-real-power-custom-hazards">The Real Power: Custom Hazards<a class="anchor" aria-label="anchor" href="#the-real-power-custom-hazards"></a>
+</h2>
+<p>Where <code>flexhaz</code> truly shines is modeling
+<strong>non-standard hazard patterns</strong> that no built-in
+distribution can express.</p>
+<div class="section level3">
+<h3 id="define-a-bathtub-hazard">Define a bathtub hazard<a class="anchor" aria-label="anchor" href="#define-a-bathtub-hazard"></a>
 </h3>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>a</mi><mspace width="0.167em"></mspace><msup><mi>e</mi><mrow><mo>−</mo><mi>b</mi><mi>t</mi></mrow></msup><mo>+</mo><mi>c</mi><mo>+</mo><mi>d</mi><mspace width="0.167em"></mspace><msup><mi>t</mi><mi>k</mi></msup></mrow><annotation encoding="application/x-tex">h(t) = a\,e^{-bt} + c + d\,t^k</annotation></semantics></math></p>
 <p>Three additive components: exponential decay (infant mortality),
 constant baseline (useful life), and power-law growth (wear-out).</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bathtub</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
 <span>  rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">a</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>  <span class="co"># infant mortality magnitude</span></span>
-<span>    <span class="va">b</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>  <span class="co"># infant mortality decay rate</span></span>
+<span>    <span class="va">b</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>  <span class="co"># infant mortality decay</span></span>
 <span>    <span class="va">c</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>  <span class="co"># baseline hazard</span></span>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>  <span class="co"># wear-out coefficient</span></span>
 <span>    <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>  <span class="co"># wear-out exponent</span></span>
@@ -153,7 +429,7 @@ constant baseline (useful life), and power-law growth (wear-out).</p>
 <div class="section level3">
 <h3 id="plot-the-hazard-curve">Plot the hazard curve<a class="anchor" aria-label="anchor" href="#plot-the-hazard-curve"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard</a></span><span class="op">(</span><span class="va">bathtub</span><span class="op">)</span></span>
 <span><span class="va">t_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">30</span>, length.out <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">t_seq</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">t_seq</span>, <span class="va">h</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, col <span class="op">=</span> <span class="st">"darkred"</span>,</span>
@@ -164,7 +440,7 @@ constant baseline (useful life), and power-law growth (wear-out).</p>
 <div class="section level3">
 <h3 id="plot-the-survival-curve">Plot the survival curve<a class="anchor" aria-label="anchor" href="#plot-the-survival-curve"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bathtub</span>, what <span class="op">=</span> <span class="st">"survival"</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">30</span><span class="op">)</span>,</span>
 <span>     col <span class="op">=</span> <span class="st">"darkblue"</span>, lwd <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>     main <span class="op">=</span> <span class="st">"Survival Function S(t)"</span><span class="op">)</span></span></code></pre></div>
@@ -173,8 +449,8 @@ constant baseline (useful life), and power-law growth (wear-out).</p>
 <div class="section level3">
 <h3 id="simulate-data-and-fit-via-mle">Simulate data and fit via MLE<a class="anchor" aria-label="anchor" href="#simulate-data-and-fit-via-mle"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Generate failure times with right-censoring at t = 25</span></span>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate failure times, right-censored at t = 25</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">samp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/sampler.html" class="external-link">sampler</a></span><span class="op">(</span><span class="va">bathtub</span><span class="op">)</span></span>
 <span><span class="va">raw_times</span> <span class="op">&lt;-</span> <span class="fu">samp</span><span class="op">(</span><span class="fl">80</span><span class="op">)</span></span>
@@ -200,16 +476,31 @@ constant baseline (useful life), and power-law growth (wear-out).</p>
 <div class="section level3">
 <h3 id="inspect-the-fit">Inspect the fit<a class="anchor" aria-label="anchor" href="#inspect-the-fit"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Estimated parameters:\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Estimated parameters:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.4828059584 0.6478481588 0.0128496924 0.0003329348 1.7388288598</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.4828059584 0.6478481588 0.0128496924 0.0003329348 1.7388288598</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\nTrue parameters:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; True parameters:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">0.5</span>, b <span class="op">=</span> <span class="fl">0.5</span>, c <span class="op">=</span> <span class="fl">0.01</span>, d <span class="op">=</span> <span class="fl">5e-5</span>, k <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       a       b       c       d       k </span></span>
+<span><span class="co">#&gt; 0.50000 0.50000 0.01000 0.00005 2.50000</span></span></code></pre></div>
+<p>With five parameters and only 80 observations, the optimizer recovers
+the general shape but not every parameter exactly. In particular,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+trade off: a smaller exponent with a larger coefficient can produce a
+similar wear-out curve. The Q-Q plot below is the real test of fit
+quality.</p>
 </div>
 <div class="section level3">
 <h3 id="residual-diagnostics">Residual diagnostics<a class="anchor" aria-label="anchor" href="#residual-diagnostics"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fitted_bathtub</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
 <span>  rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span> <span class="op">+</span> <span class="va">par</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="va">par</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="va">t</span><span class="op">^</span><span class="va">par</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span></span>
@@ -229,20 +520,23 @@ pattern well.</p>
 constructors with analytical cumulative hazard and score functions:</p>
 <table class="table">
 <colgroup>
-<col width="34%">
-<col width="34%">
-<col width="31%">
+<col width="27%">
+<col width="27%">
+<col width="25%">
+<col width="20%">
 </colgroup>
 <thead><tr class="header">
 <th>Constructor</th>
 <th>Hazard Shape</th>
 <th>Parameters</th>
+<th>Use Case</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td><code>dfr_exponential(lambda)</code></td>
 <td>Constant</td>
 <td>failure rate</td>
+<td>Random failures, useful life</td>
 </tr>
 <tr class="even">
 <td><code>dfr_weibull(shape, scale)</code></td>
@@ -252,16 +546,19 @@ constructors with analytical cumulative hazard and score functions:</p>
 scale
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>
 </td>
+<td>Wear-out, infant mortality</td>
 </tr>
 <tr class="odd">
 <td><code>dfr_gompertz(a, b)</code></td>
 <td>Exponential growth</td>
 <td>initial rate, growth rate</td>
+<td>Biological aging</td>
 </tr>
 <tr class="even">
 <td><code>dfr_loglogistic(alpha, beta)</code></td>
 <td>Non-monotonic (hump)</td>
 <td>scale, shape</td>
+<td>Initial risk that diminishes</td>
 </tr>
 </tbody>
 </table>
@@ -269,29 +566,65 @@ scale
 analytical derivatives for faster, more accurate MLE.</p>
 </div>
 <div class="section level2">
-<h2 id="who-is-this-for">Who Is This For?<a class="anchor" aria-label="anchor" href="#who-is-this-for"></a>
+<h2 id="key-functions">Key Functions<a class="anchor" aria-label="anchor" href="#key-functions"></a>
 </h2>
-<p><strong>Reliability engineers</strong>: If you think in failure
-rates, MTBF, and bathtub curves, <code>flexhaz</code> speaks your
-language. Define the hazard function that matches your failure physics,
-fit it to test data with censoring, and extract B-life estimates,
-warranty predictions, and maintenance intervals — all from a single
-object.</p>
-<p><strong>Statisticians and survival analysts</strong>: If you work
-with censored lifetime data and need more flexibility than Weibull or
-Cox regression, <code>flexhaz</code> gives you fully parametric models
-with arbitrary hazard shapes. You get proper likelihood inference
-(score, Hessian, confidence intervals) and residual diagnostics, with
-the option to supply analytical derivatives or fall back to numerical
-methods.</p>
+<table class="table">
+<thead><tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard()</a></code></td>
+<td>Get hazard (failure rate) function</td>
+</tr>
+<tr class="even">
+<td><code><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv()</a></code></td>
+<td>Get survival function S(t)</td>
+</tr>
+<tr class="odd">
+<td><code><a href="https://rdrr.io/r/stats/density.html" class="external-link">density()</a></code></td>
+<td>Get PDF f(t)</td>
+</tr>
+<tr class="even">
+<td><code><a href="https://queelius.github.io/algebraic.dist/reference/cdf.html" class="external-link">cdf()</a></code></td>
+<td>Get CDF F(t)</td>
+</tr>
+<tr class="odd">
+<td><code><a href="https://queelius.github.io/algebraic.dist/reference/inv_cdf.html" class="external-link">inv_cdf()</a></code></td>
+<td>Get quantile function</td>
+</tr>
+<tr class="even">
+<td><code><a href="https://queelius.github.io/algebraic.dist/reference/sampler.html" class="external-link">sampler()</a></code></td>
+<td>Generate random samples</td>
+</tr>
+<tr class="odd">
+<td><code><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit()</a></code></td>
+<td>Maximum likelihood estimation</td>
+</tr>
+<tr class="even">
+<td><code><a href="https://queelius.github.io/likelihood.model/reference/loglik.html" class="external-link">loglik()</a></code></td>
+<td>Get log-likelihood function</td>
+</tr>
+<tr class="odd">
+<td><code><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals()</a></code></td>
+<td>Model diagnostics (Cox-Snell, Martingale)</td>
+</tr>
+<tr class="even">
+<td><code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code></td>
+<td>Visualize distribution functions</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../reference/qqplot_residuals.html">qqplot_residuals()</a></code></td>
+<td>Q-Q plot for goodness-of-fit</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="where-to-go-next">Where to Go Next<a class="anchor" aria-label="anchor" href="#where-to-go-next"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li>
-<strong><code><a href="../articles/getting_started.html">vignette("getting_started")</a></code></strong> — 5-minute
-quick start with fitting and diagnostics</li>
 <li>
 <strong><code><a href="../articles/reliability_engineering.html">vignette("reliability_engineering")</a></code></strong> —
 Five real-world case studies</li>

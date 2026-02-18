@@ -29,14 +29,13 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../articles/getting_started.html">Get Started</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/flexhaz-package.html">Get Started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Motivation &amp; Applications</h6></li>
-    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview</a></li>
-    <li><a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/flexhaz-package.html">Package Overview &amp; Quick Start</a></li>
     <li><a class="dropdown-item" href="../articles/reliability_engineering.html">Reliability Engineering</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Theory</h6></li>
@@ -157,11 +156,6 @@ increasing/decreasing):</p>
 <span><span class="co"># Fit exponential</span></span>
 <span><span class="va">exp_solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">exp_result</span> <span class="op">&lt;-</span> <span class="fu">exp_solver</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.001</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
 <span><span class="va">exp_lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">exp_result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Exponential lambda:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">exp_lambda</span>, <span class="fl">6</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Exponential lambda: 0.001506</span></span>
@@ -169,7 +163,6 @@ increasing/decreasing):</p>
 <span><span class="co"># Fit Weibull</span></span>
 <span><span class="va">weib_solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/dfr_weibull.html">dfr_weibull</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">weib_result</span> <span class="op">&lt;-</span> <span class="fu">weib_solver</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">600</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in log(h_exact): NaNs produced</span></span>
 <span><span class="va">weib_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">weib_result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Weibull shape:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">weib_params</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Weibull shape: 1.823</span></span>
