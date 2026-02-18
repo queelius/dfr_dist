@@ -242,3 +242,70 @@ test_that("residuals works with log-logistic distribution", {
     expected <- log(1 + (c(5, 10, 15) / alpha)^beta)
     expect_equal(cs_resid, expected, tolerance = 1e-4)
 })
+
+# =============================================================================
+# Diagnostics with Custom Column Names
+# =============================================================================
+
+test_that("residuals errors when ob_col not found in data", {
+    dist <- dfr_dist(
+        rate = function(t, par, ...) rep(par[1], length(t)),
+        cum_haz_rate = function(t, par, ...) par[1] * t,
+        ob_col = "survival_time",
+        par = c(0.5)
+    )
+    df <- data.frame(t = c(1, 2, 3), delta = c(1, 1, 1))
+
+    expect_error(residuals(dist, df), "Time column 'survival_time' not found")
+})
+
+test_that("residuals works with custom ob_col and delta_col", {
+    dist <- dfr_dist(
+        rate = function(t, par, ...) rep(par[1], length(t)),
+        cum_haz_rate = function(t, par, ...) par[1] * t,
+        ob_col = "time",
+        delta_col = "status",
+        par = c(0.5)
+    )
+    df <- data.frame(time = c(1, 2, 3), status = c(1, 0, 1))
+
+    # Cox-Snell residuals: H(t) = 0.5 * t
+    cs_resid <- residuals(dist, df, type = "cox-snell")
+    expect_equal(cs_resid, c(0.5, 1.0, 1.5), tolerance = 1e-6)
+
+    # Martingale residuals: delta - H(t)
+    mart_resid <- residuals(dist, df, type = "martingale")
+    expected <- c(1, 0, 1) - c(0.5, 1.0, 1.5)
+    expect_equal(mart_resid, expected, tolerance = 1e-6)
+})
+
+test_that("plot with cumhaz and empirical overlay produces cumhaz curve", {
+    exp_dist <- dfr_exponential(lambda = 0.5)
+    set.seed(42)
+    df <- data.frame(
+        t = rexp(50, rate = 0.5),
+        delta = sample(c(0, 1), 50, replace = TRUE, prob = c(0.3, 0.7))
+    )
+
+    # Should not error, and should exercise the cumhaz empirical overlay path
+    expect_silent({
+        result <- plot(exp_dist, data = df, what = "cumhaz",
+                       xlim = c(0, 5), empirical = TRUE)
+    })
+
+    expect_true("t" %in% names(result))
+    expect_true("y" %in% names(result))
+})
+
+test_that("qqplot_residuals works when delta column is absent", {
+    exp_dist <- dfr_exponential(lambda = 0.5)
+    # Data without delta column - all observations treated as exact
+    df <- data.frame(t = rexp(30, rate = 0.5))
+
+    expect_silent({
+        result <- qqplot_residuals(exp_dist, df)
+    })
+
+    # Should return all residuals (no filtering needed)
+    expect_equal(length(result), 30)
+})

@@ -174,12 +174,9 @@ ll(df, par = c(0.5))
 
 **Start Here:**
 
-- [Package
-  Overview](https://queelius.github.io/flexhaz/articles/flexhaz-package.html) -
-  Motivation, complete example, and audience guide
-- [Quick Start
-  Guide](https://queelius.github.io/flexhaz/articles/getting_started.html) -
-  5-minute introduction
+- [Package Overview & Quick
+  Start](https://queelius.github.io/flexhaz/articles/flexhaz-package.html) -
+  Motivation, complete example, and quick start guide
 
 **Real-World Applications:**
 
@@ -328,8 +325,6 @@ ll(df, par = c(0.5))
 
 - [flexhaz: Hazard-First Survival
   Modeling](https://queelius.github.io/flexhaz/articles/flexhaz-package.md):
-- [Getting Started with
-  flexhaz](https://queelius.github.io/flexhaz/articles/getting_started.md):
 - [Reliability Engineering
   Applications](https://queelius.github.io/flexhaz/articles/reliability_engineering.md):
 

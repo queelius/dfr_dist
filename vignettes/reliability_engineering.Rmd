@@ -72,7 +72,7 @@ head(capacitor_data)
 
 Compare exponential (constant failure rate) vs Weibull (allows increasing/decreasing):
 
-```{r}
+```{r, warning=FALSE}
 # Prepare data in flexhaz format
 df <- data.frame(t = capacitor_data$hours, delta = capacitor_data$failed)
 

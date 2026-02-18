@@ -10,7 +10,8 @@ Description: Flexible framework for specifying survival distributions through
     curves, proportional hazards with covariates, and other non-standard
     hazard behaviors. Provides automatic computation of survival, CDF, PDF,
     quantiles, and sampling. Implements the likelihood model interface for
-    maximum likelihood estimation with right-censored survival data.
+    maximum likelihood estimation with right-censored and left-censored
+    survival data.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

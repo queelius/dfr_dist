@@ -174,12 +174,9 @@ ll(df, par = c(0.5))
 
 **Start Here:**
 
-- [Package
-  Overview](https://queelius.github.io/flexhaz/articles/flexhaz-package.html) -
-  Motivation, complete example, and audience guide
-- [Quick Start
-  Guide](https://queelius.github.io/flexhaz/articles/getting_started.html) -
-  5-minute introduction
+- [Package Overview & Quick
+  Start](https://queelius.github.io/flexhaz/articles/flexhaz-package.html) -
+  Motivation, complete example, and quick start guide
 
 **Real-World Applications:**
 

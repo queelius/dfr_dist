@@ -24,7 +24,6 @@ NULL
 #'
 #' Creates a DFR distribution with constant failure rate (exponential).
 #' The exponential distribution is "memoryless" - the hazard does not depend
-
 #' on time, making it appropriate for random failures unrelated to age.
 #'
 #' @param lambda Rate parameter (failure rate). If NULL, must be provided
@@ -74,12 +73,12 @@ dfr_exponential <- function(lambda = NULL) {
         cum_haz_rate = function(t, par, ...) {
             par[[1]] * t
         },
-        score_fn = function(df, par, ...) {
-            delta <- get_delta(df)
-            c(sum(delta == 1) / par[[1]] - sum(df$t))
+        score_fn = function(df, par, ob_col = "t", delta_col = "delta", ...) {
+            delta <- get_delta(df, delta_col)
+            c(sum(delta == 1) / par[[1]] - sum(df[[ob_col]]))
         },
-        hess_fn = function(df, par, ...) {
-            delta <- get_delta(df)
+        hess_fn = function(df, par, ob_col = "t", delta_col = "delta", ...) {
+            delta <- get_delta(df, delta_col)
             matrix(-sum(delta == 1) / par[[1]]^2, nrow = 1, ncol = 1)
         },
         par = lambda
@@ -162,11 +161,11 @@ dfr_weibull <- function(shape = NULL, scale = NULL) {
         cum_haz_rate = function(t, par, ...) {
             (t / par[[2]])^par[[1]]
         },
-        score_fn = function(df, par, ...) {
+        score_fn = function(df, par, ob_col = "t", delta_col = "delta", ...) {
             k <- par[[1]]
             sigma <- par[[2]]
-            t <- df$t
-            delta <- get_delta(df)
+            t <- df[[ob_col]]
+            delta <- get_delta(df, delta_col)
 
             n_events <- sum(delta == 1)
             t_ratio <- t / sigma
@@ -179,11 +178,11 @@ dfr_weibull <- function(shape = NULL, scale = NULL) {
 
             c(dk, dsigma)
         },
-        hess_fn = function(df, par, ...) {
+        hess_fn = function(df, par, ob_col = "t", delta_col = "delta", ...) {
             k <- par[[1]]
             sigma <- par[[2]]
-            t <- df$t
-            delta <- get_delta(df)
+            t <- df[[ob_col]]
+            delta <- get_delta(df, delta_col)
 
             n_events <- sum(delta == 1)
             t_ratio <- t / sigma
@@ -264,11 +263,11 @@ dfr_gompertz <- function(a = NULL, b = NULL) {
         cum_haz_rate = function(t, par, ...) {
             (par[[1]] / par[[2]]) * (exp(par[[2]] * t) - 1)
         },
-        score_fn = function(df, par, ...) {
+        score_fn = function(df, par, ob_col = "t", delta_col = "delta", ...) {
             a <- par[[1]]
             b <- par[[2]]
-            t <- df$t
-            delta <- get_delta(df)
+            t <- df[[ob_col]]
+            delta <- get_delta(df, delta_col)
 
             exp_bt <- exp(b * t)
             n_events <- sum(delta == 1)
@@ -302,6 +301,7 @@ dfr_gompertz <- function(a = NULL, b = NULL) {
 #' The log-logistic distribution has:
 #' \itemize{
 #'   \item Hazard: \eqn{h(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta-1}}{1 + (t/\alpha)^\beta}}
+#'   \item Cumulative hazard: \eqn{H(t) = \log(1 + (t/\alpha)^\beta)}
 #'   \item Survival: \eqn{S(t) = \frac{1}{1 + (t/\alpha)^\beta}}
 #'   \item Median: \eqn{\alpha} (when beta > 1)
 #' }
@@ -314,12 +314,10 @@ dfr_gompertz <- function(a = NULL, b = NULL) {
 #'   \item Hazard is not monotonic throughout lifetime
 #' }
 #'
-#' Note: The cumulative hazard has no closed form and is computed numerically.
-#' For efficiency with large datasets, consider providing `cum_haz_rate`
-#' using numerical integration cached appropriately.
+#' The cumulative hazard has a closed form and is provided analytically.
 #'
-#' @return A `dfr_dist` object with analytical rate function.
-#'   Cumulative hazard uses numerical integration.
+#' @return A `dfr_dist` object with analytical rate, cumulative hazard,
+#'   and score function.
 #'
 #' @examples
 #' # Component with peak hazard around t = alpha
@@ -349,11 +347,11 @@ dfr_loglogistic <- function(alpha = NULL, beta = NULL) {
         cum_haz_rate = function(t, par, ...) {
             log(1 + (t / par[[1]])^par[[2]])
         },
-        score_fn = function(df, par, ...) {
+        score_fn = function(df, par, ob_col = "t", delta_col = "delta", ...) {
             alpha <- par[[1]]
             beta <- par[[2]]
-            t <- df$t
-            delta <- get_delta(df)
+            t <- df[[ob_col]]
+            delta <- get_delta(df, delta_col)
 
             t_ratio <- t / alpha
             t_ratio_beta <- t_ratio^beta

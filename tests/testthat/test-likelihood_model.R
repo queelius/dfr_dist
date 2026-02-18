@@ -839,7 +839,204 @@ test_that("is_likelihood_model returns TRUE for dfr_dist", {
 })
 
 # =============================================================================
-# 11. Tests for Consistency Between Methods
+# 11. Tests for Left-Censoring with Non-Exponential Distributions
+# =============================================================================
+
+test_that("loglik for left-censored Weibull observations matches analytical", {
+  # Given: Weibull distribution with shape=2, scale=3
+  shape <- 2
+  scale_par <- 3
+  dist <- make_weibull_dfr()
+
+  # Given: Left-censored observations (failed before time t)
+  times <- c(1, 2, 3)
+  df <- data.frame(t = times, delta = rep(-1, length(times)))
+
+  # When: Computing log-likelihood
+  ll <- loglik(dist)
+  result <- ll(df, par = c(shape, scale_par))
+
+  # Then: Should match log(1 - exp(-H(t))) where H(t) = (t/sigma)^k
+  H_vals <- (times / scale_par)^shape
+  expected <- sum(log(1 - exp(-H_vals)))
+
+  expect_equal(result, expected, tolerance = 1e-5)
+})
+
+test_that("loglik for mixed censoring Weibull data is correct", {
+  # Given: Weibull with mixed exact, right-censored, and left-censored data
+  shape <- 2
+  scale_par <- 5
+  dist <- make_weibull_dfr()
+
+  df <- data.frame(
+    t = c(1, 2, 3, 4, 5, 6),
+    delta = c(1, 1, 0, 0, -1, -1)
+  )
+
+  ll <- loglik(dist)
+  result <- ll(df, par = c(shape, scale_par))
+
+  # Manual computation
+  t_exact <- c(1, 2)
+  t_right <- c(3, 4)
+  t_left <- c(5, 6)
+
+  # Exact: log(h(t)) - H(t) = log((k/s)(t/s)^(k-1)) - (t/s)^k
+  h_exact <- (shape / scale_par) * (t_exact / scale_par)^(shape - 1)
+  H_exact <- (t_exact / scale_par)^shape
+  exact_contrib <- sum(log(h_exact) - H_exact)
+
+  # Right-censored: -H(t)
+  H_right <- (t_right / scale_par)^shape
+  right_contrib <- -sum(H_right)
+
+  # Left-censored: log(1 - exp(-H(t)))
+  H_left <- (t_left / scale_par)^shape
+  left_contrib <- sum(log(1 - exp(-H_left)))
+
+  expected <- exact_contrib + right_contrib + left_contrib
+
+  expect_equal(result, expected, tolerance = 1e-5)
+})
+
+test_that("loglik for left-censored Gompertz observations matches analytical", {
+  a <- 0.01
+  b <- 0.1
+  dist <- dfr_dist(
+    rate = function(t, par, ...) par[1] * exp(par[2] * t),
+    cum_haz_rate = function(t, par, ...) (par[1] / par[2]) * (exp(par[2] * t) - 1),
+    par = c(a, b)
+  )
+
+  times <- c(5, 10, 15)
+  df <- data.frame(t = times, delta = rep(-1, 3))
+
+  ll <- loglik(dist)
+  result <- ll(df, par = c(a, b))
+
+  H_vals <- (a / b) * (exp(b * times) - 1)
+  expected <- sum(log(1 - exp(-H_vals)))
+
+  expect_equal(result, expected, tolerance = 1e-5)
+})
+
+# =============================================================================
+# 12. Tests for Score/Hessian Numerical Fallback with Left-Censored Data
+# =============================================================================
+
+test_that("score falls back to numerical gradient with left-censored data", {
+  # Left-censored data (delta=-1) bypasses the analytical score_fn
+  # and uses numDeriv::grad instead.
+  dist <- dfr_exponential()
+
+  df <- data.frame(
+    t = c(1, 2, 3, 4, 5, 6),
+    delta = c(1, 1, 0, 0, -1, -1)
+  )
+
+  ll <- loglik(dist)
+  s <- score(dist)
+
+  par_test <- c(0.5)
+  num_grad <- numDeriv::grad(function(p) ll(df, par = p), par_test)
+
+  score_val <- s(df, par = par_test)
+  expect_true(is.finite(score_val))
+  expect_equal(score_val, num_grad, tolerance = 1e-5)
+})
+
+test_that("hessian falls back to numerical computation with left-censored data", {
+  dist <- dfr_exponential()
+
+  df <- data.frame(
+    t = c(1, 2, 3, 4, 5, 6),
+    delta = c(1, 1, 0, 0, -1, -1)
+  )
+
+  ll <- loglik(dist)
+  H <- hess_loglik(dist)
+
+  par_test <- c(0.5)
+  num_hess <- numDeriv::hessian(function(p) ll(df, par = p), par_test)
+
+  hess_val <- H(df, par = par_test)
+  expect_true(is.finite(hess_val[1, 1]))
+  expect_equal(hess_val[1, 1], num_hess[1, 1], tolerance = 1e-4)
+})
+
+# =============================================================================
+# 13. Tests for MLE Fitting with Left-Censored Data
+# =============================================================================
+
+test_that("fit converges with left-censored data", {
+  # Given: Mixed censoring data from exponential(lambda=1)
+  set.seed(42)
+  n <- 100
+  true_lambda <- 1
+  true_times <- rexp(n, rate = true_lambda)
+
+  # Create left-censoring: anything < 0.5 is left-censored at 0.5
+  left_censor_time <- 0.5
+  right_censor_time <- 3
+
+  observed_times <- ifelse(true_times < left_censor_time, left_censor_time,
+                    ifelse(true_times > right_censor_time, right_censor_time,
+                           true_times))
+  deltas <- ifelse(true_times < left_censor_time, -1,
+            ifelse(true_times > right_censor_time, 0, 1))
+
+  df <- data.frame(t = observed_times, delta = deltas)
+
+  # When: Fitting the model
+  dist <- dfr_exponential()
+  solver <- fit(dist)
+  result <- suppressWarnings(solver(df, par = c(0.5)))
+
+  # Then: Should converge and produce a reasonable estimate
+  expect_true(result$converged)
+  fitted_lambda <- coef(result)[1]
+  expect_gt(fitted_lambda, 0)
+  expect_lt(abs(fitted_lambda - true_lambda), 1.0)
+})
+
+# =============================================================================
+# 14. Tests for Custom Column Names with Fitting
+# =============================================================================
+
+test_that("fit works end-to-end with custom column names", {
+  set.seed(123)
+  true_lambda <- 2
+  n <- 80
+  times <- rexp(n, rate = true_lambda)
+  df <- data.frame(duration = times, event = rep(1, n))
+
+  dist <- dfr_dist(
+    rate = function(t, par, ...) rep(par[1], length(t)),
+    cum_haz_rate = function(t, par, ...) par[1] * t,
+    ob_col = "duration",
+    delta_col = "event",
+    score_fn = function(df, par, ob_col = "t", delta_col = "delta", ...) {
+      delta <- get_delta(df, delta_col)
+      c(sum(delta == 1) / par[1] - sum(df[[ob_col]]))
+    },
+    hess_fn = function(df, par, ob_col = "t", delta_col = "delta", ...) {
+      delta <- get_delta(df, delta_col)
+      matrix(-sum(delta == 1) / par[1]^2, 1, 1)
+    }
+  )
+
+  solver <- fit(dist)
+  result <- solver(df, par = c(1))
+
+  expect_true(result$converged)
+  fitted_lambda <- coef(result)[1]
+  analytical_mle <- n / sum(times)
+  expect_equal(fitted_lambda, analytical_mle, tolerance = 1e-3)
+})
+
+# =============================================================================
+# 15. Tests for Consistency Between Methods
 # =============================================================================
 
 test_that("score equals numerical gradient of loglik", {
@@ -905,7 +1102,7 @@ test_that("hess_loglik equals numerical hessian of loglik", {
 })
 
 # =============================================================================
-# 12. Tests for Complex DFR (Time-Varying Hazard)
+# 16. Tests for Complex DFR (Time-Varying Hazard)
 # =============================================================================
 
 test_that("loglik works with time-varying hazard (bathtub)", {
@@ -956,15 +1153,13 @@ test_that("fit works with time-varying hazard", {
 })
 
 # =============================================================================
-# 13. Tests for Assumptions Method
+# 17. Tests for Assumptions Method
 # =============================================================================
 
 test_that("assumptions method returns expected values", {
   dist <- make_exponential_dfr(lambda = 1)
 
   result <- assumptions(dist)
-
-  # Should return character vector
 
   expect_type(result, "character")
   expect_true(length(result) >= 4)
