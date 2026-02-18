@@ -104,7 +104,7 @@ exp(-1.5)
 
 For fastest MLE with exact Hessian, also provide the score (gradient of log-likelihood):
 
-```{r}
+```{r, warning=FALSE}
 # Score derivation:
 # Log-likelihood for exact observation: log(h(t)) - H(t)
 # Log-likelihood for censored: -H(t)

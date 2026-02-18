@@ -66,8 +66,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x60bb279d8e48>
-#> <environment: 0x60bb279db3f8>
+#> <bytecode: 0x5f14bb577a80>
+#> <environment: 0x5f14bb575fd0>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -310,13 +310,6 @@ ll <- loglik(dist)
 # Fit with censored data
 solver <- fit(dist)
 result <- solver(df_mixed, par = c(0.5), method = "BFGS")
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
 coef(result)
 #> [1] 0.1388889
 ```
@@ -466,11 +459,6 @@ test_df <- data.frame(t = test_times, delta = 1)
 exp_fitted <- dfr_exponential()
 solver <- fit(exp_fitted)
 fit_result <- solver(test_df, par = c(0.5))
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
 lambda_hat <- coef(fit_result)
 
 # Create fitted distribution with estimated parameters
@@ -527,8 +515,8 @@ This makes it ideal for:
 
 ## Next Steps
 
-- **[`vignette("getting_started")`](https://queelius.github.io/flexhaz/articles/getting_started.md)** -
-  Quick 5-minute introduction
+- **[`vignette("flexhaz-package")`](https://queelius.github.io/flexhaz/articles/flexhaz-package.md)** -
+  Package introduction and quick start
 - **[`vignette("reliability_engineering")`](https://queelius.github.io/flexhaz/articles/reliability_engineering.md)** -
   Five real-world case studies
 - **[`vignette("custom_distributions")`](https://queelius.github.io/flexhaz/articles/custom_distributions.md)** -

@@ -289,8 +289,8 @@ needed.
 
 ## Next Steps
 
-- **[`vignette("getting_started")`](https://queelius.github.io/flexhaz/articles/getting_started.md)** -
-  Quick 5-minute introduction
+- **[`vignette("flexhaz-package")`](https://queelius.github.io/flexhaz/articles/flexhaz-package.md)** -
+  Package introduction and quick start
 - **[`vignette("reliability_engineering")`](https://queelius.github.io/flexhaz/articles/reliability_engineering.md)** -
   Real-world applications
 - **[`vignette("failure_rate")`](https://queelius.github.io/flexhaz/articles/failure_rate.md)** -

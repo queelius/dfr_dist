@@ -25,7 +25,8 @@ Defaults to "t".}
 
 \item{delta_col}{The column name for event indicators in data frames.
 Uses standard survival analysis convention: 1 = event
-observed (exact), 0 = right-censored. Defaults to "delta".}
+observed (exact), 0 = right-censored, -1 = left-censored.
+Defaults to "delta".}
 
 \item{cum_haz_rate}{Optional analytical cumulative hazard function H(t, par).
 If provided, used for faster exact cumulative hazard
@@ -33,12 +34,22 @@ computation instead of numerical integration.
 Should return the integral of rate from 0 to t.}
 
 \item{score_fn}{Optional score function (gradient of log-likelihood).
-Signature: score_fn(df, par, ...) returning a numeric vector.
-If NULL, falls back to numerical gradient via numDeriv::grad.}
+Signature: score_fn(df, par, ob_col, delta_col, ...)
+returning a numeric vector. The ob_col and delta_col arguments
+indicate which columns in df contain observation times and event
+indicators. If NULL, falls back to numerical gradient via
+numDeriv::grad. Analytical score functions that only handle
+delta in \{0, 1\} are automatically bypassed when left-censored
+data (delta = -1) is present.}
 
 \item{hess_fn}{Optional Hessian function (second derivatives of log-likelihood).
-Signature: hess_fn(df, par, ...) returning a matrix.
-If NULL, falls back to numerical Hessian via numDeriv::hessian.}
+Signature: hess_fn(df, par, ob_col, delta_col, ...) returning
+a matrix. The ob_col and delta_col arguments indicate which
+columns in df contain observation times and event indicators.
+If NULL, falls back to numerical Hessian via numDeriv::hessian.
+Analytical Hessian functions that only handle delta in \{0, 1\}
+are automatically bypassed when left-censored data (delta = -1)
+is present.}
 }
 \value{
 A \code{dfr_dist} object that inherits from \code{likelihood_model}.

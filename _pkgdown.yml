@@ -9,15 +9,13 @@ navbar:
   components:
     intro:
       text: Get Started
-      href: articles/getting_started.html
+      href: articles/flexhaz-package.html
     articles:
       text: Articles
       menu:
         - text: "Motivation & Applications"
-        - text: "Package Overview"
+        - text: "Package Overview & Quick Start"
           href: articles/flexhaz-package.html
-        - text: Getting Started
-          href: articles/getting_started.html
         - text: Reliability Engineering
           href: articles/reliability_engineering.html
         - text: "---"
@@ -36,7 +34,6 @@ articles:
     navbar: ~
     contents:
       - flexhaz-package
-      - getting_started
       - reliability_engineering
   - title: Theory
     contents:

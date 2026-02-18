@@ -14,8 +14,8 @@ beta <= 1: monotonically decreasing hazard
 beta > 1: hazard increases to a peak then decreases}
 }
 \value{
-A \code{dfr_dist} object with analytical rate function.
-Cumulative hazard uses numerical integration.
+A \code{dfr_dist} object with analytical rate, cumulative hazard,
+and score function.
 }
 \description{
 Creates a DFR distribution with log-logistic hazard function.
@@ -26,6 +26,7 @@ useful for modeling processes with an initial risk that diminishes.
 The log-logistic distribution has:
 \itemize{
 \item Hazard: \eqn{h(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta-1}}{1 + (t/\alpha)^\beta}}
+\item Cumulative hazard: \eqn{H(t) = \log(1 + (t/\alpha)^\beta)}
 \item Survival: \eqn{S(t) = \frac{1}{1 + (t/\alpha)^\beta}}
 \item Median: \eqn{\alpha} (when beta > 1)
 }
@@ -39,9 +40,7 @@ The log-logistic is useful when:
 \item Hazard is not monotonic throughout lifetime
 }
 
-Note: The cumulative hazard has no closed form and is computed numerically.
-For efficiency with large datasets, consider providing \code{cum_haz_rate}
-using numerical integration cached appropriately.
+The cumulative hazard has a closed form and is provided analytically.
 }
 
 \examples{

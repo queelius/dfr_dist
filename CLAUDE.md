@@ -250,7 +250,6 @@ Cox-Snell residuals should follow Exp(1) if model is correct.
 - `tests/testthat/test-diagnostics.R`: Tests for diagnostic methods
 - `tests/testthat/test-derivatives.R`: Tests for score/Hessian computation
 - `tests/testthat/test-likelihood_model.R`: Likelihood interface tests
-- `vignettes/getting_started.Rmd`: 5-minute quick start
 - `vignettes/failure_rate.Rmd`: Hazard-based modeling deep dive
 - `vignettes/custom_distributions.Rmd`: How to create custom distributions
 - `vignettes/reliability_engineering.Rmd`: Real-world applications

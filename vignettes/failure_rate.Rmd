@@ -252,7 +252,7 @@ hess  # Should be negative (concave at maximum)
 
 The `fit()` function provides MLE estimation:
 
-```{r}
+```{r, warning=FALSE}
 solver <- fit(dist)
 
 # Find MLE starting from initial guess
@@ -270,7 +270,7 @@ c(fitted = coef(result), analytical = analytical_mle, true = true_lambda)
 
 Real survival data often includes censoring. Here's an example with mixed data:
 
-```{r}
+```{r, warning=FALSE}
 # Some observations are censored (patient still alive at study end)
 df_mixed <- data.frame(
   t = c(1, 2, 3, 4, 5, 6, 7, 8),
@@ -287,7 +287,7 @@ coef(result)
 
 ## Example: Weibull MLE
 
-```{r}
+```{r, warning=FALSE}
 # Create Weibull DFR
 weibull <- dfr_dist(
   rate = function(t, par, ...) {
@@ -404,7 +404,7 @@ Cox-Snell residuals are defined as r_i = H(t_i), the cumulative hazard at each
 observation time. If the model is correctly specified, these residuals follow
 an Exp(1) distribution.
 
-```{r, fig.alt="Cox-Snell residuals Q-Q plot showing model fit assessment."}
+```{r, warning=FALSE, fig.alt="Cox-Snell residuals Q-Q plot showing model fit assessment."}
 # Fit a model and check residuals
 set.seed(99)
 test_times <- rexp(80, rate = 0.3)
@@ -448,7 +448,7 @@ The `flexhaz` package provides:
 1. **Flexible specification**: Define distributions through hazard functions
 2. **Complete distribution interface**: hazard, survival, CDF, PDF, quantiles, sampling
 3. **Likelihood model support**: Log-likelihood, score, Hessian for MLE
-4. **Censoring support**: Handle exact and right-censored survival data
+4. **Censoring support**: Handle exact, right-censored, and left-censored survival data
 5. **Numerical integration**: Automatic computation of cumulative hazard
 6. **Model diagnostics**: Residuals and Q-Q plots for fit assessment
 
@@ -461,7 +461,7 @@ This makes it ideal for:
 
 ## Next Steps
 
-- **`vignette("getting_started")`** - Quick 5-minute introduction
+- **`vignette("flexhaz-package")`** - Package introduction and quick start
 - **`vignette("reliability_engineering")`** - Five real-world case studies
 - **`vignette("custom_distributions")`** - The three-level optimization paradigm
 - **`vignette("custom_derivatives")`** - Supplying analytical score and Hessian functions

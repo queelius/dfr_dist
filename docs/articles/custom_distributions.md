@@ -140,9 +140,6 @@ set.seed(42)
 test_data <- data.frame(t = sampler(linear_hazard_v3)(50), delta = 1)
 solver <- fit(linear_hazard_v3)
 result <- solver(test_data, par = c(0.05, 0.005))
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
-#> Warning in log(h_exact): NaNs produced
 
 s <- score(linear_hazard_v3)
 s(test_data, par = coef(result))  # Should be ≈ (0, 0)
@@ -314,13 +311,13 @@ ll3 <- loglik(dist_v3)
 # Single evaluation timing (run multiple times for accuracy)
 system.time(for(i in 1:100) ll1(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   2.768   0.021   2.797
+#>   5.812   0.031   6.578
 system.time(for(i in 1:100) ll2(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.478   0.000   0.478
+#>   0.823   0.001   0.852
 system.time(for(i in 1:100) ll3(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.497   0.000   0.497
+#>   0.820   0.001   0.853
 ```
 
 ## Real-World Example: Bathtub Curve

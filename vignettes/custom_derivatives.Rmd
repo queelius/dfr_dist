@@ -210,7 +210,7 @@ This gives you fast optimization (analytical gradient) with correct but slower H
 
 The package provides helper constructors with analytical derivatives already implemented:
 
-```{r constructors}
+```{r constructors, warning=FALSE}
 # These include score_fn and hess_fn (where available)
 weib <- dfr_weibull(shape = 2, scale = 3)
 exp_d <- dfr_exponential(lambda = 0.5)
@@ -259,7 +259,7 @@ For Gompertz and log-logistic, you can supply your own `hess_fn` if needed.
 
 ## Next Steps
 
-- **`vignette("getting_started")`** - Quick 5-minute introduction
+- **`vignette("flexhaz-package")`** - Package introduction and quick start
 - **`vignette("reliability_engineering")`** - Real-world applications
 - **`vignette("failure_rate")`** - Mathematical foundations
 - **`vignette("custom_distributions")`** - The three-level optimization paradigm

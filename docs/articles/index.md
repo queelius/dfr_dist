@@ -4,8 +4,6 @@
 
 - [flexhaz: Hazard-First Survival
   Modeling](https://queelius.github.io/flexhaz/articles/flexhaz-package.md):
-- [Getting Started with
-  flexhaz](https://queelius.github.io/flexhaz/articles/getting_started.md):
 - [Reliability Engineering
   Applications](https://queelius.github.io/flexhaz/articles/reliability_engineering.md):
 

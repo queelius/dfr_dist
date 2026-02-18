@@ -11,17 +11,28 @@
 #'               Defaults to "t".
 #' @param delta_col The column name for event indicators in data frames.
 #'                  Uses standard survival analysis convention: 1 = event
-#'                  observed (exact), 0 = right-censored. Defaults to "delta".
+#'                  observed (exact), 0 = right-censored, -1 = left-censored.
+#'                  Defaults to "delta".
 #' @param cum_haz_rate Optional analytical cumulative hazard function H(t, par).
 #'                     If provided, used for faster exact cumulative hazard
 #'                     computation instead of numerical integration.
 #'                     Should return the integral of rate from 0 to t.
 #' @param score_fn Optional score function (gradient of log-likelihood).
-#'                 Signature: score_fn(df, par, ...) returning a numeric vector.
-#'                 If NULL, falls back to numerical gradient via numDeriv::grad.
+#'                 Signature: score_fn(df, par, ob_col, delta_col, ...)
+#'                 returning a numeric vector. The ob_col and delta_col arguments
+#'                 indicate which columns in df contain observation times and event
+#'                 indicators. If NULL, falls back to numerical gradient via
+#'                 numDeriv::grad. Analytical score functions that only handle
+#'                 delta in \{0, 1\} are automatically bypassed when left-censored
+#'                 data (delta = -1) is present.
 #' @param hess_fn Optional Hessian function (second derivatives of log-likelihood).
-#'                Signature: hess_fn(df, par, ...) returning a matrix.
+#'                Signature: hess_fn(df, par, ob_col, delta_col, ...) returning
+#'                a matrix. The ob_col and delta_col arguments indicate which
+#'                columns in df contain observation times and event indicators.
 #'                If NULL, falls back to numerical Hessian via numDeriv::hessian.
+#'                Analytical Hessian functions that only handle delta in \{0, 1\}
+#'                are automatically bypassed when left-censored data (delta = -1)
+#'                is present.
 #' @return A `dfr_dist` object that inherits from `likelihood_model`.
 #' @export
 dfr_dist <- function(rate, par = NULL,
@@ -85,11 +96,13 @@ inv_cdf.dfr_dist <- function(x, ...) {
     cdf_fn <- cdf(x, ...)
     function(p, par = NULL, ...) {
         par <- get_params(par, x$par)
-        uniroot(
-            f = function(t) cdf_fn(t, par, ...) - p,
-            interval = c(0, 1e3),
-            extendInt = "upX"
-        )$root
+        sapply(p, function(pi) {
+            uniroot(
+                f = function(t) cdf_fn(t, par, ...) - pi,
+                interval = c(0, 1e3),
+                extendInt = "upX"
+            )$root
+        })
     }
 }
 
@@ -225,17 +238,19 @@ cum_haz.dfr_dist <- function(x, ...) {
 
     function(t, par = NULL, ...) {
         par <- get_params(par, x$par)
-        res <- do.call(integrate,
-            modifyList(integrator, list(
-                upper = t,
-                f = function(u) x$rate(u, par, ...))))
-        if (res$message != "OK") {
-            warning(res$message)
-        }
-        if (res$abs.error > integrator$abs.tol) {
-            warning("Absolute error in cumulative hazard is greater than tolerance")
-        }
-        res$value
+        sapply(t, function(ti) {
+            res <- do.call(integrate,
+                modifyList(integrator, list(
+                    upper = ti,
+                    f = function(u) x$rate(u, par, ...))))
+            if (res$message != "OK") {
+                warning(res$message)
+            }
+            if (res$abs.error > integrator$abs.tol) {
+                warning("Absolute error in cumulative hazard is greater than tolerance")
+            }
+            res$value
+        })
     }
 }
 
@@ -333,6 +348,7 @@ loglik.dfr_dist <- function(model, ...) {
             ll <- ll + sum(log1p(-exp(-H_left)))
         }
 
+        if (is.nan(ll) || is.na(ll)) return(-Inf)
         ll
     }
 }
@@ -354,7 +370,11 @@ score.dfr_dist <- function(model, ...) {
     function(df, par = NULL, ...) {
         par <- get_params(par, model$par)
         if (!is.null(model$score_fn)) {
-            return(model$score_fn(df, par, ...))
+            delta <- get_delta(df, model$delta_col)
+            if (!any(delta == -1)) {
+                return(model$score_fn(df, par,
+                    ob_col = model$ob_col, delta_col = model$delta_col, ...))
+            }
         }
         numDeriv::grad(function(p) ll_fn(df, par = p, ...), par)
     }
@@ -377,7 +397,11 @@ hess_loglik.dfr_dist <- function(model, ...) {
     function(df, par = NULL, ...) {
         par <- get_params(par, model$par)
         if (!is.null(model$hess_fn)) {
-            return(model$hess_fn(df, par, ...))
+            delta <- get_delta(df, model$delta_col)
+            if (!any(delta == -1)) {
+                return(model$hess_fn(df, par,
+                    ob_col = model$ob_col, delta_col = model$delta_col, ...))
+            }
         }
         numDeriv::hessian(function(p) ll_fn(df, par = p, ...), par)
     }
