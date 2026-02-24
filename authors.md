@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/queelius/flexhaz/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/queelius/flexhaz/blob/v0.5.1/DESCRIPTION)
 
 Towell A (2026). *flexhaz: Dynamic Failure Rate Distributions for
 Survival Analysis*. R package version 0.5.0,
