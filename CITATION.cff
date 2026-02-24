@@ -2,7 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
 title: "flexhaz: Hazard-First Survival Distributions for R"
-version: 0.5.0
+version: 0.5.1
+doi: 10.5281/zenodo.18757479
 date-released: 2026-02-24
 url: "https://queelius.github.io/flexhaz/"
 repository-code: "https://github.com/queelius/flexhaz"
