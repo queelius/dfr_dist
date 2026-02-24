@@ -23,8 +23,8 @@ dfr_loglogistic(alpha = NULL, beta = NULL)
 
 ## Value
 
-A `dfr_dist` object with analytical rate function. Cumulative hazard
-uses numerical integration.
+A `dfr_dist` object with analytical rate, cumulative hazard, and score
+function.
 
 ## Details
 
@@ -32,6 +32,8 @@ The log-logistic distribution has:
 
 - Hazard: \\h(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta-1}}{1 +
   (t/\alpha)^\beta}\\
+
+- Cumulative hazard: \\H(t) = \log(1 + (t/\alpha)^\beta)\\
 
 - Survival: \\S(t) = \frac{1}{1 + (t/\alpha)^\beta}\\
 
@@ -47,9 +49,7 @@ The log-logistic is useful when:
 
 - Hazard is not monotonic throughout lifetime
 
-Note: The cumulative hazard has no closed form and is computed
-numerically. For efficiency with large datasets, consider providing
-`cum_haz_rate` using numerical integration cached appropriately.
+The cumulative hazard has a closed form and is provided analytically.
 
 ## Examples
 

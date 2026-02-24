@@ -11,3 +11,4 @@
 ^\.github$
 ^\.claude$
 ^CITATION\.cff$
+^cran-comments\.md$

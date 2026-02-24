@@ -66,8 +66,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x5f14bb577a80>
-#> <environment: 0x5f14bb575fd0>
+#> <bytecode: 0x651d71a92ad8>
+#> <environment: 0x651d71a95148>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -501,7 +501,8 @@ The `flexhaz` package provides:
 2.  **Complete distribution interface**: hazard, survival, CDF, PDF,
     quantiles, sampling
 3.  **Likelihood model support**: Log-likelihood, score, Hessian for MLE
-4.  **Censoring support**: Handle exact and right-censored survival data
+4.  **Censoring support**: Handle exact, right-censored, and
+    left-censored survival data
 5.  **Numerical integration**: Automatic computation of cumulative
     hazard
 6.  **Model diagnostics**: Residuals and Q-Q plots for fit assessment

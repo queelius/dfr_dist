@@ -29,7 +29,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="active nav-item"><a class="nav-link" href="../articles/flexhaz-package.html">Get Started</a></li>
+<li class="active nav-item"><a class="nav-link" href="../articles/flexhaz-package.html">Overview</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
@@ -137,19 +137,16 @@ automatically.</p>
 <p>Let’s start with the simplest case: the exponential distribution with
 constant failure rate.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create an exponential distribution with failure rate lambda = 0.1</span></span>
-<span><span class="co"># (Mean time to failure = 10 time units)</span></span>
+<code class="sourceCode R"><span><span class="co"># Exponential with failure rate lambda = 0.1 (MTTF = 10 time units)</span></span>
 <span><span class="va">exp_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span>lambda <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Print summary</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dynamic failure rate (DFR) distribution with failure rate:</span></span>
 <span><span class="co">#&gt; function (t, par, ...) </span></span>
 <span><span class="co">#&gt; {</span></span>
 <span><span class="co">#&gt;     rep(par[[1]], length(t))</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x617bea4c6040&gt;</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x617bea4c83c0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x5649dd5b8218&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x5649dd5ba6c8&gt;</span></span>
 <span><span class="co">#&gt; It has a survival function given by:</span></span>
 <span><span class="co">#&gt;     S(t|rate) = exp(-H(t,...))</span></span>
 <span><span class="co">#&gt; where H(t,...) is the cumulative hazard function.</span></span></code></pre></div>
@@ -160,13 +157,13 @@ constant failure rate.</p>
 returns a <strong>closure</strong> that you then call with time
 values:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># 1. Get the function</span></span>
-<span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span>        <span class="co"># Survival function</span></span>
-<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span>      <span class="co"># Hazard (failure rate)</span></span>
-<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/density.html" class="external-link">density</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span>     <span class="co"># PDF</span></span>
+<code class="sourceCode R"><span><span class="co"># Get closures</span></span>
+<span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
+<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
+<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/density.html" class="external-link">density</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 2. Evaluate at specific times</span></span>
-<span><span class="fu">S</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>   <span class="co"># P(survive past t=10) = exp(-0.1 * 10) ≈ 0.37</span></span>
+<span><span class="co"># Evaluate at specific times</span></span>
+<span><span class="fu">S</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>   <span class="co"># P(survive past t=10) = exp(-0.1 * 10) ~ 0.37</span></span>
 <span><span class="co">#&gt; [1] 0.3678794</span></span>
 <span><span class="fu">h</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>   <span class="co"># Hazard at t=10 = 0.1 (constant for exponential)</span></span>
 <span><span class="co">#&gt; [1] 0.1</span></span>
@@ -183,16 +180,15 @@ and
 <h3 id="generate-samples">Generate Samples<a class="anchor" aria-label="anchor" href="#generate-samples"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create a sampler and generate failure times</span></span>
-<span><span class="va">samp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/sampler.html" class="external-link">sampler</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">samp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/sampler.html" class="external-link">sampler</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">failure_times</span> <span class="op">&lt;-</span> <span class="fu">samp</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Check: sample mean should be close to MTBF = 1/lambda = 10</span></span>
+<span><span class="co"># Sample mean should be close to MTTF = 1/lambda = 10</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">failure_times</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 13.31295</span></span></code></pre></div>
 <p>With only 20 samples the mean can deviate noticeably from the
-theoretical MTBF of 10. Larger samples converge closer.</p>
+theoretical MTTF of 10. Larger samples converge closer.</p>
 </div>
 </div>
 <div class="section level2">
@@ -201,14 +197,12 @@ theoretical MTBF of 10. Larger samples converge closer.</p>
 <p>Now let’s fit a model to survival data using maximum likelihood
 estimation.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Simulate failure data (in practice, you'd have real data)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  t <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="va">n</span>, rate <span class="op">=</span> <span class="fl">0.08</span><span class="op">)</span>,   <span class="co"># True lambda = 0.08</span></span>
-<span>  delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">n</span><span class="op">)</span>           <span class="co"># All exact observations</span></span>
+<span>  delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">n</span><span class="op">)</span>            <span class="co"># All exact observations</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            t delta</span></span>
 <span><span class="co">#&gt; 1 10.5432158     1</span></span>
@@ -221,14 +215,11 @@ estimation.</p>
 <h3 id="maximum-likelihood-estimation">Maximum Likelihood Estimation<a class="anchor" aria-label="anchor" href="#maximum-likelihood-estimation"></a>
 </h3>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create distribution template (no parameters)</span></span>
+<code class="sourceCode R"><span><span class="co"># Template with no parameters (to be estimated)</span></span>
 <span><span class="va">exp_template</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Create solver and fit</span></span>
 <span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">exp_template</span><span class="op">)</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>  <span class="co"># Initial guess</span></span>
-<span></span>
-<span><span class="co"># Extract fitted parameter</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.07077333</span></span>
 <span></span>
@@ -246,12 +237,10 @@ variability at
 <div class="section level3">
 <h3 id="model-diagnostics">Model Diagnostics<a class="anchor" aria-label="anchor" href="#model-diagnostics"></a>
 </h3>
-<p>Check if the model fits well using residuals:</p>
+<p>Check model fit using Cox-Snell residuals (should follow the Exp(1)
+diagonal):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create fitted distribution</span></span>
-<span><span class="va">fitted_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span>lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Q-Q plot of Cox-Snell residuals (should follow Exp(1) line)</span></span>
+<code class="sourceCode R"><span><span class="va">fitted_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span>lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/qqplot_residuals.html">qqplot_residuals</a></span><span class="op">(</span><span class="va">fitted_dist</span>, <span class="va">df</span><span class="op">)</span></span></code></pre></div>
 <p><img src="flexhaz-package_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Cox-Snell residuals Q-Q plot showing points close to diagonal line, indicating good fit." width="672"></p>
 </div>
@@ -295,13 +284,11 @@ three types of observation:</p>
 <p>Right-censoring is the most common type — the subject was still alive
 (or the device was still running) when observation ended.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Data with right-censoring (delta=0 means censored)</span></span>
-<span><span class="va">df_censored</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">df_censored</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  t <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">8</span>, <span class="fl">12</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">25</span>, <span class="fl">30</span>, <span class="fl">30</span>, <span class="fl">30</span>, <span class="fl">30</span><span class="op">)</span>,</span>
-<span>  delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>  <span class="co"># Last 5 censored at t=30</span></span>
+<span>  delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>  <span class="co"># Last 5 right-censored at t=30</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Fit handles censoring automatically</span></span>
 <span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df_censored</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
@@ -326,8 +313,7 @@ periodic-inspection studies: you check a device at time
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
 and discover it has already failed.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Left-censored: failure occurred before inspection time</span></span>
-<span><span class="va">df_left</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">df_left</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  t <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">20</span><span class="op">)</span>,</span>
 <span>  delta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>   <span class="co"># left-censored, left-censored, exact, right-censored</span></span>
 <span><span class="op">)</span></span>
@@ -335,19 +321,18 @@ and discover it has already failed.</p>
 <span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">solver</span><span class="op">(</span><span class="va">df_left</span>, par <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.07185132</span></span></code></pre></div>
-<p>This dataset mixes all three observation types: two left-censored
-(failed before inspection), one exact failure at
+<span><span class="co">#&gt; [1] 0.07184419</span></span></code></pre></div>
+<p>This dataset mixes all three observation types: two left-censored,
+one exact failure at
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>15</mn></mrow><annotation encoding="application/x-tex">t = 15</annotation></semantics></math>,
-and one right-censored (still running at
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">t = 20</annotation></semantics></math>).
-The estimated
+and one right-censored at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">t = 20</annotation></semantics></math>.
+The estimate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>λ</mi><mo accent="true">̂</mo></mover><mo>≈</mo><mn>0.072</mn></mrow><annotation encoding="application/x-tex">\hat\lambda \approx 0.072</annotation></semantics></math>
-balances these different information sources — higher than the
-right-censored-only estimate because the left-censored observations
-provide evidence of earlier failures.</p>
-<p>You can mix all three types in the same dataset — the log-likelihood
-simply sums the appropriate contribution for each observation.</p>
+is higher than a right-censored-only estimate because the left-censored
+observations provide evidence of earlier failures. All three types can
+coexist in the same dataset — the log-likelihood sums the appropriate
+contribution for each observation.</p>
 </div>
 </div>
 <div class="section level2">
@@ -359,13 +344,11 @@ indicator). When your data uses different column names — as is common
 with clinical datasets — use the <code>ob_col</code> and
 <code>delta_col</code> arguments:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Data with non-standard column names</span></span>
-<span><span class="va">clinical_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">clinical_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">8</span>, <span class="fl">12</span>, <span class="fl">15</span>, <span class="fl">20</span><span class="op">)</span>,</span>
 <span>  status <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Tell flexhaz which columns to use</span></span>
 <span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">dist</span><span class="op">$</span><span class="va">ob_col</span> <span class="op">&lt;-</span> <span class="st">"time"</span></span>
 <span><span class="va">dist</span><span class="op">$</span><span class="va">delta_col</span> <span class="op">&lt;-</span> <span class="st">"status"</span></span>
@@ -378,9 +361,8 @@ with clinical datasets — use the <code>ob_col</code> and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>λ</mi><mo accent="true">̂</mo></mover><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">\hat\lambda = 0.05</annotation></semantics></math>
 equals
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mi>/</mi><mn>60</mn><mo>=</mo><mi>d</mi><mi>/</mi><mo>∑</mo><msub><mi>t</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">3 / 60 = d / \sum t_i</annotation></semantics></math>,
-confirming that <code>ob_col</code> and <code>delta_col</code> correctly
-directed the likelihood to the right columns.</p>
-<p>Or set them when creating a custom distribution with
+confirming that the column mapping works correctly.</p>
+<p>You can also set custom columns at construction time via
 <code><a href="../reference/dfr_dist.html">dfr_dist()</a></code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
@@ -422,7 +404,7 @@ aging)</li>
 <div class="section level2">
 <h2 id="the-real-power-custom-hazards">The Real Power: Custom Hazards<a class="anchor" aria-label="anchor" href="#the-real-power-custom-hazards"></a>
 </h2>
-<p>The real power of <code>flexhaz</code> is modeling
+<p>Where <code>flexhaz</code> truly shines is modeling
 <strong>non-standard hazard patterns</strong> that no built-in
 distribution can express.</p>
 <div class="section level3">
@@ -435,7 +417,7 @@ constant baseline (useful life), and power-law growth (wear-out).</p>
 <code class="sourceCode R"><span><span class="va">bathtub</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
 <span>  rate <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span>, <span class="va">par</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">a</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>  <span class="co"># infant mortality magnitude</span></span>
-<span>    <span class="va">b</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>  <span class="co"># infant mortality decay rate</span></span>
+<span>    <span class="va">b</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>  <span class="co"># infant mortality decay</span></span>
 <span>    <span class="va">c</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>  <span class="co"># baseline hazard</span></span>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>  <span class="co"># wear-out coefficient</span></span>
 <span>    <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">par</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>  <span class="co"># wear-out exponent</span></span>
@@ -468,7 +450,7 @@ constant baseline (useful life), and power-law growth (wear-out).</p>
 <h3 id="simulate-data-and-fit-via-mle">Simulate data and fit via MLE<a class="anchor" aria-label="anchor" href="#simulate-data-and-fit-via-mle"></a>
 </h3>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Generate failure times with right-censoring at t = 25</span></span>
+<code class="sourceCode R"><span><span class="co"># Generate failure times, right-censored at t = 25</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">samp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/sampler.html" class="external-link">sampler</a></span><span class="op">(</span><span class="va">bathtub</span><span class="op">)</span></span>
 <span><span class="va">raw_times</span> <span class="op">&lt;-</span> <span class="fu">samp</span><span class="op">(</span><span class="fl">80</span><span class="op">)</span></span>

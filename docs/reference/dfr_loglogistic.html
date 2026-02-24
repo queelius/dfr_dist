@@ -19,7 +19,7 @@ useful for modeling processes with an initial risk that diminishes."></head><bod
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/flexhaz-package.html">Get Started</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/flexhaz-package.html">Overview</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
@@ -78,12 +78,13 @@ beta &gt; 1: hazard increases to a peak then decreases</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>dfr_dist</code> object with analytical rate function.
-Cumulative hazard uses numerical integration.</p>
+    <p>A <code>dfr_dist</code> object with analytical rate, cumulative hazard,
+and score function.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The log-logistic distribution has:</p><ul><li><p>Hazard: \(h(t) = \frac{(\beta/\alpha)(t/\alpha)^{\beta-1}}{1 + (t/\alpha)^\beta}\)</p></li>
+<li><p>Cumulative hazard: \(H(t) = \log(1 + (t/\alpha)^\beta)\)</p></li>
 <li><p>Survival: \(S(t) = \frac{1}{1 + (t/\alpha)^\beta}\)</p></li>
 <li><p>Median: \(\alpha\) (when beta &gt; 1)</p></li>
 </ul></div>
@@ -94,9 +95,7 @@ Cumulative hazard uses numerical integration.</p>
 <p>The log-logistic is useful when:</p><ul><li><p>Initial failures decrease after screening period</p></li>
 <li><p>Risk peaks early then declines (therapy response)</p></li>
 <li><p>Hazard is not monotonic throughout lifetime</p></li>
-</ul><p>Note: The cumulative hazard has no closed form and is computed numerically.
-For efficiency with large datasets, consider providing <code>cum_haz_rate</code>
-using numerical integration cached appropriately.</p>
+</ul><p>The cumulative hazard has a closed form and is provided analytically.</p>
     </div>
 
     <div class="section level2">

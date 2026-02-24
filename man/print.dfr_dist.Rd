@@ -11,6 +11,9 @@
 
 \item{...}{Additional arguments (not used)}
 }
+\value{
+Invisibly returns \code{x}.
+}
 \description{
 Print method for \code{dfr_dist} objects.
 }

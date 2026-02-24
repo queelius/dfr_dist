@@ -279,6 +279,7 @@ surv.dfr_dist <- function(x, ...) {
 #' Print method for `dfr_dist` objects.
 #' @param x The `dfr_dist` object to print.
 #' @param ... Additional arguments (not used)
+#' @return Invisibly returns `x`.
 #' @export
 print.dfr_dist <- function(x, ...) {
     cat("Dynamic failure rate (DFR) distribution with failure rate:\n")

@@ -51,19 +51,16 @@ Let’s start with the simplest case: the exponential distribution with
 constant failure rate.
 
 ``` r
-# Create an exponential distribution with failure rate lambda = 0.1
-# (Mean time to failure = 10 time units)
+# Exponential with failure rate lambda = 0.1 (MTTF = 10 time units)
 exp_dist <- dfr_exponential(lambda = 0.1)
-
-# Print summary
 print(exp_dist)
 #> Dynamic failure rate (DFR) distribution with failure rate:
 #> function (t, par, ...) 
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x617bea4c6040>
-#> <environment: 0x617bea4c83c0>
+#> <bytecode: 0x5649dd5b8218>
+#> <environment: 0x5649dd5ba6c8>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -75,13 +72,13 @@ All distribution functions follow a two-step pattern — the method
 returns a **closure** that you then call with time values:
 
 ``` r
-# 1. Get the function
-S <- surv(exp_dist)        # Survival function
-h <- hazard(exp_dist)      # Hazard (failure rate)
-f <- density(exp_dist)     # PDF
+# Get closures
+S <- surv(exp_dist)
+h <- hazard(exp_dist)
+f <- density(exp_dist)
 
-# 2. Evaluate at specific times
-S(10)   # P(survive past t=10) = exp(-0.1 * 10) ≈ 0.37
+# Evaluate at specific times
+S(10)   # P(survive past t=10) = exp(-0.1 * 10) ~ 0.37
 #> [1] 0.3678794
 h(10)   # Hazard at t=10 = 0.1 (constant for exponential)
 #> [1] 0.1
@@ -97,18 +94,17 @@ $f(10) = \lambda\, S(10) = 0.1 \times 0.368 \approx 0.0368$.
 ### Generate Samples
 
 ``` r
-# Create a sampler and generate failure times
 samp <- sampler(exp_dist)
 set.seed(42)
 failure_times <- samp(20)
 
-# Check: sample mean should be close to MTBF = 1/lambda = 10
+# Sample mean should be close to MTTF = 1/lambda = 10
 mean(failure_times)
 #> [1] 13.31295
 ```
 
 With only 20 samples the mean can deviate noticeably from the
-theoretical MTBF of 10. Larger samples converge closer.
+theoretical MTTF of 10. Larger samples converge closer.
 
 ## Fitting to Data
 
@@ -116,14 +112,12 @@ Now let’s fit a model to survival data using maximum likelihood
 estimation.
 
 ``` r
-# Simulate failure data (in practice, you'd have real data)
 set.seed(123)
 n <- 50
 df <- data.frame(
   t = rexp(n, rate = 0.08),   # True lambda = 0.08
-  delta = rep(1, n)           # All exact observations
+  delta = rep(1, n)            # All exact observations
 )
-
 head(df)
 #>            t delta
 #> 1 10.5432158     1
@@ -137,14 +131,11 @@ head(df)
 ### Maximum Likelihood Estimation
 
 ``` r
-# Create distribution template (no parameters)
+# Template with no parameters (to be estimated)
 exp_template <- dfr_exponential()
 
-# Create solver and fit
 solver <- fit(exp_template)
 result <- solver(df, par = c(0.1))  # Initial guess
-
-# Extract fitted parameter
 coef(result)
 #> [1] 0.07077333
 
@@ -160,13 +151,11 @@ given the sampling variability at $n = 50$.
 
 ### Model Diagnostics
 
-Check if the model fits well using residuals:
+Check model fit using Cox-Snell residuals (should follow the Exp(1)
+diagonal):
 
 ``` r
-# Create fitted distribution
 fitted_dist <- dfr_exponential(lambda = coef(result))
-
-# Q-Q plot of Cox-Snell residuals (should follow Exp(1) line)
 qqplot_residuals(fitted_dist, df)
 ```
 
@@ -192,13 +181,11 @@ Right-censoring is the most common type — the subject was still alive
 (or the device was still running) when observation ended.
 
 ``` r
-# Data with right-censoring (delta=0 means censored)
 df_censored <- data.frame(
   t = c(5, 8, 12, 15, 20, 25, 30, 30, 30, 30),
-  delta = c(1, 1, 1, 1, 1, 0, 0, 0, 0, 0)  # Last 5 censored at t=30
+  delta = c(1, 1, 1, 1, 1, 0, 0, 0, 0, 0)  # Last 5 right-censored at t=30
 )
 
-# Fit handles censoring automatically
 solver <- fit(dfr_exponential())
 result <- solver(df_censored, par = c(0.1))
 coef(result)
@@ -219,7 +206,6 @@ periodic-inspection studies: you check a device at time $t$ and discover
 it has already failed.
 
 ``` r
-# Left-censored: failure occurred before inspection time
 df_left <- data.frame(
   t = c(5, 10, 15, 20),
   delta = c(-1, -1, 1, 0)   # left-censored, left-censored, exact, right-censored
@@ -228,18 +214,16 @@ df_left <- data.frame(
 solver <- fit(dfr_exponential())
 result <- solver(df_left, par = c(0.1))
 coef(result)
-#> [1] 0.07185132
+#> [1] 0.07184419
 ```
 
-This dataset mixes all three observation types: two left-censored
-(failed before inspection), one exact failure at $t = 15$, and one
-right-censored (still running at $t = 20$). The estimated
-$\widehat{\lambda} \approx 0.072$ balances these different information
-sources — higher than the right-censored-only estimate because the
-left-censored observations provide evidence of earlier failures.
-
-You can mix all three types in the same dataset — the log-likelihood
-simply sums the appropriate contribution for each observation.
+This dataset mixes all three observation types: two left-censored, one
+exact failure at $t = 15$, and one right-censored at $t = 20$. The
+estimate $\widehat{\lambda} \approx 0.072$ is higher than a
+right-censored-only estimate because the left-censored observations
+provide evidence of earlier failures. All three types can coexist in the
+same dataset — the log-likelihood sums the appropriate contribution for
+each observation.
 
 ## Custom Column Names
 
@@ -249,13 +233,11 @@ as is common with clinical datasets — use the `ob_col` and `delta_col`
 arguments:
 
 ``` r
-# Data with non-standard column names
 clinical_data <- data.frame(
   time = c(5, 8, 12, 15, 20),
   status = c(1, 1, 1, 0, 0)
 )
 
-# Tell flexhaz which columns to use
 dist <- dfr_exponential()
 dist$ob_col <- "time"
 dist$delta_col <- "status"
@@ -267,10 +249,9 @@ coef(result)
 ```
 
 The estimate $\widehat{\lambda} = 0.05$ equals $3/60 = d/\sum t_{i}$,
-confirming that `ob_col` and `delta_col` correctly directed the
-likelihood to the right columns.
+confirming that the column mapping works correctly.
 
-Or set them when creating a custom distribution with
+You can also set custom columns at construction time via
 [`dfr_dist()`](https://queelius.github.io/flexhaz/reference/dfr_dist.md):
 
 ``` r
@@ -311,8 +292,8 @@ Weibull shape parameter interpretation:
 
 ## The Real Power: Custom Hazards
 
-The real power of `flexhaz` is modeling **non-standard hazard patterns**
-that no built-in distribution can express.
+Where `flexhaz` truly shines is modeling **non-standard hazard
+patterns** that no built-in distribution can express.
 
 ### Define a bathtub hazard
 
@@ -325,7 +306,7 @@ constant baseline (useful life), and power-law growth (wear-out).
 bathtub <- dfr_dist(
   rate = function(t, par, ...) {
     a <- par[[1]]  # infant mortality magnitude
-    b <- par[[2]]  # infant mortality decay rate
+    b <- par[[2]]  # infant mortality decay
     c <- par[[3]]  # baseline hazard
     d <- par[[4]]  # wear-out coefficient
     k <- par[[5]]  # wear-out exponent
@@ -364,7 +345,7 @@ again.](flexhaz-package_files/figure-html/plot-surv-1.png)
 ### Simulate data and fit via MLE
 
 ``` r
-# Generate failure times with right-censoring at t = 25
+# Generate failure times, right-censored at t = 25
 set.seed(42)
 samp <- sampler(bathtub)
 raw_times <- samp(80)

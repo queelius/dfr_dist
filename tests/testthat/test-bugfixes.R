@@ -1,35 +1,29 @@
-# Tests for bug fixes identified in code review
-# Written BEFORE fixes (TDD RED phase)
+# Tests for bug fixes from left-censoring and vectorization review (v0.5.0)
 
 # =============================================================================
-# Issue 1: cum_haz numerical path doesn't vectorize over t
+# Cumulative hazard numerical path: vector t input
 # =============================================================================
 
 test_that("cum_haz numerical path accepts vector t", {
-    # Distribution WITHOUT cum_haz_rate forces numerical integration path
+    # No cum_haz_rate forces numerical integration path
     dist <- dfr_dist(
         rate = function(t, par, ...) rep(par[1], length(t)),
         par = c(0.5)
     )
-
     H <- cum_haz(dist)
 
-    # Vector input should work just like analytical path
     t_vec <- c(1, 2, 3, 4, 5)
     result <- H(t_vec)
 
-    # Should return a vector of length 5
     expect_length(result, 5)
 
-    # Each element should match scalar call
     for (i in seq_along(t_vec)) {
         expect_equal(result[i], H(t_vec[i]), tolerance = 1e-3,
                      info = paste("t =", t_vec[i]))
     }
 
-    # For constant rate 0.5: H(t) = 0.5*t
-    expected <- 0.5 * t_vec
-    expect_equal(result, expected, tolerance = 1e-3)
+    # Constant rate 0.5: H(t) = 0.5 * t
+    expect_equal(result, 0.5 * t_vec, tolerance = 1e-3)
 })
 
 test_that("cum_haz numerical path matches analytical for vectors", {
@@ -56,11 +50,10 @@ test_that("cum_haz numerical path matches analytical for vectors", {
 })
 
 # =============================================================================
-# Issue 2: Helper constructors hardcode df$t and get_delta(df)
+# Score/Hessian with custom ob_col and delta_col
 # =============================================================================
 
 test_that("dfr_exponential score works with custom ob_col", {
-    # Create exponential with custom column name
     # Use "obs" (not "time") to avoid R's $ partial matching with "t"
     dist <- dfr_dist(
         rate = function(t, par, ...) rep(par[1], length(t)),
@@ -71,12 +64,10 @@ test_that("dfr_exponential score works with custom ob_col", {
 
     df <- data.frame(obs = c(1, 2, 3, 4, 5), delta = c(1, 1, 1, 0, 0))
     s <- score(dist)
-
-    # Should use "obs" column, not error looking for "t"
     result <- s(df, par = c(0.5))
-    expect_true(is.finite(result))
 
-    # Verify correctness: n_events/lambda - sum(obs) = 3/0.5 - 15 = -9
+    expect_true(is.finite(result))
+    # n_events/lambda - sum(obs) = 3/0.5 - 15 = -9
     expect_equal(result, c(3 / 0.5 - sum(df$obs)), tolerance = 1e-6)
 })
 
@@ -127,8 +118,6 @@ test_that("dfr_weibull score works with custom ob_col", {
 
     df <- data.frame(obs = c(1, 2, 3, 4, 5), delta = c(1, 1, 1, 0, 0))
     s <- score(dist)
-
-    # Should use "obs" column
     result <- s(df, par = c(2, 3))
     expect_length(result, 2)
     expect_true(all(is.finite(result)))
@@ -189,11 +178,11 @@ test_that("dfr_loglogistic score works with custom ob_col", {
     expect_true(all(is.finite(result)))
 })
 
-test_that("helper constructor score/hess consistent with loglik under custom columns", {
-    # End-to-end: fit with custom column names and verify score ~ 0 at MLE
+test_that("score at MLE is zero with custom ob_col and delta_col", {
     set.seed(42)
-    times <- rexp(100, rate = 0.5)
-    df <- data.frame(obs = times, status = rep(1, 100))
+    n <- 100
+    times <- rexp(n, rate = 0.5)
+    df <- data.frame(obs = times, status = rep(1, n))
 
     dist <- dfr_dist(
         rate = function(t, par, ...) rep(par[1], length(t)),
@@ -204,19 +193,14 @@ test_that("helper constructor score/hess consistent with loglik under custom col
         hess_fn = dfr_exponential()$hess_fn
     )
 
-    ll <- loglik(dist)
     s <- score(dist)
+    mle <- n / sum(times)
 
-    # MLE = n / sum(t)
-    mle <- 100 / sum(times)
-
-    # Score at MLE should be ~0
-    score_at_mle <- s(df, par = c(mle))
-    expect_equal(score_at_mle, 0, tolerance = 1e-6)
+    expect_equal(s(df, par = c(mle)), 0, tolerance = 1e-6)
 })
 
 # =============================================================================
-# Issue 3: inv_cdf doesn't vectorize over p
+# inv_cdf: vector p input
 # =============================================================================
 
 test_that("inv_cdf accepts vector of probabilities", {
@@ -261,22 +245,19 @@ test_that("inv_cdf vector works with Weibull", {
 })
 
 # =============================================================================
-# Issue 4: NaN guard only on exact-observation path in loglik
+# loglik NaN guard for all censoring types
 # =============================================================================
 
 test_that("loglik returns -Inf (not NaN) for invalid params with right-censored data", {
-    # Use a rate involving log(par) so negative par produces NaN in H(t)
+    # cum_haz_rate includes log(par[1]) which produces NaN when par[1] < 0
     dist <- dfr_dist(
         rate = function(t, par, ...) rep(exp(par[1]), length(t)),
         cum_haz_rate = function(t, par, ...) exp(par[1]) * t + log(par[1])
-        # log(par[1]) is NaN when par[1] < 0
     )
 
-    # Right-censored data only
     df <- data.frame(t = c(1, 2, 3), delta = c(0, 0, 0))
     ll <- loglik(dist)
 
-    # Negative par -> log(par[1]) = NaN -> H(t) = NaN -> ll = NaN
     result <- suppressWarnings(ll(df, par = c(-1)))
     expect_equal(result, -Inf)
 })
@@ -287,11 +268,10 @@ test_that("loglik returns -Inf (not NaN) for invalid params with left-censored d
         cum_haz_rate = function(t, par, ...) par[1] * t
     )
 
-    # Left-censored data only
     df <- data.frame(t = c(1, 2, 3), delta = c(-1, -1, -1))
     ll <- loglik(dist)
 
-    # Negative lambda -> log1p(-exp(positive)) -> NaN
+    # Negative lambda -> H(t) < 0 -> log1p(-exp(positive)) -> NaN -> -Inf
     result <- ll(df, par = c(-1))
     expect_equal(result, -Inf)
 })
@@ -307,24 +287,18 @@ test_that("loglik returns -Inf for NaN in mixed censoring", {
         delta = c(1, 0, -1, 1)
     )
     ll <- loglik(dist)
-
-    # Negative lambda causes NaN in various contribution types
     result <- ll(df, par = c(-1))
     expect_equal(result, -Inf)
 })
 
 # =============================================================================
-# Issue 5: DESCRIPTION should mention left-censored data support
+# DESCRIPTION mentions left-censoring support
 # =============================================================================
 
 test_that("DESCRIPTION mentions left-censoring support", {
-    # Read from source tree (two directories up from tests/testthat/)
-    desc_path <- test_path("..", "..", "DESCRIPTION")
-    desc <- readLines(desc_path)
-
-    desc_text <- paste(desc, collapse = " ")
+    desc <- packageDescription("flexhaz")
     expect_true(
-        grepl("left.censored", desc_text, ignore.case = TRUE),
+        grepl("left.censored", desc$Description, ignore.case = TRUE),
         info = "DESCRIPTION should mention left-censored data support"
     )
 })
