@@ -1,10 +1,10 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
-title: "flexhaz: Dynamic Failure Rate Distributions for Survival Analysis"
+title: "flexhaz: Hazard-First Survival Distributions for R"
 version: 0.5.0
-date-released: 2025-01-01
-url: "https://github.com/queelius/flexhaz"
+date-released: 2026-02-24
+url: "https://queelius.github.io/flexhaz/"
 repository-code: "https://github.com/queelius/flexhaz"
 license: GPL-3.0-or-later
 authors:

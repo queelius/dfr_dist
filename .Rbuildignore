@@ -12,3 +12,8 @@
 ^\.claude$
 ^CITATION\.cff$
 ^cran-comments\.md$
+^paper\.md$
+^paper\.bib$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
+^CRAN-SUBMISSION$
