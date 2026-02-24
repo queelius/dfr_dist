@@ -1,6 +1,8 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://queelius.github.io/flexhaz/404.html</loc></url>
 <url><loc>https://queelius.github.io/flexhaz/CLAUDE.html</loc></url>
+<url><loc>https://queelius.github.io/flexhaz/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://queelius.github.io/flexhaz/CONTRIBUTING.html</loc></url>
 <url><loc>https://queelius.github.io/flexhaz/LICENSE.html</loc></url>
 <url><loc>https://queelius.github.io/flexhaz/articles/custom_derivatives.html</loc></url>
 <url><loc>https://queelius.github.io/flexhaz/articles/custom_distributions.html</loc></url>
@@ -11,6 +13,7 @@
 <url><loc>https://queelius.github.io/flexhaz/authors.html</loc></url>
 <url><loc>https://queelius.github.io/flexhaz/index.html</loc></url>
 <url><loc>https://queelius.github.io/flexhaz/news/index.html</loc></url>
+<url><loc>https://queelius.github.io/flexhaz/paper.html</loc></url>
 <url><loc>https://queelius.github.io/flexhaz/reference/assumptions.dfr_dist.html</loc></url>
 <url><loc>https://queelius.github.io/flexhaz/reference/cdf.dfr_dist.html</loc></url>
 <url><loc>https://queelius.github.io/flexhaz/reference/cum_haz.dfr_dist.html</loc></url>
