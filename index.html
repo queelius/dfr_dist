@@ -62,7 +62,30 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level1">
+  <main id="main" class="col-md-9"><ul>
+<li>
+<a href="#flexhaz">flexhaz</a>
+<ul>
+<li><a href="#why-flexhaz">Why flexhaz?</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#installation">Installation</a></li>
+<li>
+<a href="#quick-start">Quick Start</a>
+<ul>
+<li><a href="#built-in-distributions">Built-in Distributions</a></li>
+<li><a href="#maximum-likelihood-estimation">Maximum Likelihood Estimation</a></li>
+<li><a href="#custom-hazard-functions">Custom Hazard Functions</a></li>
+<li><a href="#model-diagnostics">Model Diagnostics</a></li>
+</ul>
+</li>
+<li><a href="#mathematical-background">Mathematical Background</a></li>
+<li><a href="#likelihood-for-survival-data">Likelihood for Survival Data</a></li>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#related-packages">Related Packages</a></li>
+</ul>
+</li>
+</ul>
+<!-- README.md is generated from README.Rmd. Please edit that file --><div class="section level1">
 <div class="page-header"><h1 id="flexhaz">flexhaz<a class="anchor" aria-label="anchor" href="#flexhaz"></a>
 </h1></div>
 <!-- badges: start -->
@@ -75,10 +98,10 @@
 </h2>
 <table class="table">
 <colgroup>
-<col width="23%">
-<col width="25%">
-<col width="25%">
-<col width="25%">
+<col width="31%">
+<col width="42%">
+<col width="15%">
+<col width="11%">
 </colgroup>
 <thead><tr class="header">
 <th>Feature</th>
@@ -152,20 +175,23 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Install from <a href="https://queelius.r-universe.dev" class="external-link">r-universe</a>:</p>
+<p>Install from CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"flexhaz"</span><span class="op">)</span></span></code></pre></div>
+<p>Or the development version from r-universe:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"flexhaz"</span>, repos <span class="op">=</span> <span class="st">"https://queelius.r-universe.dev"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/queelius/flexhaz" class="external-link">flexhaz</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="built-in-distributions">Built-in Distributions<a class="anchor" aria-label="anchor" href="#built-in-distributions"></a>
 </h3>
 <p>Use the convenient constructors for classic survival distributions:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Exponential: constant hazard (memoryless)</span></span>
 <span><span class="va">exp_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span>lambda <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span></span>
@@ -178,7 +204,7 @@
 <span><span class="co"># Log-logistic: non-monotonic hazard (increases then decreases)</span></span>
 <span><span class="va">ll_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfr_loglogistic.html">dfr_loglogistic</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">10</span>, beta <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>All distribution functions are automatically available:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv</a></span><span class="op">(</span><span class="va">exp_dist</span><span class="op">)</span></span>
 <span><span class="fu">S</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>  <span class="co"># Survival probability at t=2</span></span>
 <span><span class="co">#&gt; [1] 0.3678794</span></span>
@@ -190,7 +216,7 @@
 <div class="section level3">
 <h3 id="maximum-likelihood-estimation">Maximum Likelihood Estimation<a class="anchor" aria-label="anchor" href="#maximum-likelihood-estimation"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simulate failure times</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="fl">50</span>, rate <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
@@ -206,7 +232,7 @@
 <h3 id="custom-hazard-functions">Custom Hazard Functions<a class="anchor" aria-label="anchor" href="#custom-hazard-functions"></a>
 </h3>
 <p>Model complex failure patterns like bathtub curves:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># h(t) = a*exp(-b*t) + c + d*t^k</span></span>
 <span><span class="co"># Infant mortality + useful life + wear-out</span></span>
 <span><span class="va">bathtub</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfr_dist.html">dfr_dist</a></span><span class="op">(</span></span>
@@ -219,35 +245,35 @@
 <span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://queelius.github.io/algebraic.dist/reference/hazard.html" class="external-link">hazard</a></span><span class="op">(</span><span class="va">bathtub</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html" class="external-link">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">h</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">15</span>, xlab <span class="op">=</span> <span class="st">"Time"</span>, ylab <span class="op">=</span> <span class="st">"Hazard rate"</span>,</span>
 <span>      main <span class="op">=</span> <span class="st">"Bathtub hazard curve"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="reference/figures/README-bathtub-1.png" alt="plot of chunk bathtub" width="100%"><p class="caption">
-plot of chunk bathtub
-</p>
-</div>
+<p><img src="reference/figures/README-bathtub-1.png" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="model-diagnostics">Model Diagnostics<a class="anchor" aria-label="anchor" href="#model-diagnostics"></a>
 </h3>
 <p>Check model fit with residual analysis:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit exponential to data</span></span>
 <span><span class="va">fitted_exp</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dfr_exponential.html">dfr_exponential</a></span><span class="op">(</span>lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Cox-Snell residuals Q-Q plot</span></span>
 <span><span class="fu"><a href="reference/qqplot_residuals.html">qqplot_residuals</a></span><span class="op">(</span><span class="va">fitted_exp</span>, <span class="va">df</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="reference/figures/README-diagnostics-1.png" alt="plot of chunk diagnostics" width="100%"><p class="caption">
-plot of chunk diagnostics
-</p>
-</div>
+<p><img src="reference/figures/README-diagnostics-1.png" width="100%"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="mathematical-background">Mathematical Background<a class="anchor" aria-label="anchor" href="#mathematical-background"></a>
 </h2>
-<p>For a lifetime <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>, the hazard function is: <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">h(t) = \frac{f(t)}{S(t)}</annotation></semantics></math></p>
+<p>For a lifetime <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;T" title="T" alt="T">, the hazard function is:</p>
+<div class="float">
+<img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;h%28t%29%20%3D%20%5Cfrac%7Bf%28t%29%7D%7BS%28t%29%7D" title="h(t) = \frac{f(t)}{S(t)}" alt="h(t) = "><div class="figcaption">h(t) = </div>
+</div>
 <p>From the hazard, all other quantities follow:</p>
 <table class="table">
+<colgroup>
+<col width="9%">
+<col width="84%">
+<col width="6%">
+</colgroup>
 <thead><tr class="header">
 <th>Function</th>
 <th>Formula</th>
@@ -256,22 +282,22 @@ plot of chunk diagnostics
 <tbody>
 <tr class="odd">
 <td>Cumulative hazard</td>
-<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><mi>u</mi></mrow><annotation encoding="application/x-tex">H(t) = \int_0^t h(u) du</annotation></semantics></math></td>
+<td><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;H%28t%29%20%3D%20%5Cint_0%5Et%20h%28u%29%20du" title="H(t) = \int_0^t h(u) du" alt="H(t) = _0^t h(u) du"></td>
 <td><code><a href="reference/cum_haz.html">cum_haz()</a></code></td>
 </tr>
 <tr class="even">
 <td>Survival</td>
-<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msup></mrow><annotation encoding="application/x-tex">S(t) = e^{-H(t)}</annotation></semantics></math></td>
+<td><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;S%28t%29%20%3D%20e%5E%7B-H%28t%29%7D" title="S(t) = e^{-H(t)}" alt="S(t) = e^{-H(t)}"></td>
 <td><code><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv()</a></code></td>
 </tr>
 <tr class="odd">
 <td>CDF</td>
-<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>−</mo><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F(t) = 1 - S(t)</annotation></semantics></math></td>
+<td><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;F%28t%29%20%3D%201%20-%20S%28t%29" title="F(t) = 1 - S(t)" alt="F(t) = 1 - S(t)"></td>
 <td><code><a href="https://queelius.github.io/algebraic.dist/reference/cdf.html" class="external-link">cdf()</a></code></td>
 </tr>
 <tr class="even">
 <td>PDF</td>
-<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">f(t) = h(t) \cdot S(t)</annotation></semantics></math></td>
+<td><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;f%28t%29%20%3D%20h%28t%29%20%5Ccdot%20S%28t%29" title="f(t) = h(t) \cdot S(t)" alt="f(t) = h(t) S(t)"></td>
 <td><code><a href="https://rdrr.io/r/stats/density.html" class="external-link">density()</a></code></td>
 </tr>
 </tbody>
@@ -280,9 +306,9 @@ plot of chunk diagnostics
 <div class="section level2">
 <h2 id="likelihood-for-survival-data">Likelihood for Survival Data<a class="anchor" aria-label="anchor" href="#likelihood-for-survival-data"></a>
 </h2>
-<p>For exact observations: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mi>L</mi><mo>=</mo><mo>log</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log L = \log h(t) - H(t)</annotation></semantics></math></p>
-<p>For right-censored: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mi>L</mi><mo>=</mo><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log L = -H(t)</annotation></semantics></math></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>For exact observations: <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Clog%20L%20%3D%20%5Clog%20h%28t%29%20-%20H%28t%29" title="\log L = \log h(t) - H(t)" alt="L = h(t) - H(t)"></p>
+<p>For right-censored: <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Clog%20L%20%3D%20-H%28t%29" title="\log L = -H(t)" alt="L = -H(t)"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Mixed data with censoring</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  t <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span>,</span>
@@ -333,9 +359,11 @@ plot of chunk diagnostics
 </ul>
 </div>
 </div>
+
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=flexhaz" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/queelius/flexhaz/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/queelius/flexhaz/issues" class="external-link">Report a bug</a></li>
 </ul>
@@ -374,7 +402,8 @@ plot of chunk diagnostics
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/queelius/flexhaz/actions" class="external-link"><img src="https://github.com/queelius/flexhaz/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://CRAN.R-project.org/package=flexhaz" class="external-link"><img src="https://www.r-pkg.org/badges/version/flexhaz" alt="CRAN status"></a></li>
+<li><a href="https://github.com/queelius/flexhaz/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/queelius/flexhaz/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
 
