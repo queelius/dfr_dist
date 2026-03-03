@@ -18,7 +18,8 @@ knitr::opts_chunk$set(
 # flexhaz
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/queelius/flexhaz/workflows/R-CMD-check/badge.svg)](https://github.com/queelius/flexhaz/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/flexhaz)](https://CRAN.R-project.org/package=flexhaz)
+[![R-CMD-check](https://github.com/queelius/flexhaz/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/queelius/flexhaz/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 **Dynamic Failure Rate Distributions for Survival Analysis**
@@ -56,7 +57,13 @@ quantiles, sampling, log-likelihoods, MLE fitting, and residual diagnostics.
 
 ## Installation
 
-Install from [r-universe](https://queelius.r-universe.dev):
+Install from CRAN:
+
+```r
+install.packages("flexhaz")
+```
+
+Or the development version from r-universe:
 
 ```r
 install.packages("flexhaz", repos = "https://queelius.r-universe.dev")

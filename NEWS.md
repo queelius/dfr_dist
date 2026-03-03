@@ -1,3 +1,10 @@
+# flexhaz 0.5.1
+
+* Initial CRAN release.
+* Added JOSS paper (`paper.md`, `paper.bib`).
+* Added community guidelines (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`).
+* Added Zenodo archive (DOI: 10.5281/zenodo.18757479).
+
 # flexhaz 0.5.0
 
 ## Changes
