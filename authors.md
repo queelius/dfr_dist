@@ -11,13 +11,13 @@ Source:
 [`DESCRIPTION`](https://github.com/queelius/flexhaz/blob/main/DESCRIPTION)
 
 Towell A (2026). *flexhaz: Dynamic Failure Rate Distributions for
-Survival Analysis*. R package version 0.5.0,
+Survival Analysis*. R package version 0.5.1,
 <https://github.com/queelius/flexhaz>.
 
     @Manual{,
       title = {flexhaz: Dynamic Failure Rate Distributions for Survival Analysis},
       author = {Alexander Towell},
       year = {2026},
-      note = {R package version 0.5.0},
+      note = {R package version 0.5.1},
       url = {https://github.com/queelius/flexhaz},
     }
