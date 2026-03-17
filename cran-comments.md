@@ -1,29 +1,23 @@
-## Test environments
-
-* Local: Ubuntu 24.04, R 4.3.3
-* GitHub Actions: ubuntu-latest, R release
-
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 0 notes
 
-* NOTE: "unable to verify current time" — benign network-dependent check.
+## Patch (v0.5.0 → v0.5.1)
 
-## Test coverage
+Updated test for algebraic.mle class rename ("mle" to "mle_fit").
 
-99.47% (322 tests)
+## Coordinated submission
 
-## Dependencies
+This is part of a coordinated 6-package submission. All packages are
+maintained by me. Updated versions being submitted simultaneously:
 
-All Imports are on CRAN:
-- stats (base)
-- numDeriv
-- algebraic.dist (0.1.0)
-- likelihood.model (0.9.1)
-- generics (0.1.4)
+- algebraic.dist 1.0.0
+- algebraic.mle 2.0.2
+- likelihood.model 1.0.0
+- compositional.mle 2.0.0
+- flexhaz 0.5.1 (this package)
+- maskedcauses 0.9.3
 
-## Downstream dependencies
+## Test environments
 
-None currently on CRAN. Two r-universe packages depend on flexhaz:
-- serieshaz (series system hazard distributions)
-- maskedhaz (masked failure data likelihood)
+* local Ubuntu 24.04, R 4.3.3

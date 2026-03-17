@@ -517,8 +517,8 @@ test_that("fit returns object with expected structure", {
   # Result should be a fisher_mle object (from likelihood.model)
   expect_true(inherits(result, "fisher_mle"),
               info = "fit should return a fisher_mle object")
-  expect_true(inherits(result, "mle"),
-              info = "fisher_mle should inherit from mle")
+  expect_true(inherits(result, "mle_fit"),
+              info = "fisher_mle should inherit from mle_fit")
 
   # Should have accessible parameters
   expect_true(!is.null(coef(result)),

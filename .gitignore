@@ -1,3 +1,5 @@
 /doc/
 /Meta/
 Rplots.pdf
+.RData
+.Rhistory
