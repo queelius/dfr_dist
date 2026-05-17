@@ -46,8 +46,8 @@ NULL
 #'   \item As a baseline model to test against more complex alternatives
 #' }
 #'
-#' @return A `dfr_dist` object with analytical rate, cumulative hazard,
-#'   and score function.
+#' @return A `dfr_dist` object of class `c("dfr_exponential", "dfr_dist",
+#'   ...)` with analytical rate, cumulative hazard, and score function.
 #'
 #' @examples
 #' # Component with MTBF of 1000 hours (lambda = 0.001)
@@ -66,7 +66,7 @@ NULL
 #'
 #' @export
 dfr_exponential <- function(lambda = NULL) {
-    dfr_dist(
+    obj <- dfr_dist(
         rate = function(t, par, ...) {
             rep(par[[1]], length(t))
         },
@@ -83,6 +83,8 @@ dfr_exponential <- function(lambda = NULL) {
         },
         par = lambda
     )
+    class(obj) <- c("dfr_exponential", class(obj))
+    obj
 }
 
 # =============================================================================
@@ -122,8 +124,8 @@ dfr_exponential <- function(lambda = NULL) {
 #' The B10 life (10% failure quantile) is commonly used in reliability:
 #' \eqn{B10 = \sigma \cdot (-\log(0.9))^{1/k}}
 #'
-#' @return A `dfr_dist` object with analytical rate, cumulative hazard,
-#'   and score function.
+#' @return A `dfr_dist` object of class `c("dfr_weibull", "dfr_dist",
+#'   ...)` with analytical rate, cumulative hazard, and score function.
 #'
 #' @examples
 #' # Bearing with wear-out failure (shape > 1)
@@ -152,7 +154,7 @@ dfr_exponential <- function(lambda = NULL) {
 dfr_weibull <- function(shape = NULL, scale = NULL) {
     par <- if (!is.null(shape) && !is.null(scale)) c(shape, scale) else NULL
 
-    dfr_dist(
+    obj <- dfr_dist(
         rate = function(t, par, ...) {
             k <- par[[1]]
             sigma <- par[[2]]
@@ -200,6 +202,8 @@ dfr_weibull <- function(shape = NULL, scale = NULL) {
         },
         par = par
     )
+    class(obj) <- c("dfr_weibull", class(obj))
+    obj
 }
 
 # =============================================================================
@@ -234,8 +238,8 @@ dfr_weibull <- function(shape = NULL, scale = NULL) {
 #' When b is small, Gompertz approximates exponential early in life.
 #' As b increases, wear-out acceleration becomes more pronounced.
 #'
-#' @return A `dfr_dist` object with analytical rate, cumulative hazard,
-#'   and score function.
+#' @return A `dfr_dist` object of class `c("dfr_gompertz", "dfr_dist",
+#'   ...)` with analytical rate, cumulative hazard, and score function.
 #'
 #' @examples
 #' # Aging system: initial hazard 0.001, doubling every 1000 hours
@@ -256,7 +260,7 @@ dfr_weibull <- function(shape = NULL, scale = NULL) {
 dfr_gompertz <- function(a = NULL, b = NULL) {
     par <- if (!is.null(a) && !is.null(b)) c(a, b) else NULL
 
-    dfr_dist(
+    obj <- dfr_dist(
         rate = function(t, par, ...) {
             par[[1]] * exp(par[[2]] * t)
         },
@@ -280,6 +284,8 @@ dfr_gompertz <- function(a = NULL, b = NULL) {
         },
         par = par
     )
+    class(obj) <- c("dfr_gompertz", class(obj))
+    obj
 }
 
 # =============================================================================
@@ -316,8 +322,8 @@ dfr_gompertz <- function(a = NULL, b = NULL) {
 #'
 #' The cumulative hazard has a closed form and is provided analytically.
 #'
-#' @return A `dfr_dist` object with analytical rate, cumulative hazard,
-#'   and score function.
+#' @return A `dfr_dist` object of class `c("dfr_loglogistic", "dfr_dist",
+#'   ...)` with analytical rate, cumulative hazard, and score function.
 #'
 #' @examples
 #' # Component with peak hazard around t = alpha
@@ -337,7 +343,7 @@ dfr_gompertz <- function(a = NULL, b = NULL) {
 dfr_loglogistic <- function(alpha = NULL, beta = NULL) {
     par <- if (!is.null(alpha) && !is.null(beta)) c(alpha, beta) else NULL
 
-    dfr_dist(
+    obj <- dfr_dist(
         rate = function(t, par, ...) {
             alpha <- par[[1]]
             beta <- par[[2]]
@@ -369,4 +375,6 @@ dfr_loglogistic <- function(alpha = NULL, beta = NULL) {
         },
         par = par
     )
+    class(obj) <- c("dfr_loglogistic", class(obj))
+    obj
 }

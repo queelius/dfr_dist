@@ -1,3 +1,12 @@
+# flexhaz 0.5.2
+
+* Prototype constructors (`dfr_exponential()`, `dfr_weibull()`,
+  `dfr_gompertz()`, `dfr_loglogistic()`) now prepend a family-specific
+  S3 subclass (e.g. `"dfr_exponential"`) to the class chain. This
+  enables downstream packages to dispatch on component type via
+  `inherits()` rather than maintaining parallel lookup tables. Existing
+  `inherits(x, "dfr_dist")` checks are unaffected (additive change).
+
 # flexhaz 0.5.1
 
 * Initial CRAN release.

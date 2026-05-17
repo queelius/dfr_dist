@@ -15,8 +15,7 @@ k > 1: increasing hazard (wear-out)}
 \item{scale}{Scale parameter (sigma). Controls time scale.}
 }
 \value{
-A \code{dfr_dist} object with analytical rate, cumulative hazard,
-and score function.
+A \code{dfr_dist} object of class \code{c("dfr_weibull", "dfr_dist", ...)} with analytical rate, cumulative hazard, and score function.
 }
 \description{
 Creates a DFR distribution with Weibull hazard function.

@@ -11,8 +11,7 @@ dfr_exponential(lambda = NULL)
 when calling methods or fitting. Must be positive.}
 }
 \value{
-A \code{dfr_dist} object with analytical rate, cumulative hazard,
-and score function.
+A \code{dfr_dist} object of class \code{c("dfr_exponential", "dfr_dist", ...)} with analytical rate, cumulative hazard, and score function.
 }
 \description{
 Creates a DFR distribution with constant failure rate (exponential).

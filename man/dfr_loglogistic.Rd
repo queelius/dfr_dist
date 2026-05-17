@@ -14,8 +14,7 @@ beta <= 1: monotonically decreasing hazard
 beta > 1: hazard increases to a peak then decreases}
 }
 \value{
-A \code{dfr_dist} object with analytical rate, cumulative hazard,
-and score function.
+A \code{dfr_dist} object of class \code{c("dfr_loglogistic", "dfr_dist", ...)} with analytical rate, cumulative hazard, and score function.
 }
 \description{
 Creates a DFR distribution with log-logistic hazard function.

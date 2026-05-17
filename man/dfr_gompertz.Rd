@@ -12,8 +12,7 @@ dfr_gompertz(a = NULL, b = NULL)
 \item{b}{Growth rate of the hazard. Must be positive.}
 }
 \value{
-A \code{dfr_dist} object with analytical rate, cumulative hazard,
-and score function.
+A \code{dfr_dist} object of class \code{c("dfr_gompertz", "dfr_dist", ...)} with analytical rate, cumulative hazard, and score function.
 }
 \description{
 Creates a DFR distribution with Gompertz hazard function.
