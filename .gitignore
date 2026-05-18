@@ -3,3 +3,8 @@
 Rplots.pdf
 .RData
 .Rhistory
+*.tar.gz
+*.Rcheck/
+CRAN-SUBMISSION
+paper.pdf
+README.html
