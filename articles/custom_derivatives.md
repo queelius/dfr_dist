@@ -10,10 +10,10 @@ and confidence intervals via the observed Fisher information.
 
 The `flexhaz` package uses a simple 2-tier fallback for each:
 
-| Derivative | If provided              | Otherwise                                                              |
-|------------|--------------------------|------------------------------------------------------------------------|
-| Score      | `score_fn(df, par, ...)` | [`numDeriv`](https://CRAN.R-project.org/package=numDeriv)`::grad()`    |
-| Hessian    | `hess_fn(df, par, ...)`  | [`numDeriv`](https://CRAN.R-project.org/package=numDeriv)`::hessian()` |
+| Derivative | If provided | Otherwise |
+|----|----|----|
+| Score | `score_fn(df, par, ...)` | [`numDeriv`](https://CRAN.R-project.org/package=numDeriv)`::grad()` |
+| Hessian | `hess_fn(df, par, ...)` | [`numDeriv`](https://CRAN.R-project.org/package=numDeriv)`::hessian()` |
 
 **You decide how to compute derivatives.** Hand-derive them, use an AD
 library, or let the package fall back to numerical methods. The package
@@ -25,6 +25,7 @@ distribution as a case study.
 ## Setup
 
 ``` r
+
 library(flexhaz)
 ```
 
@@ -33,19 +34,26 @@ library(flexhaz)
 The Weibull distribution is widely used in survival analysis. Its hazard
 function is:
 
-$$h(t;k,\sigma) = \frac{k}{\sigma}\left( \frac{t}{\sigma} \right)^{k - 1}$$
+``` math
+h(t; k, \sigma) = \frac{k}{\sigma}\left(\frac{t}{\sigma}\right)^{k-1}
+```
 
 The cumulative hazard is:
 
-$$H(t;k,\sigma) = \left( \frac{t}{\sigma} \right)^{k}$$
+``` math
+H(t; k, \sigma) = \left(\frac{t}{\sigma}\right)^k
+```
 
 For uncensored data, the log-likelihood is:
 
-$$\ell(k,\sigma) = n\log k + (k - 1)\sum\limits_{i}\log t_{i} - nk\log\sigma - \sum\limits_{i}\left( \frac{t_{i}}{\sigma} \right)^{k}$$
+``` math
+\ell(k, \sigma) = n\log k + (k-1)\sum_i \log t_i - nk\log\sigma - \sum_i \left(\frac{t_i}{\sigma}\right)^k
+```
 
 ## Simulating Data
 
 ``` r
+
 set.seed(42)
 true_k <- 2
 true_sigma <- 3
@@ -67,6 +75,7 @@ The simplest approach provides only the hazard function. Everything else
 is computed numerically:
 
 ``` r
+
 weibull_minimal <- dfr_dist(
     rate = function(t, par, ...) {
         k <- par[1]
@@ -104,11 +113,16 @@ For the Weibull, we can derive exact gradient and Hessian analytically:
 
 **Score:**
 
-$$\frac{\partial\ell}{\partial k} = \frac{n}{k} + \sum\limits_{i}\log t_{i} - n\log\sigma - \sum\limits_{i}\left( \frac{t_{i}}{\sigma} \right)^{k}\log\left( \frac{t_{i}}{\sigma} \right)$$
+``` math
+\frac{\partial \ell}{\partial k} = \frac{n}{k} + \sum_i \log t_i - n\log\sigma - \sum_i \left(\frac{t_i}{\sigma}\right)^k \log\left(\frac{t_i}{\sigma}\right)
+```
 
-$$\frac{\partial\ell}{\partial\sigma} = \frac{k}{\sigma}\left\lbrack \sum\limits_{i}\left( \frac{t_{i}}{\sigma} \right)^{k} - n \right\rbrack$$
+``` math
+\frac{\partial \ell}{\partial \sigma} = \frac{k}{\sigma}\left[\sum_i \left(\frac{t_i}{\sigma}\right)^k - n\right]
+```
 
 ``` r
+
 weibull_full <- dfr_dist(
     rate = function(t, par, ...) {
         k <- par[1]
@@ -178,6 +192,7 @@ If deriving the Hessian is tedious but the score is straightforward,
 provide just `score_fn`:
 
 ``` r
+
 weibull_score_only <- dfr_dist(
     rate = function(t, par, ...) {
         k <- par[1]
@@ -227,6 +242,7 @@ The package provides helper constructors with analytical derivatives
 already implemented:
 
 ``` r
+
 # These include score_fn and hess_fn (where available)
 weib <- dfr_weibull(shape = 2, scale = 3)
 exp_d <- dfr_exponential(lambda = 0.5)
@@ -257,6 +273,7 @@ With the Hessian, standard errors come from the observed Fisher
 information:
 
 ``` r
+
 # Hessian at MLE
 mle_par <- coef(result)
 hess_mle <- H_full(df, par = mle_par)
@@ -277,11 +294,11 @@ cat("  SE(sigma) =", round(se[2], 4), "\n")
 
 ## Distribution Reference
 
-| Distribution | Constructor                                                                            | Score      | Hessian                                                 |
-|--------------|----------------------------------------------------------------------------------------|------------|---------------------------------------------------------|
-| Exponential  | [`dfr_exponential()`](https://queelius.github.io/flexhaz/reference/dfr_exponential.md) | Analytical | Analytical                                              |
-| Weibull      | [`dfr_weibull()`](https://queelius.github.io/flexhaz/reference/dfr_weibull.md)         | Analytical | Analytical                                              |
-| Gompertz     | [`dfr_gompertz()`](https://queelius.github.io/flexhaz/reference/dfr_gompertz.md)       | Analytical | [numDeriv](https://CRAN.R-project.org/package=numDeriv) |
+| Distribution | Constructor | Score | Hessian |
+|----|----|----|----|
+| Exponential | [`dfr_exponential()`](https://queelius.github.io/flexhaz/reference/dfr_exponential.md) | Analytical | Analytical |
+| Weibull | [`dfr_weibull()`](https://queelius.github.io/flexhaz/reference/dfr_weibull.md) | Analytical | Analytical |
+| Gompertz | [`dfr_gompertz()`](https://queelius.github.io/flexhaz/reference/dfr_gompertz.md) | Analytical | [numDeriv](https://CRAN.R-project.org/package=numDeriv) |
 | Log-logistic | [`dfr_loglogistic()`](https://queelius.github.io/flexhaz/reference/dfr_loglogistic.md) | Analytical | [numDeriv](https://CRAN.R-project.org/package=numDeriv) |
 
 For Gompertz and log-logistic, you can supply your own `hess_fn` if

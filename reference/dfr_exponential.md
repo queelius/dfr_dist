@@ -19,8 +19,8 @@ dfr_exponential(lambda = NULL)
 
 ## Value
 
-A `dfr_dist` object with analytical rate, cumulative hazard, and score
-function.
+A `dfr_dist` object of class `c("dfr_exponential", "dfr_dist", ...)`
+with analytical rate, cumulative hazard, and score function.
 
 ## Details
 

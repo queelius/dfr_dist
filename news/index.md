@@ -1,6 +1,21 @@
 # Changelog
 
+## flexhaz 0.5.2
+
+- Prototype constructors
+  ([`dfr_exponential()`](https://queelius.github.io/flexhaz/reference/dfr_exponential.md),
+  [`dfr_weibull()`](https://queelius.github.io/flexhaz/reference/dfr_weibull.md),
+  [`dfr_gompertz()`](https://queelius.github.io/flexhaz/reference/dfr_gompertz.md),
+  [`dfr_loglogistic()`](https://queelius.github.io/flexhaz/reference/dfr_loglogistic.md))
+  now prepend a family-specific S3 subclass (e.g. `"dfr_exponential"`)
+  to the class chain. This enables downstream packages to dispatch on
+  component type via [`inherits()`](https://rdrr.io/r/base/class.html)
+  rather than maintaining parallel lookup tables. Existing
+  `inherits(x, "dfr_dist")` checks are unaffected (additive change).
+
 ## flexhaz 0.5.1
+
+CRAN release: 2026-03-19
 
 - Initial CRAN release.
 - Added JOSS paper (`paper.md`, `paper.bib`).

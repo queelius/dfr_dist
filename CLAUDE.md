@@ -13,6 +13,7 @@ depend on time and any set of predictors/covariates.
 ## Development Commands
 
 ``` r
+
 devtools::document()      # Update NAMESPACE and .Rd files from roxygen2
 devtools::build()         # Build package tarball
 devtools::check()         # Run R CMD check
@@ -45,6 +46,7 @@ and documentation
 The central abstraction in `R/dfr_dist.R`:
 
 ``` r
+
 dfr_dist(rate, par = NULL, eps = 0.01,
          ob_col = "t", delta_col = "delta",
          cum_haz_rate = NULL, score_fn = NULL,
@@ -82,6 +84,7 @@ is critical for working with the package:
     `...`
 
 ``` r
+
 # Create distribution
 d <- dfr_dist(rate = function(t, par, ...) par, par = 1)
 
@@ -98,29 +101,29 @@ This enables flexible parameter handling and late binding of parameters
 
 ### Distribution Methods
 
-| Method                                                                          | Returns             | Formula                                                  |
-|---------------------------------------------------------------------------------|---------------------|----------------------------------------------------------|
-| [`hazard()`](https://queelius.github.io/algebraic.dist/reference/hazard.html)   | h(t, par, …)        | Direct rate function                                     |
-| [`cum_haz()`](https://queelius.github.io/flexhaz/reference/cum_haz.md)          | H(t, par, …)        | ∫₀ᵗ h(u) du (numerical)                                  |
-| [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html)       | S(t, par, …)        | exp(-H(t))                                               |
-| [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html)         | F(t, par, …)        | 1 - S(t)                                                 |
-| [`density()`](https://rdrr.io/r/stats/density.html)                             | f(t, par, …)        | h(t) × S(t)                                              |
-| [`inv_cdf()`](https://queelius.github.io/algebraic.dist/reference/inv_cdf.html) | t given F(t)        | Uses [`uniroot()`](https://rdrr.io/r/stats/uniroot.html) |
-| [`sampler()`](https://queelius.github.io/algebraic.dist/reference/sampler.html) | Generates samples   | Inverse CDF sampling                                     |
-| [`params()`](https://queelius.github.io/algebraic.dist/reference/params.html)   | Resolved parameters | Handles NA/NULL defaults                                 |
+| Method | Returns | Formula |
+|----|----|----|
+| [`hazard()`](https://queelius.github.io/algebraic.dist/reference/hazard.html) | h(t, par, …) | Direct rate function |
+| [`cum_haz()`](https://queelius.github.io/flexhaz/reference/cum_haz.md) | H(t, par, …) | ∫₀ᵗ h(u) du (numerical) |
+| [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html) | S(t, par, …) | exp(-H(t)) |
+| [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html) | F(t, par, …) | 1 - S(t) |
+| [`density()`](https://rdrr.io/r/stats/density.html) | f(t, par, …) | h(t) × S(t) |
+| [`inv_cdf()`](https://queelius.github.io/algebraic.dist/reference/inv_cdf.html) | t given F(t) | Uses [`uniroot()`](https://rdrr.io/r/stats/uniroot.html) |
+| [`sampler()`](https://queelius.github.io/algebraic.dist/reference/sampler.html) | Generates samples | Inverse CDF sampling |
+| [`params()`](https://queelius.github.io/algebraic.dist/reference/params.html) | Resolved parameters | Handles NA/NULL defaults |
 
 ### Likelihood Model Interface
 
 The `dfr_dist` class implements `likelihood_model` from the
 likelihood.model package:
 
-| Method                                                                                    | Returns                   | Usage                                                                            |
-|-------------------------------------------------------------------------------------------|---------------------------|----------------------------------------------------------------------------------|
-| [`loglik()`](https://queelius.github.io/likelihood.model/reference/loglik.html)           | Log-likelihood function   | `ll <- loglik(dist); ll(df, par)`                                                |
-| [`score()`](https://queelius.github.io/likelihood.model/reference/score.html)             | Score function (gradient) | `score_fn` → [`numDeriv::grad`](https://rdrr.io/pkg/numDeriv/man/grad.html)      |
+| Method | Returns | Usage |
+|----|----|----|
+| [`loglik()`](https://queelius.github.io/likelihood.model/reference/loglik.html) | Log-likelihood function | `ll <- loglik(dist); ll(df, par)` |
+| [`score()`](https://queelius.github.io/likelihood.model/reference/score.html) | Score function (gradient) | `score_fn` → [`numDeriv::grad`](https://rdrr.io/pkg/numDeriv/man/grad.html) |
 | [`hess_loglik()`](https://queelius.github.io/likelihood.model/reference/hess_loglik.html) | Hessian of log-likelihood | `hess_fn` → [`numDeriv::hessian`](https://rdrr.io/pkg/numDeriv/man/hessian.html) |
-| [`fit()`](https://generics.r-lib.org/reference/fit.html)                                  | MLE solver                | `solver <- fit(dist); result <- solver(df, par)` → `fisher_mle`                  |
-| [`assumptions()`](https://queelius.github.io/likelihood.model/reference/assumptions.html) | Model assumptions         | Returns character vector of assumptions                                          |
+| [`fit()`](https://generics.r-lib.org/reference/fit.html) | MLE solver | `solver <- fit(dist); result <- solver(df, par)` → `fisher_mle` |
+| [`assumptions()`](https://queelius.github.io/likelihood.model/reference/assumptions.html) | Model assumptions | Returns character vector of assumptions |
 
 ### Derivative Computation
 
@@ -135,6 +138,7 @@ The package just accepts functions or falls back to numerical methods.
 **Example with analytical score and Hessian:**
 
 ``` r
+
 exp_dist <- dfr_dist(
     rate = function(t, par, ...) rep(par[1], length(t)),
     cum_haz_rate = function(t, par, ...) par[1] * t,
@@ -187,6 +191,7 @@ has its own [`fit()`](https://generics.r-lib.org/reference/fit.html)
 method:
 
 ``` r
+
 # Create distribution
 dist <- dfr_dist(rate = function(t, par, ...) rep(par[1], length(t)))
 
@@ -238,17 +243,18 @@ in maskedcauses’s `utils.R`
 The package provides ready-to-use constructors for classic survival
 distributions:
 
-| Constructor                    | Hazard Pattern     | Parameters                          |
-|--------------------------------|--------------------|-------------------------------------|
-| `dfr_exponential(lambda)`      | Constant           | lambda = failure rate               |
-| `dfr_weibull(shape, scale)`    | Power-law          | shape (k), scale (σ)                |
-| `dfr_gompertz(a, b)`           | Exponential growth | a = initial hazard, b = growth rate |
-| `dfr_loglogistic(alpha, beta)` | Non-monotonic      | alpha = scale, beta = shape         |
+| Constructor | Hazard Pattern | Parameters |
+|----|----|----|
+| `dfr_exponential(lambda)` | Constant | lambda = failure rate |
+| `dfr_weibull(shape, scale)` | Power-law | shape (k), scale (σ) |
+| `dfr_gompertz(a, b)` | Exponential growth | a = initial hazard, b = growth rate |
+| `dfr_loglogistic(alpha, beta)` | Non-monotonic | alpha = scale, beta = shape |
 
 Each provides analytical `rate`, `cum_haz_rate`, and `score_fn`.
 Exponential and Weibull also include analytical `hess_fn`:
 
 ``` r
+
 # Quick creation with parameters
 weib <- dfr_weibull(shape = 2, scale = 100)
 

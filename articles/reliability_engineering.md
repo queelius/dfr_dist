@@ -21,6 +21,7 @@ handles real reliability engineering problems:
     multiple mechanisms
 
 ``` r
+
 library(flexhaz)
 ```
 
@@ -33,6 +34,7 @@ treated as censored.
 ### The Data
 
 ``` r
+
 # Simulated capacitor failure data (hours)
 set.seed(42)
 n_tested <- 50
@@ -70,6 +72,7 @@ Compare exponential (constant failure rate) vs Weibull (allows
 increasing/decreasing):
 
 ``` r
+
 # Prepare data in flexhaz format
 df <- data.frame(t = capacitor_data$hours, delta = capacitor_data$failed)
 
@@ -95,6 +98,7 @@ cat("Weibull scale:", round(weib_params[2], 1), "\n")
 Use AIC to compare models (lower is better):
 
 ``` r
+
 # Compute log-likelihood at fitted parameters
 ll_exp <- loglik(dfr_exponential())
 ll_weib <- loglik(dfr_weibull())
@@ -113,6 +117,7 @@ cat("Winner:", ifelse(aic_weib < aic_exp, "Weibull", "Exponential"), "\n")
 ### Interpretation
 
 ``` r
+
 # Create fitted distributions
 exp_fit <- dfr_exponential(lambda = exp_lambda)
 weib_fit <- dfr_weibull(shape = weib_params[1], scale = weib_params[2])
@@ -142,6 +147,7 @@ percentage of the population will have failed.
 - **B50**: Median lifetime (50% survival)
 
 ``` r
+
 # Use fitted Weibull distribution
 Q <- inv_cdf(weib_fit)
 
@@ -161,6 +167,7 @@ cat("B90 life:", round(B90, 1), "hours\n")
 ### Visual Representation
 
 ``` r
+
 plot(weib_fit, what = "survival", xlim = c(0, 1200),
      main = "Capacitor Reliability Curve",
      col = "darkblue", lwd = 2)
@@ -186,6 +193,7 @@ A product has a 2-year warranty. Using the fitted model, we can predict:
 2.  Expected warranty claims per 1000 units?
 
 ``` r
+
 # Warranty period (convert years to hours: 2 years ≈ 17520 hours)
 warranty_hours <- 2 * 365 * 24
 
@@ -214,6 +222,7 @@ For an aging system (Gompertz model), determine optimal preventive
 maintenance intervals.
 
 ``` r
+
 # System with aging characteristics
 system <- dfr_gompertz(a = 0.001, b = 0.002)
 
@@ -254,6 +263,7 @@ Real products often have multiple failure modes. Model with additive
 hazards:
 
 ``` r
+
 # Electronic component: constant failure rate (random defects)
 # Mechanical component: Weibull wear-out
 
@@ -302,6 +312,7 @@ shape.](reliability_engineering_files/figure-html/unnamed-chunk-10-1.png)
 Always validate your model with residual analysis:
 
 ``` r
+
 # Check Weibull fit for capacitor data
 qqplot_residuals(weib_fit, df)
 ```
@@ -316,13 +327,13 @@ suggest model misspecification.
 
 Key reliability metrics you can compute with `flexhaz`:
 
-| Metric           | Function                                                                        | Purpose                                    |
-|------------------|---------------------------------------------------------------------------------|--------------------------------------------|
-| Reliability R(t) | [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html)       | Probability of survival to time t          |
-| Hazard h(t)      | [`hazard()`](https://queelius.github.io/algebraic.dist/reference/hazard.html)   | Instantaneous failure rate                 |
-| MTTF             | `inv_cdf()(0.632)`                                                              | Mean time to failure (for Weibull ≈ scale) |
-| B-life           | [`inv_cdf()`](https://queelius.github.io/algebraic.dist/reference/inv_cdf.html) | Time for given failure fraction            |
-| Failure rate     | `1 - surv()(t)`                                                                 | Cumulative failure proportion              |
+| Metric | Function | Purpose |
+|----|----|----|
+| Reliability R(t) | [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html) | Probability of survival to time t |
+| Hazard h(t) | [`hazard()`](https://queelius.github.io/algebraic.dist/reference/hazard.html) | Instantaneous failure rate |
+| MTTF | `inv_cdf()(0.632)` | Mean time to failure (for Weibull ≈ scale) |
+| B-life | [`inv_cdf()`](https://queelius.github.io/algebraic.dist/reference/inv_cdf.html) | Time for given failure fraction |
+| Failure rate | `1 - surv()(t)` | Cumulative failure proportion |
 
 ## Best Practices
 

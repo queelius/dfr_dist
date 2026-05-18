@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Dynamic Failure Rate Distributions for Survival Analysis • flexhaz</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Dynamic Failure Rate Distributions for Survival Analysis">
 <meta name="description" content="Flexible framework for specifying survival distributions through their hazard (failure rate) functions. Define arbitrary time-varying hazard functions to model complex failure patterns including bathtub curves, proportional hazards with covariates, and other non-standard hazard behaviors. Provides automatic computation of survival, CDF, PDF, quantiles, and sampling. Implements the likelihood model interface for maximum likelihood estimation with right-censored and left-censored survival data.">
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">flexhaz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,44 +103,44 @@
 <col width="15%">
 <col width="11%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Feature</th>
 <th>flexhaz</th>
 <th>survival</th>
 <th>flexsurv</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Custom hazard functions</td>
 <td><strong>Yes</strong></td>
 <td>No</td>
 <td>Limited</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Built-in distributions</td>
 <td>Exp, Weibull, Gompertz, Log-logistic</td>
 <td>Weibull, Exp</td>
 <td>Many</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>User-supplied derivatives</td>
 <td><strong>score + Hessian</strong></td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Censoring support</td>
 <td>Right + Left</td>
 <td>Right</td>
 <td>Right</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Model diagnostics</td>
 <td>Cox-Snell, Martingale, Q-Q</td>
 <td>Limited</td>
 <td>Limited</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Likelihood model interface</td>
 <td><strong>Full</strong></td>
 <td>Basic</td>
@@ -274,28 +274,28 @@
 <col width="84%">
 <col width="6%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Function</th>
 <th>Formula</th>
 <th>Method</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Cumulative hazard</td>
 <td><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;H%28t%29%20%3D%20%5Cint_0%5Et%20h%28u%29%20du" title="H(t) = \int_0^t h(u) du" alt="H(t) = _0^t h(u) du"></td>
 <td><code><a href="reference/cum_haz.html">cum_haz()</a></code></td>
 </tr>
-<tr class="even">
+<tr>
 <td>Survival</td>
 <td><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;S%28t%29%20%3D%20e%5E%7B-H%28t%29%7D" title="S(t) = e^{-H(t)}" alt="S(t) = e^{-H(t)}"></td>
 <td><code><a href="https://queelius.github.io/algebraic.dist/reference/surv.html" class="external-link">surv()</a></code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td>CDF</td>
 <td><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;F%28t%29%20%3D%201%20-%20S%28t%29" title="F(t) = 1 - S(t)" alt="F(t) = 1 - S(t)"></td>
 <td><code><a href="https://queelius.github.io/algebraic.dist/reference/cdf.html" class="external-link">cdf()</a></code></td>
 </tr>
-<tr class="even">
+<tr>
 <td>PDF</td>
 <td><img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;f%28t%29%20%3D%20h%28t%29%20%5Ccdot%20S%28t%29" title="f(t) = h(t) \cdot S(t)" alt="f(t) = h(t) S(t)"></td>
 <td><code><a href="https://rdrr.io/r/stats/density.html" class="external-link">density()</a></code></td>

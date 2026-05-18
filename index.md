@@ -29,14 +29,14 @@ residual diagnostics.
 
 ## Why flexhaz?
 
-| Feature                    | flexhaz                              | survival     | flexsurv |
-|----------------------------|--------------------------------------|--------------|----------|
-| Custom hazard functions    | **Yes**                              | No           | Limited  |
-| Built-in distributions     | Exp, Weibull, Gompertz, Log-logistic | Weibull, Exp | Many     |
-| User-supplied derivatives  | **score + Hessian**                  | No           | No       |
-| Censoring support          | Right + Left                         | Right        | Right    |
-| Model diagnostics          | Cox-Snell, Martingale, Q-Q           | Limited      | Limited  |
-| Likelihood model interface | **Full**                             | Basic        | Partial  |
+| Feature | flexhaz | survival | flexsurv |
+|----|----|----|----|
+| Custom hazard functions | **Yes** | No | Limited |
+| Built-in distributions | Exp, Weibull, Gompertz, Log-logistic | Weibull, Exp | Many |
+| User-supplied derivatives | **score + Hessian** | No | No |
+| Censoring support | Right + Left | Right | Right |
+| Model diagnostics | Cox-Snell, Martingale, Q-Q | Limited | Limited |
+| Likelihood model interface | **Full** | Basic | Partial |
 
 ## Features
 
@@ -60,18 +60,21 @@ residual diagnostics.
 Install from CRAN:
 
 ``` r
+
 install.packages("flexhaz")
 ```
 
 Or the development version from r-universe:
 
 ``` r
+
 install.packages("flexhaz", repos = "https://queelius.r-universe.dev")
 ```
 
 ## Quick Start
 
 ``` r
+
 library(flexhaz)
 ```
 
@@ -80,6 +83,7 @@ library(flexhaz)
 Use the convenient constructors for classic survival distributions:
 
 ``` r
+
 # Exponential: constant hazard (memoryless)
 exp_dist <- dfr_exponential(lambda = 0.5)
 
@@ -96,6 +100,7 @@ ll_dist <- dfr_loglogistic(alpha = 10, beta = 2)
 All distribution functions are automatically available:
 
 ``` r
+
 S <- surv(exp_dist)
 S(2)  # Survival probability at t=2
 #> [1] 0.3678794
@@ -108,6 +113,7 @@ h(1)  # Hazard at t=1
 ### Maximum Likelihood Estimation
 
 ``` r
+
 # Simulate failure times
 set.seed(42)
 times <- rexp(50, rate = 1)
@@ -125,6 +131,7 @@ coef(result)  # Estimated rate
 Model complex failure patterns like bathtub curves:
 
 ``` r
+
 # h(t) = a*exp(-b*t) + c + d*t^k
 # Infant mortality + useful life + wear-out
 bathtub <- dfr_dist(
@@ -146,6 +153,7 @@ curve(sapply(x, h), 0, 15, xlab = "Time", ylab = "Hazard rate",
 Check model fit with residual analysis:
 
 ``` r
+
 # Fit exponential to data
 fitted_exp <- dfr_exponential(lambda = coef(result))
 
@@ -168,12 +176,12 @@ h(t) =
 
 From the hazard, all other quantities follow:
 
-| Function          | Formula                                                                                                                                                                       | Method                                                                    |
-|-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
-| Cumulative hazard | ![H(t) = \_0^t h(u) du](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;H%28t%29%20%3D%20%5Cint_0%5Et%20h%28u%29%20du "H(t) = \int_0^t h(u) du") | [`cum_haz()`](https://queelius.github.io/flexhaz/reference/cum_haz.md)    |
-| Survival          | ![S(t) = e^{-H(t)}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;S%28t%29%20%3D%20e%5E%7B-H%28t%29%7D "S(t) = e^{-H(t)}")                     | [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html) |
-| CDF               | ![F(t) = 1 - S(t)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;F%28t%29%20%3D%201%20-%20S%28t%29 "F(t) = 1 - S(t)")                          | [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html)   |
-| PDF               | ![f(t) = h(t) S(t)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;f%28t%29%20%3D%20h%28t%29%20%5Ccdot%20S%28t%29 "f(t) = h(t) \cdot S(t)")     | [`density()`](https://rdrr.io/r/stats/density.html)                       |
+| Function | Formula | Method |
+|----|----|----|
+| Cumulative hazard | ![H(t) = \_0^t h(u) du](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;H%28t%29%20%3D%20%5Cint_0%5Et%20h%28u%29%20du "H(t) = \int_0^t h(u) du") | [`cum_haz()`](https://queelius.github.io/flexhaz/reference/cum_haz.md) |
+| Survival | ![S(t) = e^{-H(t)}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;S%28t%29%20%3D%20e%5E%7B-H%28t%29%7D "S(t) = e^{-H(t)}") | [`surv()`](https://queelius.github.io/algebraic.dist/reference/surv.html) |
+| CDF | ![F(t) = 1 - S(t)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;F%28t%29%20%3D%201%20-%20S%28t%29 "F(t) = 1 - S(t)") | [`cdf()`](https://queelius.github.io/algebraic.dist/reference/cdf.html) |
+| PDF | ![f(t) = h(t) S(t)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;f%28t%29%20%3D%20h%28t%29%20%5Ccdot%20S%28t%29 "f(t) = h(t) \cdot S(t)") | [`density()`](https://rdrr.io/r/stats/density.html) |
 
 ## Likelihood for Survival Data
 
@@ -184,6 +192,7 @@ For right-censored: ![L =
 -H(t)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clog%20L%20%3D%20-H%28t%29 "\log L = -H(t)")
 
 ``` r
+
 # Mixed data with censoring
 df <- data.frame(
   t = c(1, 2, 3, 4, 5),

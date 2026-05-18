@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>flexhaz: Hazard-First Survival Modeling • flexhaz</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="flexhaz: Hazard-First Survival Modeling">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">flexhaz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,15 +108,15 @@ closed-form quantities like mean time to failure.</p>
 the hazard function, and the package derives everything
 else</strong>.</p>
 <p>Given a hazard (failure rate) function
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(t)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">h(t)</annotation></semantics></math>,
 the full distribution follows:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.278em"></mspace><mover><mo>→</mo><mrow><mspace width="0.278em"></mspace><mo>∫</mo><mspace width="0.278em"></mspace></mrow></mover><mspace width="0.278em"></mspace><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>u</mi><mspace width="0.278em"></mspace><mover><mo>→</mo><mrow><mspace width="0.278em"></mspace><mo>exp</mo><mspace width="0.278em"></mspace></mrow></mover><mspace width="0.278em"></mspace><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msup><mspace width="0.278em"></mspace><mover><mo>→</mo><mrow><mspace width="0.278em"></mspace><mo>×</mo><mi>h</mi><mspace width="0.278em"></mspace></mrow></mover><mspace width="0.278em"></mspace><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mspace width="0.278em"></mspace><mover><mo>→</mo><mrow><mspace width="0.278em"></mspace><mo>∫</mo><mspace width="0.278em"></mspace></mrow></mover><mspace width="0.278em"></mspace><mi>H</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mi>h</mi><mo stretchy="false" form="prefix">(</mo><mi>u</mi><mo stretchy="false" form="postfix">)</mo><mspace width="0.167em"></mspace><mi>d</mi><mi>u</mi><mspace width="0.278em"></mspace><mover><mo>→</mo><mrow><mspace width="0.278em"></mspace><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mspace width="0.278em"></mspace></mrow></mover><mspace width="0.278em"></mspace><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msup><mi>e</mi><mrow><mi>−</mi><mi>H</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><mspace width="0.278em"></mspace><mover><mo>→</mo><mrow><mspace width="0.278em"></mspace><mo>×</mo><mi>h</mi><mspace width="0.278em"></mspace></mrow></mover><mspace width="0.278em"></mspace><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>h</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mspace width="0.167em"></mspace><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">
 h(t) \;\xrightarrow{\;\int\;}\; H(t) = \int_0^t h(u)\,du
       \;\xrightarrow{\;\exp\;}\; S(t) = e^{-H(t)}
       \;\xrightarrow{\;\times h\;}\; f(t) = h(t)\,S(t)
 </annotation></semantics></math></p>
 <p>If you can express
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(t)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">h(t)</annotation></semantics></math>
 as an R function of time and parameters, <code>flexhaz</code> gives you
 survival curves, CDFs, densities, quantiles, random sampling,
 log-likelihoods, MLE fitting, and residual diagnostics —
@@ -145,8 +145,8 @@ constant failure rate.</p>
 <span><span class="co">#&gt; {</span></span>
 <span><span class="co">#&gt;     rep(par[[1]], length(t))</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5614a2cf12e0&gt;</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x5614a2cef830&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55578ed489f8&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x55578ed4cb48&gt;</span></span>
 <span><span class="co">#&gt; It has a survival function given by:</span></span>
 <span><span class="co">#&gt;     S(t|rate) = exp(-H(t,...))</span></span>
 <span><span class="co">#&gt; where H(t,...) is the cumulative hazard function.</span></span></code></pre></div>
@@ -170,11 +170,11 @@ values:</p>
 <span><span class="fu">f</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>   <span class="co"># PDF at t=10</span></span>
 <span><span class="co">#&gt; [1] 0.03678794</span></span></code></pre></div>
 <p>You can verify these analytically:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>10</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>0.1</mn><mo>×</mo><mn>10</mn></mrow></msup><mo>=</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>≈</mo><mn>0.368</mn></mrow><annotation encoding="application/x-tex">S(10) = e^{-0.1 \times 10} = e^{-1} \approx 0.368</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mn>10</mn><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msup><mi>e</mi><mrow><mi>−</mi><mn>0.1</mn><mo>×</mo><mn>10</mn></mrow></msup><mo>=</mo><msup><mi>e</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo>≈</mo><mn>0.368</mn></mrow><annotation encoding="application/x-tex">S(10) = e^{-0.1 \times 10} = e^{-1} \approx 0.368</annotation></semantics></math>,
 the hazard is constant at
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\lambda = 0.1</annotation></semantics></math>,
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>10</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>λ</mi><mspace width="0.167em"></mspace><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>10</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.1</mn><mo>×</mo><mn>0.368</mn><mo>≈</mo><mn>0.0368</mn></mrow><annotation encoding="application/x-tex">f(10) = \lambda \, S(10) = 0.1 \times 0.368 \approx 0.0368</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mn>10</mn><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>λ</mi><mspace width="0.167em"></mspace><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mn>10</mn><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>0.1</mn><mo>×</mo><mn>0.368</mn><mo>≈</mo><mn>0.0368</mn></mrow><annotation encoding="application/x-tex">f(10) = \lambda \, S(10) = 0.1 \times 0.368 \approx 0.0368</annotation></semantics></math>.</p>
 </div>
 <div class="section level3">
 <h3 id="generate-samples">Generate Samples<a class="anchor" aria-label="anchor" href="#generate-samples"></a>
@@ -262,19 +262,19 @@ three types of observation:</p>
 <tr class="odd">
 <td><code>1</code></td>
 <td>Exact failure</td>
-<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log h(t) - H(t)</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mi>h</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mi>H</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\log h(t) - H(t)</annotation></semantics></math></td>
 </tr>
 <tr class="even">
 <td><code>0</code></td>
 <td>Right-censored (survived past
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)</td>
-<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">-H(t)</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mi>H</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">-H(t)</annotation></semantics></math></td>
 </tr>
 <tr class="odd">
 <td><code>-1</code></td>
 <td>Left-censored (failed before
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)</td>
-<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log(1 - e^{-H(t)})</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mi>−</mi><mi>H</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\log(1 - e^{-H(t)})</annotation></semantics></math></td>
 </tr>
 </tbody>
 </table>
@@ -410,7 +410,7 @@ distribution can express.</p>
 <div class="section level3">
 <h3 id="define-a-bathtub-hazard">Define a bathtub hazard<a class="anchor" aria-label="anchor" href="#define-a-bathtub-hazard"></a>
 </h3>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>a</mi><mspace width="0.167em"></mspace><msup><mi>e</mi><mrow><mo>−</mo><mi>b</mi><mi>t</mi></mrow></msup><mo>+</mo><mi>c</mi><mo>+</mo><mi>d</mi><mspace width="0.167em"></mspace><msup><mi>t</mi><mi>k</mi></msup></mrow><annotation encoding="application/x-tex">h(t) = a\,e^{-bt} + c + d\,t^k</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>a</mi><mspace width="0.167em"></mspace><msup><mi>e</mi><mrow><mi>−</mi><mi>b</mi><mi>t</mi></mrow></msup><mo>+</mo><mi>c</mi><mo>+</mo><mi>d</mi><mspace width="0.167em"></mspace><msup><mi>t</mi><mi>k</mi></msup></mrow><annotation encoding="application/x-tex">h(t) = a\,e^{-bt} + c + d\,t^k</annotation></semantics></math></p>
 <p>Three additive components: exponential decay (infant mortality),
 constant baseline (useful life), and power-law growth (wear-out).</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">

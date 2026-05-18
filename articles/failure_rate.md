@@ -13,7 +13,7 @@ patterns.
 
 Traditional approaches use parametric families (Weibull, exponential,
 log-normal) that impose strong assumptions on failure rate behavior. The
-hazard function $h(t)$ provides a more intuitive parameterization for
+hazard function $`h(t)`$ provides a more intuitive parameterization for
 reliability:
 
 - **Constant hazard**: Exponential distribution (memoryless failures)
@@ -23,22 +23,27 @@ reliability:
 
 ### Mathematical background
 
-For a lifetime random variable $T$, the instantaneous failure rate
+For a lifetime random variable $`T`$, the instantaneous failure rate
 (hazard) is:
-$$h(t) = \lim\limits_{\Delta t\rightarrow 0}\frac{\Pr\{ T \leq t + \Delta t|T > t\}}{\Delta t} = \frac{f(t)}{S(t)}$$
+``` math
+h(t) = \lim_{\Delta t \to 0} \frac{\Pr\{T \leq t + \Delta t | T > t\}}{\Delta t} = \frac{f(t)}{S(t)}
+```
 
 The cumulative hazard integrates the instantaneous rate:
-$$H(t) = \int_{0}^{t}h(u)\, du$$
+``` math
+H(t) = \int_0^t h(u) \, du
+```
 
 From this, all other quantities follow:
 
-- **Survival function**: $S(t) = \exp\left( - H(t) \right)$
-- **CDF**: $F(t) = 1 - S(t)$
-- **PDF**: $f(t) = h(t) \cdot S(t)$
+- **Survival function**: $`S(t) = \exp(-H(t))`$
+- **CDF**: $`F(t) = 1 - S(t)`$
+- **PDF**: $`f(t) = h(t) \cdot S(t)`$
 
 ## Getting Started
 
 ``` r
+
 library(flexhaz)
 ```
 
@@ -48,6 +53,7 @@ The package provides convenient constructors for classic survival
 distributions:
 
 ``` r
+
 # Exponential: constant hazard h(t) = lambda
 exp_dist <- dfr_exponential(lambda = 0.5)
 
@@ -66,8 +72,8 @@ print(exp_dist)
 #> {
 #>     rep(par[[1]], length(t))
 #> }
-#> <bytecode: 0x55dd95453318>
-#> <environment: 0x55dd95455698>
+#> <bytecode: 0x56152219efb0>
+#> <environment: 0x5615221a1840>
 #> It has a survival function given by:
 #>     S(t|rate) = exp(-H(t,...))
 #> where H(t,...) is the cumulative hazard function.
@@ -82,6 +88,7 @@ For non-standard hazard patterns, use
 directly:
 
 ``` r
+
 # Custom: linear increasing hazard h(t) = a + b*t
 linear_dist <- dfr_dist(
   rate = function(t, par, ...) {
@@ -110,6 +117,7 @@ All standard distribution functions are available:
 ### Hazard and cumulative hazard
 
 ``` r
+
 h <- hazard(exp_dist)
 H <- cum_haz(exp_dist)
 
@@ -126,6 +134,7 @@ H(2)      # Cumulative hazard at t=2
 ### Survival and CDF
 
 ``` r
+
 S <- surv(exp_dist)
 F <- cdf(exp_dist)
 
@@ -139,6 +148,7 @@ c(survival = S(t), cdf = F(t), sum = S(t) + F(t))
 ### PDF (Density)
 
 ``` r
+
 # Use stats::density which flexhaz implements as density.dfr_dist
 pdf_fn <- density(exp_dist)
 
@@ -153,6 +163,7 @@ c(computed = pdf_fn(t), analytical = lambda * exp(-lambda * t))
 ### Quantile function (inverse CDF)
 
 ``` r
+
 Q <- inv_cdf(exp_dist)
 
 # Median of exponential is log(2)/lambda
@@ -166,6 +177,7 @@ c(computed = median_computed, analytical = median_analytical)
 ### Sampling
 
 ``` r
+
 samp <- sampler(exp_dist)
 
 set.seed(42)
@@ -182,6 +194,7 @@ c(sample_mean = mean(samples), theoretical = 1/0.5)
 All methods accept a `par` argument to override default parameters:
 
 ``` r
+
 h <- hazard(exp_dist)
 
 # Use default lambda = 0.5
@@ -202,14 +215,19 @@ interface, enabling maximum likelihood estimation with survival data.
 ### Log-likelihood for survival data
 
 For exact observations (failures at known times):
-$$\log L_{i} = \log h\left( t_{i} \right) - H\left( t_{i} \right)$$
+``` math
+\log L_i = \log h(t_i) - H(t_i)
+```
 
-For right-censored observations (survived past time $t$):
-$$\log L_{i} = - H\left( t_{i} \right)$$
+For right-censored observations (survived past time $`t`$):
+``` math
+\log L_i = -H(t_i)
+```
 
 ### Creating test data
 
 ``` r
+
 # Simulate exact failure times from exponential(lambda=1)
 set.seed(123)
 true_lambda <- 1
@@ -232,6 +250,7 @@ head(df_exact)
 ### Computing log-likelihood
 
 ``` r
+
 dist <- dfr_dist(
   rate = function(t, par, ...) rep(par[1], length(t)),
   par = NULL  # No default - must be supplied
@@ -256,6 +275,7 @@ The score function is the gradient of the log-likelihood with respect to
 parameters. It’s computed numerically by default:
 
 ``` r
+
 s <- score(dist)
 s(df_exact, par = c(1.0))  # Should be close to 0 at MLE
 #> [1] -6.518543
@@ -264,6 +284,7 @@ s(df_exact, par = c(1.0))  # Should be close to 0 at MLE
 ### Hessian of log-likelihood
 
 ``` r
+
 H_ll <- hess_loglik(dist)
 hess <- H_ll(df_exact, par = c(1.0))
 hess  # Should be negative (concave at maximum)
@@ -277,6 +298,7 @@ The [`fit()`](https://generics.r-lib.org/reference/fit.html) function
 provides MLE estimation:
 
 ``` r
+
 solver <- fit(dist)
 
 # Find MLE starting from initial guess
@@ -299,6 +321,7 @@ Real survival data often includes censoring. Here’s an example with
 mixed data:
 
 ``` r
+
 # Some observations are censored (patient still alive at study end)
 df_mixed <- data.frame(
   t = c(1, 2, 3, 4, 5, 6, 7, 8),
@@ -317,6 +340,7 @@ coef(result)
 ## Example: Weibull MLE
 
 ``` r
+
 # Create Weibull DFR
 weibull <- dfr_dist(
   rate = function(t, par, ...) {
@@ -363,6 +387,7 @@ constant failure rate 3. **Wear-out**: Increasing failure rate as
 components age
 
 ``` r
+
 # h(t) = a * exp(-b*t) + c + d * t^k
 # Three components: infant mortality + baseline + wear-out
 bathtub <- dfr_dist(
@@ -395,6 +420,7 @@ hazard.](failure_rate_files/figure-html/unnamed-chunk-17-1.png)
 Hazards can depend on covariates that modify the time effect:
 
 ``` r
+
 # Proportional hazards with covariate x
 # h(t, x) = h0(t) * exp(beta * x)
 # where h0(t) = Weibull baseline
@@ -428,6 +454,7 @@ The `dfr_dist` class inherits from
 classes, providing access to additional functionality:
 
 ``` r
+
 # Support is (0, Inf) for all DFR distributions
 support <- sup(exp_dist)
 print(support)
@@ -450,6 +477,7 @@ at each observation time. If the model is correctly specified, these
 residuals follow an Exp(1) distribution.
 
 ``` r
+
 # Fit a model and check residuals
 set.seed(99)
 test_times <- rexp(80, rate = 0.3)
@@ -480,6 +508,7 @@ Martingale residuals (M_i = delta_i - H(t_i)) are useful for identifying
 individual observations that are poorly fit:
 
 ``` r
+
 mart_resid <- residuals(exp_final, test_df, type = "martingale")
 summary(mart_resid)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 

@@ -22,8 +22,8 @@ dfr_gompertz(a = NULL, b = NULL)
 
 ## Value
 
-A `dfr_dist` object with analytical rate, cumulative hazard, and score
-function.
+A `dfr_dist` object of class `c("dfr_gompertz", "dfr_dist", ...)` with
+analytical rate, cumulative hazard, and score function.
 
 ## Details
 

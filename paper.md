@@ -3,21 +3,22 @@
 `flexhaz` is an R package for defining survival distributions through
 their hazard (failure rate) function. The user writes the hazard, any R
 function of time and parameters, and the package derives everything
-else. Given a hazard $h(t)$, the full distribution follows by numerical
-or analytical integration: cumulative hazard
-$H(t) = \int_{0}^{t}h(u)\, du$, survival
-$S(t) = \exp\left( - H(t) \right)$, density $f(t) = h(t)S(t)$,
-quantiles, and random sampling. The package provides a complete
-likelihood model interface (log-likelihood, score, Hessian, and maximum
-likelihood estimation via `optim`) supporting exact, right-censored, and
-left-censored observations. Model diagnostics include Cox-Snell and
-Martingale residuals with Q-Q plots for goodness-of-fit assessment.
+else. Given a hazard $`h(t)`$, the full distribution follows by
+numerical or analytical integration: cumulative hazard
+$`H(t) = \int_0^t h(u)\,du`$, survival $`S(t) = \exp(-H(t))`$, density
+$`f(t) = h(t) S(t)`$, quantiles, and random sampling. The package
+provides a complete likelihood model interface (log-likelihood, score,
+Hessian, and maximum likelihood estimation via `optim`) supporting
+exact, right-censored, and left-censored observations. Model diagnostics
+include Cox-Snell and Martingale residuals with Q-Q plots for
+goodness-of-fit assessment.
 
 The central abstraction is the `dfr_dist` S3 class. All distribution
 methods return closures that accept time values and optional parameter
 overrides, enabling late binding of parameters for MLE:
 
 ``` r
+
 library(flexhaz)
 bathtub <- dfr_dist(
   rate = function(t, par, ...) {

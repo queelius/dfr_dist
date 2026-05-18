@@ -7,6 +7,7 @@ its **hazard function** (failure rate). This guide teaches you how to
 create your own distributions, from simple to optimized.
 
 ``` r
+
 library(flexhaz)
 ```
 
@@ -14,11 +15,11 @@ library(flexhaz)
 
 Every `dfr_dist` can provide up to three functions:
 
-| Function       | Purpose                     | Required?                                       |
-|----------------|-----------------------------|-------------------------------------------------|
-| `rate`         | Hazard h(t, par)            | **Yes**                                         |
+| Function | Purpose | Required? |
+|----|----|----|
+| `rate` | Hazard h(t, par) | **Yes** |
 | `cum_haz_rate` | Cumulative hazard H(t, par) | Optional (computed numerically if not provided) |
-| `score_fn`     | Score function ∂ℓ/∂θ        | Optional (exact gradient for faster MLE)        |
+| `score_fn` | Score function ∂ℓ/∂θ | Optional (exact gradient for faster MLE) |
 
 Let’s see how to provide each.
 
@@ -27,6 +28,7 @@ Let’s see how to provide each.
 The simplest approach - provide only the hazard function:
 
 ``` r
+
 # Custom hazard: linear increasing failure rate
 # h(t) = a + b*t
 linear_hazard <- dfr_dist(
@@ -58,6 +60,7 @@ less accurate).
 When you know the closed-form integral, provide it:
 
 ``` r
+
 # H(t) = integral of (a + b*u) from 0 to t = a*t + b*t^2/2
 linear_hazard_v2 <- dfr_dist(
   rate = function(t, par, ...) {
@@ -97,6 +100,7 @@ For fastest MLE with exact Hessian, also provide the score (gradient of
 log-likelihood):
 
 ``` r
+
 # Score derivation:
 # Log-likelihood for exact observation: log(h(t)) - H(t)
 # Log-likelihood for censored: -H(t)
@@ -155,24 +159,31 @@ s(test_data, par = coef(result))  # Should be ≈ (0, 0)
 Let’s build the Makeham distribution from scratch. This models mortality
 with both accident (constant) and aging (exponential growth) components:
 
-$$h(t) = \lambda + \alpha e^{\beta t}$$
+``` math
+h(t) = \lambda + \alpha e^{\beta t}
+```
 
 ### Step 1: Derive the Mathematics
 
 **Cumulative hazard**:
-$$H(t) = \int_{0}^{t}\left( \lambda + \alpha e^{\beta u} \right)du = \lambda t + \frac{\alpha}{\beta}\left( e^{\beta t} - 1 \right)$$
+``` math
+H(t) = \int_0^t (\lambda + \alpha e^{\beta u}) du = \lambda t + \frac{\alpha}{\beta}(e^{\beta t} - 1)
+```
 
 **Score function** (for exact observations, delta=1):
-$$\ell_{i} = \log\left( \lambda + \alpha e^{\beta t_{i}} \right) - \lambda t_{i} - \frac{\alpha}{\beta}\left( e^{\beta t_{i}} - 1 \right)$$
+``` math
+\ell_i = \log(\lambda + \alpha e^{\beta t_i}) - \lambda t_i - \frac{\alpha}{\beta}(e^{\beta t_i} - 1)
+```
 
 Derivatives: -
-$\frac{\partial\ell_{i}}{\partial\lambda} = \frac{1}{h\left( t_{i} \right)} - t_{i}$ -
-$\frac{\partial\ell_{i}}{\partial\alpha} = \frac{e^{\beta t_{i}}}{h\left( t_{i} \right)} - \frac{1}{\beta}\left( e^{\beta t_{i}} - 1 \right)$ -
-$\frac{\partial\ell_{i}}{\partial\beta} = \frac{\alpha t_{i}e^{\beta t_{i}}}{h\left( t_{i} \right)} + \frac{\alpha}{\beta^{2}}\left( e^{\beta t_{i}} - 1 \right) - \frac{\alpha t_{i}}{\beta}e^{\beta t_{i}}$
+$`\frac{\partial \ell_i}{\partial \lambda} = \frac{1}{h(t_i)} - t_i`$ -
+$`\frac{\partial \ell_i}{\partial \alpha} = \frac{e^{\beta t_i}}{h(t_i)} - \frac{1}{\beta}(e^{\beta t_i} - 1)`$ -
+$`\frac{\partial \ell_i}{\partial \beta} = \frac{\alpha t_i e^{\beta t_i}}{h(t_i)} + \frac{\alpha}{\beta^2}(e^{\beta t_i} - 1) - \frac{\alpha t_i}{\beta}e^{\beta t_i}`$
 
 ### Step 2: Implement
 
 ``` r
+
 dfr_makeham <- function(lambda = NULL, alpha = NULL, beta = NULL) {
   par <- if (!is.null(lambda) && !is.null(alpha) && !is.null(beta)) {
     c(lambda, alpha, beta)
@@ -218,6 +229,7 @@ dfr_makeham <- function(lambda = NULL, alpha = NULL, beta = NULL) {
 ### Step 3: Test
 
 ``` r
+
 # Create distribution
 makeham <- dfr_makeham(lambda = 0.01, alpha = 0.001, beta = 0.05)
 
@@ -229,6 +241,7 @@ plot(makeham, what = "hazard", xlim = c(0, 50), main = "Makeham Hazard")
 curve.](custom_distributions_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
+
 
 # Verify score is correct by comparing to numerical gradient
 set.seed(123)
@@ -256,6 +269,7 @@ When writing `score_fn` and `hess_fn`, follow these guidelines:
 ### Use Standard R Indexing
 
 ``` r
+
 # Both work fine for score_fn and hess_fn
 a <- par[[1]]  # or par[1]
 b <- par[[2]]  # or par[2]
@@ -264,6 +278,7 @@ b <- par[[2]]  # or par[2]
 ### Return Correct Types
 
 ``` r
+
 # score_fn should return a numeric vector
 c(da, db)
 
@@ -274,6 +289,7 @@ matrix(c(d2a, d2ab, d2ab, d2b), nrow = 2)
 ### Handle Censoring
 
 ``` r
+
 # Always check for the delta column
 delta <- if ("delta" %in% names(df)) df$delta else rep(1, nrow(df))
 n_events <- sum(delta == 1)
@@ -284,6 +300,7 @@ n_events <- sum(delta == 1)
 Let’s see the speedup from analytical formulas:
 
 ``` r
+
 # Generate test data
 set.seed(42)
 n <- 500
@@ -311,13 +328,13 @@ ll3 <- loglik(dist_v3)
 # Single evaluation timing (run multiple times for accuracy)
 system.time(for(i in 1:100) ll1(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   3.035   0.012   3.047
+#>   2.625   0.009   2.635
 system.time(for(i in 1:100) ll2(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.403   0.001   0.404
+#>   0.386   0.000   0.385
 system.time(for(i in 1:100) ll3(test_data, c(0.1)))
 #>    user  system elapsed 
-#>   0.404   0.000   0.404
+#>   0.410   0.001   0.411
 ```
 
 ## Real-World Example: Bathtub Curve
@@ -325,6 +342,7 @@ system.time(for(i in 1:100) ll3(test_data, c(0.1)))
 Model the classic “bathtub” hazard with three phases:
 
 ``` r
+
 # Bathtub: infant mortality + useful life + wear-out
 # h(t) = a*exp(-b*t) + c + d*t^k
 dfr_bathtub <- function(a = NULL, b = NULL, c = NULL, d = NULL, k = NULL) {
